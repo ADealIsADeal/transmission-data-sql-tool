@@ -1038,6 +1038,28 @@
   body.embedded:not(.light) .output-area,body.embedded:not(.light) .regex-highlight,body.embedded:not(.light) .diff-output{
     background:#11151d!important;border-color:rgba(255,255,255,.09)!important
   }
+
+  /* ===== Smart Codec ===== */
+  .smart-detect-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;margin:10px 0 4px;border-radius:8px;background:rgba(100,80,200,0.16);border:0.5px solid rgba(100,80,200,0.35);color:rgba(255,255,255,0.85);font-size:12px;font-weight:600;letter-spacing:.2px}
+  .smart-detect-badge .dot{width:6px;height:6px;border-radius:50%;background:#9f8bff;box-shadow:0 0 8px rgba(159,139,255,.8)}
+  .smart-result-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+  .smart-result{background:rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px}
+  .smart-result-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+  .smart-result-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);display:flex;align-items:center;gap:7px}
+  .smart-result-title .fmt{font-size:10px;padding:2px 7px;border-radius:5px;background:rgba(100,80,200,0.25);color:#c4b5fd;letter-spacing:.4px;text-transform:uppercase}
+  .smart-copy{font-size:11px;padding:4px 10px;border-radius:6px;border:0.5px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.65);cursor:pointer;transition:all .15s}
+  .smart-copy:hover{background:rgba(255,255,255,0.14);color:#fff}
+  .smart-copy.copied{background:rgba(80,200,150,0.2);color:#8ef0bd;border-color:rgba(80,200,150,0.4)}
+  .smart-result pre{margin:0;padding:10px 12px;background:rgba(255,255,255,0.045);border-radius:8px;font-family:'SF Mono','Fira Code','Menlo',monospace;font-size:12px;line-height:1.6;color:rgba(255,255,255,0.78);white-space:pre-wrap;word-break:break-all;max-height:320px;overflow:auto}
+  .smart-empty{color:rgba(255,255,255,0.35);font-size:12px;padding:14px 4px}
+  body.light .smart-detect-badge{background:rgba(49,91,239,0.08);border-color:rgba(49,91,239,0.3);color:#3d4a63}
+  body.light .smart-result{background:#f7f9fc;border-color:#dfe6f0}
+  body.light .smart-result-title{color:#242f45}
+  body.light .smart-result-title .fmt{background:rgba(49,91,239,0.12);color:#315bef}
+  body.light .smart-copy{background:#fff;border-color:#dfe6f0;color:#596579}
+  body.light .smart-copy:hover{background:#eef2ff;color:#315bef}
+  body.light .smart-result pre{background:#fff;border:1px solid #eef2f7;color:#334155}
+  body.light .smart-empty{color:#9aa5b5}
 </style>
 </head>
 <body class="light">
@@ -1073,6 +1095,7 @@
       <li class="nav-item" data-tool="urlcodec">
         <span class="nav-icon">%</span> URL 编解码
       </li>
+      <li class="nav-item" data-tool="smartcodec">        <span class="nav-icon">✶</span> 智能解码      </li>
       <li class="nav-item" data-tool="codediff">
         <span class="nav-icon">±</span> 代码对比
       </li>
@@ -1330,6 +1353,27 @@
         <button class="btn btn-secondary" onclick="urlDecodeURI()">解码 (decodeURI)</button>
       </div>
       <div class="output-area" id="urlOutput"></div>
+    </div>
+
+    <!-- ========== Smart Codec (Auto Detect) ========== -->
+    <div class="tool-panel" id="panel-smartcodec">
+      <div class="tool-header">
+        <h2>智能解码</h2>
+        <p>自动识别编码格式（URL / Base64 / Hex / Unicode 转义 / HTML 实体），支持 URL 参数解析与内嵌片段提取、多层自动解码</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">输入待解码内容</label>
+        <textarea id="smartInput" style="min-height:150px;" placeholder="粘贴疑似编码过的内容：%E4%BD%A0%E5%A5%BD、5L2g5aW9、&#x4F60;&#x597D;、\u4f60\u597d、68656c6c6f，或整段 URL 参数（自动解析 data_list 等 Base64 字段）"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="smartDetect(false)">自动检测并解码</button>
+        <button class="btn btn-secondary" onclick="smartDetect(true)">多层解码 (循环解码)</button>
+        <button class="btn btn-secondary" onclick="smartClear()">清空</button>
+        <button class="btn btn-secondary" onclick="smartSample()">示例</button>
+      </div>
+      <div class="smart-detect-badge" id="smartBadge" style="display:none;"><span class="dot"></span><span id="smartBadgeText">检测结果</span></div>
+      <div class="smart-result-grid" id="smartResults"></div>
+      <div class="smart-empty" id="smartEmpty">输入内容后点击「自动检测并解码」，将自动识别 URL / Base64 / Hex / Unicode 转义 / HTML 实体等格式；URL 参数支持链式深度解码（多层 URL→Base64），仅展示真正解码的字段。</div>
     </div>
 
     <!-- ========== Random Generator ========== -->
@@ -2274,6 +2318,407 @@ function urlDecodeURI() {
   if (!raw) { out.textContent = '请输入内容'; out.classList.add('error'); return; }
   try { out.textContent = decodeURI(raw); out.classList.add('success'); }
   catch(e) { out.textContent = '解码失败: ' + e.message; out.classList.add('error'); }
+}
+
+// ========== Smart Codec (Auto Detect) ==========
+// 独立模块:可被 Node 测试,也可注入 HTML
+/* global atob, TextDecoder */
+
+function looksHumanish(s) {
+  if (!s) return false;
+  if ((s.match(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g) || []).length > s.length * 0.3) return false;
+  const printable = s.replace(/[\x00-\x1f\x7f-\x9f]/g, '');
+  if (!printable.length) return false;
+  if (printable.length / s.length < 0.7) return false;
+  const c1 = (s.match(/[\x80-\x9f]/g) || []).length;
+  if (c1 / s.length > 0.4) return false;
+  return true;
+}
+
+function asciiVisibleRatio(s) {
+  if (!s) return 0;
+  const vis = (s.match(/[\x20-\x7e\r\n\t]/g) || []).length;
+  return vis / s.length;
+}
+
+function decodeUtf8FromLatin1(latinStr) {
+  try {
+    const bytes = new Uint8Array(latinStr.length);
+    for (let i = 0; i < latinStr.length; i++) bytes[i] = latinStr.charCodeAt(i);
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch (e) {
+    return latinStr;
+  }
+}
+
+function validBase64(s) {
+  const t = s.replace(/\s+/g, '');
+  if (!t || t.length < 4 || t.length % 4 !== 0) return false;
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(t)) return false;
+  if (!/[A-Za-z0-9]/.test(t)) return false;
+  try {
+    const latin = atob(t);
+    const dec = decodeUtf8FromLatin1(latin);
+    return asciiVisibleRatio(dec) > 0.6 || /[\u4e00-\u9fff]/.test(dec);
+  } catch (e) {
+    return false;
+  }
+}
+
+function hexToString(h) {
+  let latin = '';
+  for (let i = 0; i < h.length; i += 2) {
+    latin += String.fromCharCode(parseInt(h.substr(i, 2), 16));
+  }
+  return decodeUtf8FromLatin1(latin);
+}
+
+function looksHex(s) {
+  const t = s.trim();
+  if (!t || t.length < 4) return false;
+  const body = t.replace(/^0x/i, '').replace(/[\s,]+/g, '');
+  if (!/^[0-9a-fA-F]+$/.test(body)) return false;
+  if (body.length % 2 !== 0) return false;
+  if (/^[0-9]+$/.test(body)) {
+    const dec = hexToString(body);
+    if (!looksHumanish(dec)) return false;
+    return asciiVisibleRatio(dec) > 0.7 || /[\u4e00-\u9fff]/.test(dec);
+  }
+  return true;
+}
+
+function looksUnicodeEscaped(s) {
+  const t = s.trim();
+  if (!t) return false;
+  const m = t.match(/\\u\{?[0-9a-fA-F]{1,6}\}?/g);
+  if (!m) return false;
+  let covered = 0;
+  for (const mm of m) covered += mm.length;
+  return covered / t.length > 0.3;
+}
+
+function unicodeEscapeToStr(s) {
+  return s
+    .replace(/\\u\{([0-9a-fA-F]{1,6})\}/g, (mm, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/\\u([0-9a-fA-F]{4})/g, (mm, h) => String.fromCharCode(parseInt(h, 16)));
+}
+
+function looksHtmlEntity(s) {
+  const t = s.trim();
+  if (!t) return false;
+  const m = t.match(/&#x[0-9a-fA-F]{1,6};|&#[0-9]{1,7};|&[a-zA-Z]{2,8};/g);
+  if (!m) return false;
+  let covered = 0;
+  for (const mm of m) covered += mm.length;
+  return covered / t.length > 0.3;
+}
+
+function htmlEntityToStr(s) {
+  const el = document.createElement('textarea');
+  el.innerHTML = s;
+  return el.value || '';
+}
+
+function safeUtf8Decode(s) {
+  try {
+    return decodeURIComponent(s.replace(/\+/g, '%20'));
+  } catch (e) {
+    return null;
+  }
+}
+
+// ===== URL 参数结构识别 (a=1&b=2) =====
+function looksUrlParams(s) {
+  if (!s || !s.includes('=')) return false;
+  const segs = s.split('&');
+  if (segs.length < 1) return false;
+  return segs.every(function (seg) {
+    return /^[A-Za-z0-9_.\-]{1,64}=[^&]*$/.test(seg) || /^[A-Za-z0-9_.\-]{1,64}=$/.test(seg);
+  });
+}
+
+// ===== 单值链式深度解码 =====
+// 反复剥 URL 编码层(可多层层叠,如 %253D → %3D → =),再尝试 Base64 / Hex / JSON
+function deepDecodeValue(val) {
+  let cur = val;
+  let urlLayers = 0;
+  // 1) 剥 URL 层
+  while (urlLayers < 5) {
+    const ud = safeUtf8Decode(cur);
+    if (ud === null || ud === cur) break;
+    if (!/%/.test(cur)) break;
+    cur = ud;
+    urlLayers++;
+  }
+  // 2) Base64(剥完 URL 层后)
+  if (validBase64(cur)) {
+    let dec = '';
+    try { dec = decodeUtf8FromLatin1(atob(cur.replace(/\s+/g, ''))); } catch (e) { dec = ''; }
+    if (dec && looksHumanish(dec)) {
+      return { fmt: urlLayers ? 'URL×' + urlLayers + '→Base64' : 'Base64', decoded: prettyIfJson(dec) };
+    }
+  }
+  // 3) Hex
+  if (looksHex(cur)) {
+    const hb = cur.replace(/^0x/i, '').replace(/[\s,]+/g, '');
+    const dec = hexToString(hb);
+    if (looksHumanish(dec) && (asciiVisibleRatio(dec) > 0.7 || /[\u4e00-\u9fff]/.test(dec))) {
+      return { fmt: urlLayers ? 'URL×' + urlLayers + '→Hex' : 'Hex', decoded: dec };
+    }
+  }
+  // 4) 只剩 URL 层时输出最后一层(至少剥了一层)
+  if (urlLayers && looksHumanish(cur)) {
+    return { fmt: 'URL×' + urlLayers, decoded: cur };
+  }
+  return null;
+}
+
+function decodeUrlParams(s) {
+  const decoded = [];
+  let rawCount = 0;
+  const segs = s.split('&');
+  for (let i = 0; i < segs.length; i++) {
+    const seg = segs[i];
+    const eq = seg.indexOf('=');
+    if (eq <= 0) continue;
+    const key = seg.slice(0, eq);
+    const val = seg.slice(eq + 1);
+    if (!val) continue;
+    const r = deepDecodeValue(val);
+    if (r) {
+      decoded.push({ label: key, fmt: r.fmt, decoded: r.decoded });
+    } else if (looksHumanish(val) && val.length > 1) {
+      rawCount++;
+    }
+  }
+  return { decoded: decoded, total: segs.length, raw: rawCount };
+}
+
+// ===== 内嵌片段提取(混合串中找 Base64 / URL 编码段) =====
+function extractEmbedded(s) {
+  const out = [];
+  const seen = new Set();
+  const b64re = /[A-Za-z0-9+/]{24,}={0,2}/g;
+  let m;
+  while ((m = b64re.exec(s)) !== null) {
+    const tok = m[0];
+    if (seen.has(tok)) continue;
+    seen.add(tok);
+    if (!validBase64(tok)) continue;
+    let dec = '';
+    try { dec = decodeUtf8FromLatin1(atob(tok)); } catch (e) { continue; }
+    if (!dec || !looksHumanish(dec)) continue;
+    if (!out.some(function (r) { return r.decoded === dec; })) {
+      out.push({ label: '内嵌 Base64 片段', decoded: dec, confidence: 0.75 });
+    }
+  }
+  const urire = /[^\s&]*(?:%[0-9a-fA-F]{2}){3,}[^\s&]*/g;
+  while ((m = urire.exec(s)) !== null) {
+    const tok = m[0];
+    if (seen.has(tok)) continue;
+    seen.add(tok);
+    const ud = safeUtf8Decode(tok);
+    if (ud && ud !== tok && looksHumanish(ud) && !out.some(function (r) { return r.decoded === ud; })) {
+      out.push({ label: '内嵌 URL 编码片段', decoded: ud, confidence: 0.7 });
+    }
+  }
+  return out.slice(0, 8);
+}
+
+// JSON 美化
+function prettyIfJson(s) {
+  const t = String(s).trim();
+  if (!t) return String(s);
+  if (t[0] !== '[' && t[0] !== '{') return String(s);
+  try {
+    return JSON.stringify(JSON.parse(t), null, 2);
+  } catch (e) {
+    return String(s);
+  }
+}
+
+function tryDecode(s) {
+  const t = s.trim();
+  const results = [];
+  const add = function (type, label, decoded, confidence) {
+    const ok = decoded !== null && decoded !== undefined && decoded !== t && looksHumanish(decoded);
+    results.push({ type: type, label: label, decoded: ok ? decoded : null, ok: ok, confidence: confidence });
+  };
+
+  // 1. URL / URI 组件(整串;当整串是 URL 参数结构时跳过,交给参数级解码)
+  if (!looksUrlParams(t)) {
+    const urlDecoded = safeUtf8Decode(t);
+    if (urlDecoded !== null && urlDecoded !== t) add('url', 'URL Component', urlDecoded, 0.9);
+  }
+
+  // 2. Base64
+  if (validBase64(t)) {
+    let dec = '';
+    try {
+      dec = atob(t.replace(/\s+/g, ''));
+      dec = decodeUtf8FromLatin1(dec);
+    } catch (e) { dec = ''; }
+    add('base64', 'Base64', dec, 0.85);
+  }
+
+  // 3. Hex
+  const hbody = t.replace(/^0x/i, '').replace(/[\s,]+/g, '');
+  if (looksHex(t)) {
+    const dec = hexToString(hbody);
+    if (asciiVisibleRatio(dec) > 0.7 || /[\u4e00-\u9fff]/.test(dec)) {
+      add('hex', 'Hex', dec, 0.8);
+    }
+  }
+
+  // 4. Unicode 转义
+  if (looksUnicodeEscaped(t)) {
+    const dec = unicodeEscapeToStr(t);
+    add('unicode', 'Unicode \\u 转义', dec, 0.85);
+  }
+
+  // 5. HTML 实体
+  if (looksHtmlEntity(t)) {
+    const dec = htmlEntityToStr(t);
+    add('html', 'HTML 实体', dec, 0.8);
+  }
+
+  // 6. URL 参数结构(链式深度解码)
+  if (looksUrlParams(t)) {
+    const params = decodeUrlParams(t);
+    if (params.decoded.length) {
+      const label = 'URL 参数 (' + params.decoded.length + ' 个解码'
+        + (params.raw ? '，' + params.raw + ' 个明文未解码' : '') + ')';
+      const body = params.decoded.map(function (p) {
+        return '[' + p.fmt + '] ' + p.label + ' = ' + p.decoded;
+      }).join('\n');
+      results.push({ type: 'params', label: label, decoded: body, ok: true, confidence: 0.65 });
+    }
+  }
+
+  // 7. 内嵌片段(整串未识别时尝试)
+  if (results.filter(function (r) { return r.ok; }).length === 0) {
+    const emb = extractEmbedded(t);
+    for (let i = 0; i < emb.length; i++) {
+      const e = emb[i];
+      const shown = prettyIfJson(e.decoded);
+      results.push({ type: 'embedded', label: e.label, decoded: shown, ok: true, confidence: e.confidence });
+    }
+  }
+
+  return results.filter(function (r) { return r.ok; })
+    .filter(function (r, i, arr) {
+      return arr.findIndex(function (x) { return x.type === r.type && x.label === r.label; }) === i;
+    })
+    .slice(0, 10);
+}
+
+function multiDecode(s) {
+  const layers = [];
+  let cur = s.trim();
+  for (let i = 0; i < 8; i++) {
+    const res = tryDecode(cur);
+    if (res.length === 0) break;
+    const best = res.sort(function (a, b) { return b.confidence - a.confidence; })[0];
+    if (best.decoded === cur) break;
+    layers.push(best);
+    cur = best.decoded;
+  }
+  return layers;
+}
+
+// ===== DOM 绑定层(注入 HTML 时使用) =====
+function smartEls() {
+  return {
+    input: document.getElementById('smartInput'),
+    out: document.getElementById('smartResults'),
+    empty: document.getElementById('smartEmpty'),
+    badge: document.getElementById('smartBadge'),
+    badgeText: document.getElementById('smartBadgeText')
+  };
+}
+
+function smartClear() {
+  const e = smartEls();
+  e.input.value = '';
+  e.out.innerHTML = '';
+  e.empty.style.display = '';
+  e.badge.style.display = 'none';
+}
+
+function smartSample() {
+  const e = smartEls();
+  e.input.value = '%E4%BD%A0%E5%A5%BD%EF%BC%8C%E4%B8%96%E7%95%8C';
+  smartDetect(false);
+}
+
+function smartDetect(multi) {
+  const e = smartEls();
+  const raw = e.input.value;
+  e.out.innerHTML = '';
+  e.empty.style.display = 'none';
+
+  if (!raw.trim()) {
+    e.empty.style.display = '';
+    e.badge.style.display = 'none';
+    return;
+  }
+
+  const layers = multi ? multiDecode(raw) : tryDecode(raw);
+  if (layers.length === 0) {
+    e.badge.style.display = '';
+    e.badgeText.textContent = '未识别出已知编码格式';
+    e.out.innerHTML = '<div class="smart-empty">未检测到可解码的编码格式。请确认内容是否为 URL 编码 / Base64 / Hex / Unicode 转义 / HTML 实体，或包含此类编码的 URL 参数。</div>';
+    return;
+  }
+
+  e.badge.style.display = '';
+  e.badgeText.textContent = multi
+    ? '多层解码完成，共 ' + layers.length + ' 层'
+    : '检测到 ' + layers.length + ' 种可解码格式';
+
+  const typeMap = { url: 'URL', base64: 'B64', hex: 'HEX', unicode: 'U+', html: 'HTML', params: 'URL参数', embedded: '片段', 'url-loose': 'URL' };
+  e.out.innerHTML = layers.map(function (r, i) {
+    const title = multi ? '第 ' + (i + 1) + ' 层 · ' + r.label : r.label;
+    const fmt = typeMap[r.type] || 'TXT';
+    const safe = String(r.decoded).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return '<div class="smart-result">' +
+      '<div class="smart-result-head">' +
+        '<span class="smart-result-title"><span class="fmt">' + fmt + '</span>' + title + '</span>' +
+        '<button class="smart-copy" onclick="smartCopy(this, ' + i + ')">复制</button>' +
+      '</div>' +
+      '<pre>' + safe + '</pre>' +
+    '</div>';
+  }).join('');
+}
+
+function smartCopy(btn, idx) {
+  const pres = document.querySelectorAll('#smartResults pre');
+  const text = pres[idx] ? pres[idx].textContent : '';
+  if (!text) return;
+  const done = function () {
+    btn.textContent = '已复制 ✓';
+    btn.classList.add('copied');
+    setTimeout(function () {
+      btn.textContent = '复制';
+      btn.classList.remove('copied');
+    }, 1500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(function () { fallbackSmartCopy(text, done); });
+  } else {
+    fallbackSmartCopy(text, done);
+  }
+}
+
+function fallbackSmartCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) {}
+  document.body.removeChild(ta);
 }
 
 // ========== Random Generator ==========
