@@ -28,4 +28,6 @@ jobs:
           TCB_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
         run: |
           tcb login --apiKeyId "$TCB_SECRET_ID" --apiKey "$TCB_SECRET_KEY"
-          tcb hosting deploy . -e "$TCB_ENV_ID"
+          mkdir publish
+          rsync -a --exclude='.git' --exclude='.github' ./ publish/
+          tcb hosting deploy publish -e "$TCB_ENV_ID"
