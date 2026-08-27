@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>常用工具</title>
+<link rel="shortcut icon" type="image/x-icon" href="/favicon-v2.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-v2.png">
+<link rel="icon" type="image/svg+xml" sizes="any" href="/favicon-v2.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-precomposed.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#315bef">
+<link rel="manifest" href="/dwd-sql-tool-20260803/site.webmanifest?v=20260810">
+<meta name="theme-color" content="#edf5ff">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Mesh gradient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50vh; left: -50vw;
+    width: 200vw; height: 200vh;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%, rgba(120,80,200,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(200,120,50,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 80% at 60% 80%, rgba(50,150,120,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 90% 70% at 40% 60%, rgba(80,100,200,0.08) 0%, transparent 70%),
+      #0a0a0c;
+    z-index: 0;
+    animation: bgdrift 30s ease-in-out infinite alternate;
+  }
+  @keyframes bgdrift {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-3%, -2%) scale(1.03); }
+  }
+
+  /* ===== App Shell ===== */
+  .app-shell {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 100vh;
+    gap: 20px;
+    padding: 24px;
+  }
+
+  /* ===== Sidebar ===== */
+  .sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 24px;
+    align-self: flex-start;
+    border-radius: 28px;
+    background: rgba(28,28,30,0.65);
+    backdrop-filter: blur(50px) saturate(1.8) brightness(1.1);
+    -webkit-backdrop-filter: blur(50px) saturate(1.8) brightness(1.1);
+    border: 0.5px solid rgba(255,255,255,0.12);
+    box-shadow:
+      0 0 0 0.5px rgba(255,255,255,0.05) inset,
+      0 30px 60px rgba(0,0,0,0.5),
+      0 0 100px rgba(100,80,200,0.06);
+    overflow: hidden;
+    padding: 28px 0 20px;
+  }
+  .sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+    border-radius: 28px 28px 0 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .sidebar-logo {
+    text-align: center;
+    padding: 0 20px 20px;
+    position: relative;
+    z-index: 3;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .sidebar-logo .icon {
+    font-size: 18px;
+    opacity: 0.25;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .sidebar-logo .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 4px 12px;
+    position: relative;
+    z-index: 3;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+    user-select: none;
+  }
+  .nav-item:hover {
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.05);
+  }
+  .nav-item.active {
+    color: rgba(255,255,255,0.92);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 0.5px rgba(255,255,255,0.08) inset;
+  }
+  .nav-item .nav-icon {
+    font-size: 13px;
+    opacity: 0.5;
+    transition: opacity 0.25s;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .nav-item.active .nav-icon { opacity: 0.9; }
+
+  .nav-section-title {
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.18);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 16px 14px 6px;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* ===== Main Content ===== */
+  .main {
+    flex: 1;
+    min-width: 0;
+    border-radius: 28px;
+    background: rgba(28,28,30,0.65);
+    backdrop-filter: blur(50px) saturate(1.8) brightness(1.1);
+    -webkit-backdrop-filter: blur(50px) saturate(1.8) brightness(1.1);
+    border: 0.5px solid rgba(255,255,255,0.12);
+    box-shadow:
+      0 0 0 0.5px rgba(255,255,255,0.05) inset,
+      0 30px 60px rgba(0,0,0,0.5),
+      0 0 100px rgba(100,80,200,0.06);
+    overflow: hidden;
+    padding: 36px 32px 40px;
+    position: relative;
+  }
+  .main::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+    border-radius: 28px 28px 0 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .tool-panel {
+    display: none;
+    position: relative;
+    z-index: 3;
+    animation: panelFadeIn 0.35s ease;
+  }
+  .tool-panel.active { display: block; }
+  @keyframes panelFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tool-header {
+    margin-bottom: 28px;
+  }
+  .tool-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.5px;
+  }
+  .tool-header p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.32);
+    margin-top: 5px;
+    letter-spacing: 0.2px;
+  }
+
+  /* ===== Form Elements ===== */
+  .field-group {
+    margin-bottom: 16px;
+  }
+  .field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  textarea, input[type="text"], input[type="number"] {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    color: rgba(255,255,255,0.85);
+    outline: none;
+    transition: all 0.25s ease;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  textarea:focus, input:focus {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 3px rgba(100,80,200,0.12);
+  }
+  textarea {
+    min-height: 160px;
+    font-size: 12.5px;
+  }
+  input[type="number"] {
+    font-family: 'SF Pro Text', -apple-system, 'PingFang SC', sans-serif;
+  }
+  select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-family: 'SF Pro Text', -apple-system, 'PingFang SC', sans-serif;
+    color: rgba(255,255,255,0.85);
+    outline: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  select:focus {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 3px rgba(100,80,200,0.12);
+  }
+  ::placeholder { color: rgba(255,255,255,0.18); }
+
+  /* ===== Buttons ===== */
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: rgba(100,80,200,0.55);
+    color: rgba(255,255,255,0.95);
+    box-shadow: 0 2px 12px rgba(100,80,200,0.2);
+  }
+  .btn-primary:hover { background: rgba(120,100,220,0.65); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    border: 0.5px solid rgba(255,255,255,0.1);
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.13); }
+
+  /* ===== Output area ===== */
+  .output-area {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    min-height: 60px;
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+    max-height: 450px;
+    overflow-y: auto;
+  }
+  .output-area.error { color: rgba(255,130,130,0.85); }
+  .output-area.success { color: rgba(130,220,150,0.85); }
+
+  /* ===== AB Test specific ===== */
+  .ab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .ab-group {
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .ab-group-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .ab-group.control .ab-group-title { color: rgba(120,150,255,0.5); }
+  .ab-group.treatment .ab-group-title { color: rgba(180,140,255,0.5); }
+
+  .inline-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .result-card {
+    background: rgba(0,0,0,0.25);
+    border: 0.5px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 16px;
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    font-size: 12.5px;
+  }
+  .result-row + .result-row {
+    border-top: 0.5px solid rgba(255,255,255,0.03);
+  }
+  .result-label {
+    color: rgba(255,255,255,0.35);
+  }
+  .result-value {
+    color: rgba(255,255,255,0.82);
+    font-weight: 600;
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+  }
+  .result-value.sig-yes {
+    color: rgba(80,210,140,0.9);
+  }
+  .result-value.sig-no {
+    color: rgba(200,130,80,0.9);
+  }
+  .result-verdict {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .verdict-sig {
+    background: rgba(60,180,110,0.12);
+    color: rgba(80,210,140,0.9);
+  }
+  .verdict-not-sig {
+    background: rgba(180,120,50,0.1);
+    color: rgba(210,160,80,0.9);
+  }
+
+  /* ===== Tabs inside AB panel ===== */
+  .sub-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 3px;
+  }
+  .sub-tab {
+    flex: 1;
+    text-align: center;
+    padding: 9px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .sub-tab.active {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.85);
+  }
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+
+  /* ===== Timestamp ===== */
+  .ts-display {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .ts-card {
+    flex: 1;
+    background: rgba(0,0,0,0.25);
+    border: 0.5px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .ts-card .ts-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .ts-card .ts-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.88);
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    word-break: break-all;
+  }
+  .ts-card .ts-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 4px;
+  }
+
+  /* ===== CSV/JSON specific ===== */
+  .delimiter-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .delimiter-row select {
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    font-family: inherit;
+    outline: none;
+  }
+
+  /* ===== SQL specific ===== */
+  .sql-output {
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: rgba(220,220,240,0.9);
+  }
+  .sql-output .kw { color: rgba(160,180,255,0.9); font-weight: 600; }
+  .sql-output .fn { color: rgba(180,220,160,0.85); }
+  .sql-output .str { color: rgba(220,180,130,0.85); }
+  .sql-output .num { color: rgba(160,200,220,0.85); }
+  .sql-output .cmt { color: rgba(255,255,255,0.22); font-style: italic; }
+
+  /* ===== Regex specific ===== */
+  .regex-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .regex-input-row input {
+    flex: 1;
+  }
+  .flag-btn {
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.35);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .flag-btn.active {
+    background: rgba(100,80,200,0.35);
+    color: rgba(255,255,255,0.85);
+    border-color: rgba(100,80,200,0.4);
+  }
+
+  .regex-highlight {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    min-height: 60px;
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.55);
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.7;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .regex-highlight .match {
+    background: rgba(100,200,100,0.3);
+    border-radius: 2px;
+    color: rgba(180,255,180,0.9);
+    padding: 0 1px;
+  }
+  .regex-highlight .group {
+    background: rgba(180,140,255,0.25);
+    border-radius: 2px;
+    color: rgba(200,180,255,0.9);
+    padding: 0 1px;
+  }
+
+  .match-list {
+    margin-top: 12px;
+  }
+  .match-entry {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    border-bottom: 0.5px solid rgba(255,255,255,0.03);
+  }
+  .match-entry .match-idx {
+    color: rgba(255,255,255,0.25);
+    margin-right: 8px;
+  }
+  .match-entry .match-text {
+    color: rgba(180,255,180,0.85);
+    font-weight: 600;
+  }
+
+  /* ===== Code Diff specific ===== */
+  .diff-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .diff-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+  }
+  .diff-stat { display: flex; align-items: center; gap: 6px; }
+  .diff-stat .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .diff-stat .dot.add { background: rgba(80,210,140,0.9); }
+  .diff-stat .dot.del { background: rgba(255,110,110,0.9); }
+  .diff-stat .dot.same { background: rgba(150,150,160,0.6); }
+  .diff-stat .num { color: rgba(255,255,255,0.75); font-weight: 600; }
+  .diff-output {
+    margin-top: 14px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    max-height: 500px;
+    overflow: auto;
+    color: rgba(255,255,255,0.75);
+  }
+  .diff-line {
+    display: flex;
+    padding: 2px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .diff-line .ln {
+    flex-shrink: 0;
+    width: 76px;
+    padding: 0 8px;
+    text-align: right;
+    color: rgba(255,255,255,0.22);
+    user-select: none;
+    border-right: 0.5px solid rgba(255,255,255,0.05);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .diff-line .ln span { display: inline-block; width: 32px; }
+  .diff-line .sign {
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+    user-select: none;
+  }
+  .diff-line .code {
+    flex: 1;
+    padding: 0 12px 0 4px;
+  }
+  .diff-line.add {
+    background: rgba(60,180,110,0.10);
+  }
+  .diff-line.add .sign { color: rgba(80,210,140,0.85); }
+  .diff-line.add .code { color: rgba(170,240,195,0.92); }
+  .diff-line.del {
+    background: rgba(220,80,80,0.10);
+  }
+  .diff-line.del .sign { color: rgba(255,120,120,0.85); }
+  .diff-line.del .code { color: rgba(255,180,180,0.85); text-decoration: line-through; text-decoration-color: rgba(255,120,120,0.4); }
+  .diff-line.same .sign { color: rgba(255,255,255,0.18); }
+  .diff-empty {
+    padding: 24px;
+    text-align: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+  }
+
+  /* ===== Help Tooltip ===== */
+  .diff-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+    user-select: none;
+    padding: 0 4px;
+  }
+  .help-tip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    cursor: help;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .help-tip:hover {
+    background: rgba(120,95,215,0.3);
+    border-color: rgba(120,95,215,0.5);
+    color: rgba(255,255,255,0.9);
+  }
+  .help-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.95);
+    transform-origin: bottom center;
+    width: 300px;
+    padding: 14px 16px;
+    background: rgba(32,32,38,0.97);
+    backdrop-filter: blur(30px) saturate(1.6);
+    -webkit-backdrop-filter: blur(30px) saturate(1.6);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.8);
+    text-align: left;
+    white-space: normal;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 50;
+    cursor: default;
+  }
+  .help-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(32,32,38,0.97);
+  }
+  .help-tip:hover .help-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+  }
+  .help-tooltip strong {
+    color: rgba(200,180,255,0.95);
+    font-weight: 600;
+  }
+  .help-tooltip code {
+    background: rgba(255,255,255,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+    font-size: 10.5px;
+    color: rgba(180,220,255,0.9);
+  }
+  .help-tooltip .tt-label {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin: 8px 0 3px;
+  }
+  .help-tooltip .tt-label:first-of-type { margin-top: 0; }
+
+  /* ===== Theme Toggle Button ===== */
+  .theme-toggle {
+    position: fixed;
+    top: 22px;
+    right: 26px;
+    z-index: 99;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(255,255,255,0.12);
+    background: rgba(28,28,30,0.7);
+    backdrop-filter: blur(30px) saturate(1.6);
+    -webkit-backdrop-filter: blur(30px) saturate(1.6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    user-select: none;
+  }
+  .theme-toggle:hover {
+    transform: scale(1.06);
+    background: rgba(50,50,55,0.8);
+  }
+  .theme-toggle .sun { display: none; }
+  .theme-toggle .moon { display: block; }
+  body.light .theme-toggle .sun { display: block; }
+  body.light .theme-toggle .moon { display: none; }
+
+  /* ===== Light Mode Overrides ===== */
+  body.light {
+    background: #f5f5f7;
+  }
+  body.light::before {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%, rgba(150,120,220,0.14) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(240,180,120,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 80% at 60% 80%, rgba(120,200,170,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 90% 70% at 40% 60%, rgba(140,160,240,0.08) 0%, transparent 70%),
+      #eef0f4;
+  }
+  body.light .sidebar,
+  body.light .main {
+    background: rgba(255,255,255,0.72);
+    border-color: rgba(0,0,0,0.08);
+    box-shadow:
+      0 0 0 0.5px rgba(255,255,255,0.6) inset,
+      0 20px 50px rgba(80,90,130,0.12),
+      0 0 80px rgba(120,100,200,0.05);
+  }
+  body.light .sidebar::before,
+  body.light .main::before {
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+  }
+  body.light .sidebar-logo { border-bottom-color: rgba(0,0,0,0.06); }
+  body.light .sidebar-logo .title { color: rgba(20,20,30,0.85); }
+  body.light .nav-section-title { color: rgba(0,0,0,0.32); }
+  body.light .nav-item { color: rgba(20,20,30,0.5); }
+  body.light .nav-item:hover { color: rgba(20,20,30,0.8); background: rgba(0,0,0,0.05); }
+  body.light .nav-item.active {
+    color: rgba(20,20,30,0.92);
+    background: rgba(0,0,0,0.06);
+    box-shadow: 0 0 0 0.5px rgba(0,0,0,0.05) inset;
+  }
+  body.light .tool-header h2 { color: rgba(20,20,30,0.92); }
+  body.light .tool-header p { color: rgba(20,20,30,0.42); }
+  body.light .field-label { color: rgba(20,20,30,0.45); }
+  body.light textarea,
+  body.light input[type="text"],
+  body.light input[type="number"],
+  body.light select {
+    background: rgba(255,255,255,0.7);
+    border-color: rgba(0,0,0,0.1);
+    color: rgba(20,20,30,0.88);
+  }
+  body.light textarea:focus,
+  body.light input:focus,
+  body.light select:focus {
+    border-color: rgba(100,80,200,0.4);
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 0 0 3px rgba(100,80,200,0.12);
+  }
+  body.light ::placeholder { color: rgba(20,20,30,0.25); }
+  body.light .btn-primary {
+    background: rgba(120,95,215,0.85);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(120,95,215,0.3);
+  }
+  body.light .btn-primary:hover { background: rgba(110,85,205,0.95); }
+  body.light .btn-secondary {
+    background: rgba(0,0,0,0.05);
+    color: rgba(20,20,30,0.65);
+    border-color: rgba(0,0,0,0.08);
+  }
+  body.light .btn-secondary:hover { background: rgba(0,0,0,0.09); }
+  body.light .output-area,
+  body.light .regex-highlight,
+  body.light .diff-output {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.06);
+    color: rgba(20,20,30,0.78);
+  }
+  body.light .output-area.error { color: rgba(200,60,60,0.85); }
+  body.light .output-area.success { color: rgba(40,150,80,0.9); }
+  body.light .ab-group {
+    background: rgba(255,255,255,0.6);
+    border-color: rgba(0,0,0,0.06);
+  }
+  body.light .ab-group-title { color: rgba(20,20,30,0.5); }
+  body.light .ab-group.control .ab-group-title { color: rgba(60,90,200,0.7); }
+  body.light .ab-group.treatment .ab-group-title { color: rgba(140,90,220,0.7); }
+  body.light .result-card,
+  body.light .ts-card {
+    background: rgba(255,255,255,0.65);
+    border-color: rgba(0,0,0,0.06);
+  }
+  body.light .result-row + .result-row { border-top-color: rgba(0,0,0,0.05); }
+  body.light .result-label { color: rgba(20,20,30,0.45); }
+  body.light .result-value { color: rgba(20,20,30,0.85); }
+  body.light .result-value.sig-yes { color: rgba(30,160,80,0.9); }
+  body.light .result-value.sig-no { color: rgba(200,110,40,0.9); }
+  body.light .verdict-sig { background: rgba(60,180,110,0.14); color: rgba(30,150,70,0.95); }
+  body.light .verdict-not-sig { background: rgba(220,150,60,0.14); color: rgba(180,110,30,0.95); }
+  body.light .sub-tabs { background: rgba(0,0,0,0.04); }
+  body.light .sub-tab { color: rgba(20,20,30,0.45); }
+  body.light .sub-tab.active { background: rgba(255,255,255,0.9); color: rgba(20,20,30,0.88); }
+  body.light .ts-card .ts-label { color: rgba(20,20,30,0.35); }
+  body.light .ts-card .ts-value { color: rgba(20,20,30,0.88); }
+  body.light .ts-card .ts-sub { color: rgba(20,20,30,0.4); }
+  body.light .delimiter-row select {
+    background: rgba(255,255,255,0.7);
+    border-color: rgba(0,0,0,0.1);
+    color: rgba(20,20,30,0.8);
+  }
+  body.light .sql-output { color: rgba(50,50,70,0.9); }
+  body.light .sql-output .kw { color: rgba(80,100,220,0.9); }
+  body.light .sql-output .fn { color: rgba(90,150,60,0.9); }
+  body.light .sql-output .str { color: rgba(200,120,40,0.9); }
+  body.light .sql-output .num { color: rgba(50,130,180,0.9); }
+  body.light .sql-output .cmt { color: rgba(20,20,30,0.32); }
+  body.light .flag-btn {
+    background: rgba(0,0,0,0.05);
+    color: rgba(20,20,30,0.5);
+    border-color: rgba(0,0,0,0.08);
+  }
+  body.light .flag-btn.active {
+    background: rgba(120,95,215,0.18);
+    color: rgba(90,65,185,0.95);
+    border-color: rgba(120,95,215,0.3);
+  }
+  body.light .regex-highlight .match {
+    background: rgba(80,200,110,0.25);
+    color: rgba(20,130,55,0.95);
+  }
+  body.light .regex-highlight .group {
+    background: rgba(150,110,240,0.2);
+    color: rgba(110,70,200,0.95);
+  }
+  body.light .match-entry {
+    color: rgba(20,20,30,0.65);
+    border-bottom-color: rgba(0,0,0,0.05);
+  }
+  body.light .match-entry .match-idx { color: rgba(20,20,30,0.3); }
+  body.light .match-entry .match-text { color: rgba(30,150,70,0.95); }
+  body.light .diff-stat .num { color: rgba(20,20,30,0.78); }
+  body.light .diff-line .ln {
+    color: rgba(20,20,30,0.3);
+    border-right-color: rgba(0,0,0,0.06);
+  }
+  body.light .diff-line.add { background: rgba(60,180,110,0.14); }
+  body.light .diff-line.add .sign { color: rgba(30,150,70,0.9); }
+  body.light .diff-line.add .code { color: rgba(25,130,60,0.95); }
+  body.light .diff-line.del { background: rgba(230,90,90,0.12); }
+  body.light .diff-line.del .sign { color: rgba(200,60,60,0.9); }
+  body.light .diff-line.del .code { color: rgba(180,50,50,0.9); text-decoration-color: rgba(200,60,60,0.35); }
+  body.light .diff-line.same .sign { color: rgba(20,20,30,0.25); }
+  body.light .diff-empty { color: rgba(20,20,30,0.4); }
+  body.light .diff-option { color: rgba(20,20,30,0.6); }
+  body.light .help-tip {
+    background: rgba(0,0,0,0.06);
+    border-color: rgba(0,0,0,0.15);
+    color: rgba(20,20,30,0.5);
+  }
+  body.light .help-tip:hover {
+    background: rgba(120,95,215,0.15);
+    border-color: rgba(120,95,215,0.4);
+    color: rgba(90,65,185,0.95);
+  }
+  body.light .help-tooltip {
+    background: rgba(255,255,255,0.98);
+    border-color: rgba(0,0,0,0.1);
+    box-shadow: 0 12px 40px rgba(80,90,130,0.25);
+    color: rgba(20,20,30,0.85);
+  }
+  body.light .help-tooltip::after {
+    border-top-color: rgba(255,255,255,0.98);
+  }
+  body.light .help-tooltip strong { color: rgba(110,80,220,0.95); }
+  body.light .help-tooltip code {
+    background: rgba(0,0,0,0.06);
+    color: rgba(60,90,200,0.9);
+  }
+  body.light .help-tooltip .tt-label { color: rgba(20,20,30,0.4); }
+  body.light .theme-toggle {
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(0,0,0,0.1);
+    color: rgba(20,20,30,0.7);
+    box-shadow: 0 8px 24px rgba(80,90,130,0.18);
+  }
+  body.light .theme-toggle:hover { background: rgba(255,255,255,1); }
+
+  /* Align with the transmission self-service workspace */
+  html{background:transparent}
+  body.light{background:transparent;color:#202a3e;justify-content:stretch}
+  body.light::before{display:none}
+  .app-shell{max-width:none;gap:12px;padding:0;min-height:100vh;align-items:flex-start}
+  body.light .sidebar,body.light .main{border:1px solid #dfe6f0;border-radius:10px;background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(15,23,42,.04);-webkit-backdrop-filter:none;backdrop-filter:none}
+  body.light .sidebar::before,body.light .main::before{display:none}
+  .sidebar{width:200px;top:0;padding:0 0 10px;max-height:none;overflow:visible;align-self:stretch}.sidebar-logo{display:flex;align-items:center;height:58px;min-height:58px;padding:0 16px;margin:0 0 5px;text-align:left;border-bottom:1px solid #e5ebf3!important;background:linear-gradient(180deg,#fff,#fbfcff);border-radius:10px 10px 0 0}.sidebar-logo .icon{display:none}.sidebar-logo .title{font-size:13px;font-weight:680;letter-spacing:.06em;color:#202b41!important;text-transform:uppercase}.nav-list{padding:3px 9px}.nav-section-title{padding:11px 10px 4px;color:#98a3b5!important;font-size:9px;letter-spacing:.09em}.nav-item{position:relative;gap:10px;min-height:38px;padding:8px 11px;border-radius:6px;color:#69758a!important;font-size:12.5px;letter-spacing:0}.nav-item:hover{color:#34425a!important;background:#f4f7fb!important}.nav-item.active{color:#244bbf!important;background:#eef2ff!important;box-shadow:inset 0 0 0 1px rgba(49,91,239,.08)!important;font-weight:650}.nav-item.active:after{content:"";position:absolute;top:8px;bottom:8px;left:0;width:2px;border-radius:2px;background:#315bef}.nav-item .nav-icon{color:currentColor;opacity:.68}
+  .main{padding:0;overflow:auto;align-self:stretch}.tool-panel{animation:panelFadeIn .18s ease;padding:18px 20px 28px}.tool-header{display:flex;align-items:center;justify-content:space-between;height:58px;min-height:58px;margin:-18px -20px 16px;padding:0 16px;border-bottom:1px solid #e5ebf3;background:linear-gradient(180deg,#fff,#fbfcff);border-radius:10px 10px 0 0}.tool-header h2{color:#202a3e!important;font-size:16px;line-height:22px;letter-spacing:0}.tool-header p{margin:0;color:#7b8799!important;font-size:12px}.field-group{margin-bottom:13px}.field-label{color:#69758a!important;font-weight:600;text-transform:none;letter-spacing:0}
+  body.light textarea,body.light input[type="text"],body.light input[type="number"],body.light select{border:1px solid #dfe6f0;border-radius:8px;background:rgba(255,255,255,.86);color:#263247;box-shadow:inset 0 1px 2px rgba(15,23,42,.025)}body.light textarea:focus,body.light input:focus,body.light select:focus{border-color:#6c8fe5;background:#fff;box-shadow:0 0 0 3px rgba(49,91,239,.11)}
+  .btn{min-height:36px;padding:8px 14px;border-radius:7px;letter-spacing:0}.btn-primary,body.light .btn-primary{background:#315bef;color:#fff;box-shadow:0 4px 12px rgba(49,91,239,.18)}.btn-primary:hover,body.light .btn-primary:hover{background:#2852d7}.btn-secondary,body.light .btn-secondary{border:1px solid #dfe6f0;background:rgba(255,255,255,.72);color:#596579}.btn-secondary:hover,body.light .btn-secondary:hover{border-color:#9bb2df;background:#f6f8fc;color:#315bef}
+  body.light .output-area,body.light .regex-highlight,body.light .diff-output{border:1px solid #dfe6f0;border-radius:8px;background:#f7f9fc;color:#334155}.ab-group,.result-card,.ts-card{border:1px solid #e1e7f0!important;border-radius:8px!important;background:#f9fbfd!important}.sub-tabs{border:1px solid #e2e8f0;border-radius:8px!important;background:#f4f7fb!important}.sub-tab{border-radius:6px!important}.sub-tab.active{color:#244bbf!important;background:#fff!important;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  @media(max-width:1050px){.sidebar{width:190px}.tool-panel{padding-right:16px;padding-left:16px}.tool-header{margin-right:-16px;margin-left:-16px}}
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .app-shell { flex-direction: column; padding: 12px; gap: 12px; }
+    .sidebar {
+      width: 100%; position: static;
+      padding: 16px;
+      border-radius: 22px;
+    }
+    .sidebar-logo { padding: 0 0 12px; }
+    .nav-list { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; }
+    .nav-section-title { display: none; }
+    .nav-item { padding: 8px 12px; font-size: 11px; border-radius: 8px; }
+    .main { padding: 24px 16px; border-radius: 22px; }
+    .ab-grid { grid-template-columns: 1fr; }
+    .diff-input-grid { grid-template-columns: 1fr; }
+    .sidebar-logo{display:none}.app-shell{padding:8px}.sidebar{padding:8px;border-radius:10px!important}.main{padding:20px 14px;border-radius:10px!important}
+  }
+  /* Match the host self-service module geometry */
+  body.light .sidebar,body.light .main{border:1px solid transparent!important;border-radius:12px!important;background:rgba(255,255,255,.68)!important;box-shadow:0 10px 30px rgba(35,52,88,.055),inset 0 1px 0 rgba(255,255,255,.82)!important;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+  body.light .sidebar:hover,body.light .main:hover{border-color:rgba(174,188,210,.52)!important}
+  body.light .sidebar-logo,body.light .tool-header{border-radius:12px 12px 0 0!important;background:transparent!important}
+  @media(prefers-color-scheme:dark){body:not(.light) .sidebar,body:not(.light) .main{border:1px solid transparent!important;border-radius:12px!important;transition:border-color .18s ease}body:not(.light) .sidebar:hover,body:not(.light) .main:hover{border-color:rgba(255,255,255,.13)!important}}
+  /* Embedded dark mode follows the host and favors clarity over heavy glass */
+  body.embedded:not(.light){background:transparent;color:#eef2f8;justify-content:stretch}
+  body.embedded:not(.light)::before{display:none}
+  body.embedded:not(.light) .sidebar,body.embedded:not(.light) .main{border:1px solid transparent!important;border-radius:12px!important;background:rgba(28,28,30,.68)!important;box-shadow:0 18px 46px rgba(0,0,0,.22),inset 0 .5px 0 rgba(255,255,255,.045)!important;-webkit-backdrop-filter:blur(28px) saturate(135%)!important;backdrop-filter:blur(28px) saturate(135%)!important}
+  body.embedded:not(.light) .sidebar:hover,body.embedded:not(.light) .main:hover{border-color:rgba(255,255,255,.13)!important}
+  body.embedded:not(.light) .sidebar::before,body.embedded:not(.light) .main::before{display:none}
+  body.embedded:not(.light) .sidebar-logo,body.embedded:not(.light) .tool-header{border-color:rgba(255,255,255,.075)!important;border-radius:12px 12px 0 0!important;background:transparent!important}
+  body.embedded:not(.light) .sidebar-logo .title,body.embedded:not(.light) .tool-header h2{color:#f0f3f8!important}
+  body.embedded:not(.light) .tool-header p,body.embedded:not(.light) .field-label,body.embedded:not(.light) .nav-section-title{color:#a8b2c2!important}
+  body.embedded:not(.light) .nav-item{color:rgba(232,237,246,.58)!important}body.embedded:not(.light) .nav-item:hover{color:rgba(244,247,251,.82)!important;background:rgba(255,255,255,.05)!important}body.embedded:not(.light) .nav-item.active{color:#f4f6fb!important;background:rgba(126,110,210,.15)!important;box-shadow:inset 2px 0 0 #9e91ef!important}
+  body.embedded:not(.light) textarea,body.embedded:not(.light) input[type="text"],body.embedded:not(.light) input[type="number"],body.embedded:not(.light) select{color:#edf1f7!important;background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.1)!important;box-shadow:none!important}
+  body.embedded:not(.light) textarea::placeholder,body.embedded:not(.light) input::placeholder{color:rgba(222,229,240,.42)!important}
+  body.embedded:not(.light) .btn-secondary{color:#c7d0dd!important;background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.1)!important}
+  body.embedded:not(.light) .output-area,body.embedded:not(.light) .regex-highlight,body.embedded:not(.light) .diff-output,body.embedded:not(.light) .ab-group,body.embedded:not(.light) .result-card,body.embedded:not(.light) .ts-card{color:#dce3ed!important;background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.08)!important}
+  body.embedded .theme-toggle{display:none!important}
+  /* Embedded dark palette: opaque surfaces avoid the grey iframe wash */
+  body.embedded:not(.light){background:#0e1117!important;color:#eef2f8!important}
+  body.embedded:not(.light) .app-shell{background:transparent!important}
+  body.embedded:not(.light) .sidebar,body.embedded:not(.light) .main{
+    background:#171a21!important;border-color:rgba(255,255,255,.07)!important;
+    box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important
+  }
+  body.embedded:not(.light) .sidebar-logo,body.embedded:not(.light) .tool-header{
+    background:#171a21!important;border-bottom-color:rgba(255,255,255,.075)!important
+  }
+  body.embedded:not(.light) .nav-item.active{
+    color:#f1efff!important;background:rgba(105,86,190,.25)!important;
+    box-shadow:none!important
+  }
+  body.embedded:not(.light) .nav-item.active:after{background:#9e91ef!important}
+  body.embedded:not(.light) textarea,body.embedded:not(.light) input[type="text"],body.embedded:not(.light) input[type="number"],body.embedded:not(.light) select,
+  body.embedded:not(.light) .output-area,body.embedded:not(.light) .regex-highlight,body.embedded:not(.light) .diff-output{
+    background:#11151d!important;border-color:rgba(255,255,255,.09)!important
+  }
+</style>
+</head>
+<body class="light">
+<script>
+  (()=>{if(new URLSearchParams(location.search).get('embedded')!=='1')return;const media=matchMedia('(prefers-color-scheme: dark)');const sync=()=>{document.body.classList.add('embedded');document.body.classList.toggle('light',!media.matches)};sync();media.addEventListener('change',sync)})();
+</script>
+
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="title">DEV TOOLKIT</div>
+    </div>
+    <ul class="nav-list" id="navList">
+      <div class="nav-section-title">Format</div>
+      <!-- <li class="nav-item active" data-tool="sql">
+        <span class="nav-icon">✦</span> SQL 格式化
+      </li> -->
+      <li class="nav-item active" data-tool="json">
+        <span class="nav-icon">{ }</span> JSON 格式化
+      </li>
+      <li class="nav-item" data-tool="csvjson">
+        <span class="nav-icon">⇄</span> CSV ↔ JSON
+      </li>
+      <div class="nav-section-title">Developer</div>
+      <li class="nav-item" data-tool="timestamp">
+        <span class="nav-icon">⏱</span> Unix时间戳转换
+      </li>
+      <li class="nav-item" data-tool="regex">
+        <span class="nav-icon">.*</span> 正则测试
+      </li>
+      <li class="nav-item" data-tool="urlcodec">
+        <span class="nav-icon">%</span> URL 编解码
+      </li>
+      <li class="nav-item" data-tool="codediff">
+        <span class="nav-icon">±</span> 代码对比
+      </li>
+      <div class="nav-section-title">Data</div>
+      <li class="nav-item" data-tool="abtest">
+        <span class="nav-icon">Σ</span> AB 实验计算
+      </li>
+      <li class="nav-item" data-tool="randgen">
+        <span class="nav-icon">#</span> 随机数生成
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- ========== JSON Formatter ========== -->
+    <div class="tool-panel active" id="panel-json">
+      <div class="tool-header">
+        <h2>JSON 格式化</h2>
+        <p>格式化、压缩、验证 JSON 字符串</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">输入 JSON</label>
+        <textarea id="jsonInput" placeholder='{"name":"常用工具","version":1}'></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="formatJSON()">格式化</button>
+        <button class="btn btn-secondary" onclick="minifyJSON()">压缩</button>
+        <button class="btn btn-secondary" onclick="validateJSON()">验证</button>
+        <button class="btn btn-secondary" onclick="escapeJSON()">转义</button>
+        <button class="btn btn-secondary" onclick="unescapeJSON()">反转义</button>
+      </div>
+      <div class="output-area" id="jsonOutput"></div>
+    </div>
+
+    <!-- ========== Timestamp Converter ========== -->
+    <div class="tool-panel" id="panel-timestamp">
+      <div class="tool-header">
+        <h2>Unix 时间戳转换</h2>
+        <p>Unix 时间戳与日期时间互转，支持秒级 / 毫秒级</p>
+      </div>
+      <div class="ts-display">
+        <div class="ts-card">
+          <div class="ts-label">当前时间戳 (秒)</div>
+          <div class="ts-value" id="currentTsSec">—</div>
+        </div>
+        <div class="ts-card">
+          <div class="ts-label">当前时间戳 (毫秒)</div>
+          <div class="ts-value" id="currentTsMs">—</div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">时间戳 → 日期</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="tsInput" placeholder="输入时间戳，如 1700000000" style="flex:1;">
+          <button class="btn btn-primary" onclick="tsToDate()">转换</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">日期 → 时间戳</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="dateInput" placeholder="如 2025-05-28 08:10:00" style="flex:1;">
+          <button class="btn btn-primary" onclick="dateToTs()">转换</button>
+        </div>
+      </div>
+      <div class="output-area" id="tsOutput"></div>
+    </div>
+
+    <!-- ========== AB Test Calculator ========== -->
+    <div class="tool-panel" id="panel-abtest">
+      <div class="tool-header">
+        <h2>AB 实验计算</h2>
+        <p>显著性检验 &amp; 最小样本量估算</p>
+      </div>
+
+      <!-- Sub tabs -->
+      <div class="sub-tabs">
+        <div class="sub-tab active" data-sub="significance" onclick="switchABSub('significance')">显著性检验</div>
+        <div class="sub-tab" data-sub="samplesize" onclick="switchABSub('samplesize')">最小样本量</div>
+      </div>
+
+      <!-- Significance sub-panel -->
+      <div class="sub-panel active" id="sub-significance">
+        <div class="ab-grid">
+          <div class="ab-group control">
+            <div class="ab-group-title">对照组 A</div>
+            <div class="inline-fields">
+              <div>
+                <label class="field-label">实验人数</label>
+                <input type="number" id="aVisitors" placeholder="如 10000">
+              </div>
+              <div>
+                <label class="field-label">转化人数</label>
+                <input type="number" id="aConversions" placeholder="如 500">
+              </div>
+            </div>
+          </div>
+          <div class="ab-group treatment">
+            <div class="ab-group-title">实验组 B</div>
+            <div class="inline-fields">
+              <div>
+                <label class="field-label">实验人数</label>
+                <input type="number" id="bVisitors" placeholder="如 10000">
+              </div>
+              <div>
+                <label class="field-label">转化人数</label>
+                <input type="number" id="bConversions" placeholder="如 550">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <label class="field-label" style="margin:0;white-space:nowrap;">置信水平 α</label>
+            <select id="alphaSelect" style="width:auto;max-width:160px;flex-shrink:0;">
+              <option value="0.01">1% (99% 置信)</option>
+              <option value="0.05" selected>5% (95% 置信)</option>
+              <option value="0.10">10% (90% 置信)</option>
+            </select>
+            <button class="btn btn-primary" onclick="calcSignificance()">计算显著性</button>
+          </div>
+        </div>
+        <div id="sigResult"></div>
+      </div>
+
+      <!-- Sample size sub-panel -->
+      <div class="sub-panel" id="sub-samplesize">
+        <div class="ab-grid">
+          <div class="ab-group control" style="grid-column: 1 / -1;">
+            <div class="ab-group-title">预期参数</div>
+            <div class="inline-fields" style="grid-template-columns: repeat(4, 1fr);">
+              <div>
+                <label class="field-label">对照组转化率 %</label>
+                <input type="number" id="baseRate" placeholder="5" step="any" min="0" max="100">
+              </div>
+              <div>
+                <label class="field-label">最小可检测误差</label>
+                <input type="number" id="mde" placeholder="±10" step="any">
+                <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:2px;">相对变化 %（正=提升/负=下降）</div>
+              </div>
+              <div>
+                <label class="field-label">置信水平 α</label>
+                <select id="ssAlpha">
+                  <option value="0.01">1%</option>
+                  <option value="0.05" selected>5%</option>
+                  <option value="0.10">10%</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label">统计功效</label>
+                <select id="power">
+                  <option value="0.80" selected>80%</option>
+                  <option value="0.90">90%</option>
+                  <option value="0.95">95%</option>
+                  <option value="0.99">99%</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:14px;">
+              <button class="btn btn-primary" onclick="calcSampleSize()">计算最小样本量</button>
+            </div>
+          </div>
+        </div>
+        <div id="ssResult"></div>
+      </div>
+    </div>
+
+    <!-- ========== CSV ↔ JSON ========== -->
+    <div class="tool-panel" id="panel-csvjson">
+      <div class="tool-header">
+        <h2>CSV ↔ JSON</h2>
+        <p>CSV 与 JSON 格式互转，支持自定义分隔符</p>
+      </div>
+      <div class="delimiter-row">
+        <label class="field-label" style="margin:0;">分隔符</label>
+        <select id="csvDelimiter">
+          <option value=",">逗号 (,)</option>
+          <option value=";">分号 (;)</option>
+          <option value="\t">Tab</option>
+          <option value="|">竖线 (|)</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label" style="display:flex;justify-content:space-between;">
+          <span>输入</span>
+          <span style="font-weight:400;opacity:0.5;text-transform:none;" id="csvModeHint">CSV / JSON</span>
+        </label>
+        <textarea id="csvInput" placeholder="粘贴 CSV 或 JSON 数据...&#10;&#10;CSV 示例:&#10;name,age,city&#10;张三,28,深圳&#10;李四,32,北京&#10;&#10;JSON 示例:&#10;[{&quot;name&quot;:&quot;张三&quot;,&quot;age&quot;:28,&quot;city&quot;:&quot;深圳&quot;}]" style="min-height:200px;"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="csvToJSON()">CSV → JSON</button>
+        <button class="btn btn-primary" onclick="jsonToCSV()">JSON → CSV</button>
+        <button class="btn btn-secondary" onclick="autoDetectCSVJSON()">自动识别</button>
+      </div>
+      <div class="output-area" id="csvOutput"></div>
+    </div>
+
+    <!-- ========== SQL Formatter ========== -->
+    <div class="tool-panel" id="panel-sql">
+      <div class="tool-header">
+        <h2>SQL 格式化</h2>
+        <p>SQL 语句美化排版，关键字高亮</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">输入 SQL</label>
+        <textarea id="sqlInput" placeholder="SELECT id,name,created_at FROM users WHERE status=1 AND age>18 ORDER BY created_at DESC LIMIT 10" style="min-height:180px;"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="formatSQL()">格式化</button>
+        <button class="btn btn-secondary" onclick="compressSQL()">压缩</button>
+      </div>
+      <div class="output-area" id="sqlOutput" style="white-space:pre-wrap;"></div>
+    </div>
+
+    <!-- ========== Regex Tester ========== -->
+    <div class="tool-panel" id="panel-regex">
+      <div class="tool-header">
+        <h2>正则表达式测试器</h2>
+        <p>正则表达式匹配测试，支持正则表达式修饰符</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">正则表达式</label>
+        <div class="regex-input-row">
+          <input type="text" id="regexPattern" placeholder="如 \d{4}-\d{2}-\d{2}" oninput="runRegex()" style="font-size:14px;font-weight:600;">
+          <span class="flag-btn active" data-flag="g" onclick="toggleFlag(this,'g')">g</span>
+          <span class="flag-btn active" data-flag="i" onclick="toggleFlag(this,'i')">i</span>
+          <span class="flag-btn active" data-flag="m" onclick="toggleFlag(this,'m')">m</span>
+          <span class="flag-btn" data-flag="s" onclick="toggleFlag(this,'s')">s</span>
+          <span class="flag-btn" data-flag="u" onclick="toggleFlag(this,'u')">u</span>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">测试文本</label>
+        <textarea id="regexText" placeholder="输入测试文本..." oninput="runRegex()" style="min-height:160px;"></textarea>
+      </div>
+      <div class="regex-highlight" id="regexHighlight"></div>
+      <div class="match-list" id="regexMatchList"></div>
+    </div>
+
+    <!-- ========== URL Codec ========== -->
+    <div class="tool-panel" id="panel-urlcodec">
+      <div class="tool-header">
+        <h2>URL 编解码</h2>
+        <p>Component 编码所有特殊字符（用于参数值）；URI 保留 :/?# 等结构字符（用于完整链接）</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">输入</label>
+        <textarea id="urlInput" placeholder="粘贴 URL 或文本..." style="min-height:120px;"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn btn-primary" onclick="urlEncode()">编码 (encodeURIComponent)</button>
+        <button class="btn btn-primary" onclick="urlDecode()">解码 (decodeURIComponent)</button>
+        <button class="btn btn-secondary" onclick="urlEncodeURI()">编码 (encodeURI)</button>
+        <button class="btn btn-secondary" onclick="urlDecodeURI()">解码 (decodeURI)</button>
+      </div>
+      <div class="output-area" id="urlOutput"></div>
+    </div>
+
+    <!-- ========== Random Generator ========== -->
+    <div class="tool-panel" id="panel-randgen">
+      <div class="tool-header">
+        <h2>随机数生成器</h2>
+        <p>整数 / 小数 / UUID / 随机字符串，批量生成</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">生成类型</label>
+        <select id="randType" onchange="switchRandType()">
+          <option value="int">随机整数</option>
+          <option value="float">随机小数</option>
+          <option value="uuid">UUID</option>
+          <option value="string">随机字符串</option>
+        </select>
+      </div>
+      <div id="randIntOpts">
+        <div class="inline-fields" style="grid-template-columns: repeat(3, 1fr);">
+          <div>
+            <label class="field-label">最小值</label>
+            <input type="number" id="randMin" value="1">
+          </div>
+          <div>
+            <label class="field-label">最大值</label>
+            <input type="number" id="randMax" value="100">
+          </div>
+          <div>
+            <label class="field-label">生成数量</label>
+            <input type="number" id="randCount" value="10" min="1" max="1000">
+          </div>
+        </div>
+      </div>
+      <div id="randFloatOpts" style="display:none;">
+        <div class="inline-fields" style="grid-template-columns: repeat(4, 1fr);">
+          <div>
+            <label class="field-label">最小值</label>
+            <input type="number" id="randFloatMin" value="0" step="any">
+          </div>
+          <div>
+            <label class="field-label">最大值</label>
+            <input type="number" id="randFloatMax" value="1" step="any">
+          </div>
+          <div>
+            <label class="field-label">小数位数</label>
+            <input type="number" id="randFloatDec" value="4" min="0" max="10">
+          </div>
+          <div>
+            <label class="field-label">生成数量</label>
+            <input type="number" id="randFloatCount" value="10" min="1" max="1000">
+          </div>
+        </div>
+      </div>
+      <div id="randUUIDOpts" style="display:none;">
+        <div class="inline-fields" style="grid-template-columns: 1fr;">
+          <div>
+            <label class="field-label">生成数量</label>
+            <input type="number" id="randUUIDCount" value="5" min="1" max="500">
+          </div>
+        </div>
+      </div>
+      <div id="randStrOpts" style="display:none;">
+        <div class="inline-fields" style="grid-template-columns: repeat(4, 1fr);">
+          <div>
+            <label class="field-label">字符串长度</label>
+            <input type="number" id="randStrLen" value="16" min="1" max="1000">
+          </div>
+          <div>
+            <label class="field-label">生成数量</label>
+            <input type="number" id="randStrCount" value="5" min="1" max="500">
+          </div>
+          <div style="grid-column: span 2;">
+            <label class="field-label">字符集</label>
+            <select id="randStrCharset">
+              <option value="alphanum">字母 + 数字</option>
+              <option value="alpha">仅字母</option>
+              <option value="num">仅数字</option>
+              <option value="hex">十六进制 (0-9 a-f)</option>
+              <option value="lower">小写字母</option>
+              <option value="upper">大写字母</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-primary" onclick="generateRandom()">生成</button>
+      </div>
+      <div class="output-area" id="randOutput" style="max-height:400px;overflow-y:auto;"></div>
+    </div>
+
+    <!-- ========== Code Diff ========== -->
+    <div class="tool-panel" id="panel-codediff">
+      <div class="tool-header">
+        <h2>代码对比器</h2>
+        <p>对比两段代码 / 文本的差异，按行高亮新增与删除</p>
+      </div>
+      <div class="diff-input-grid">
+        <div class="field-group">
+          <label class="field-label">原始代码（旧）</label>
+          <textarea id="diffOld" placeholder="粘贴原始版本代码..." style="min-height:200px;"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">对比代码（新）</label>
+          <textarea id="diffNew" placeholder="粘贴新版本代码..." style="min-height:200px;"></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="runDiff()">对比差异</button>
+        <button class="btn btn-secondary" onclick="swapDiff()">⇄ 交换两侧</button>
+        <button class="btn btn-secondary" onclick="clearDiff()">清空</button>
+        <label class="diff-option" title="勾选后忽略每行开头/结尾的空格、Tab 等空白字符，仅比较实际内容">
+          <input type="checkbox" id="diffIgnoreWs" style="accent-color:rgba(120,95,215,0.9);cursor:pointer;">
+          <span>忽略首尾空白</span>
+          <span class="help-tip" onclick="event.preventDefault();">?
+            <span class="help-tooltip">
+              <strong>忽略首尾空白</strong>
+              勾选后，对比时将忽略每行<strong>开头和结尾</strong>的空格、Tab 等空白字符，只比较行的实际内容。<br><br>
+              <span class="tt-label">示例</span>
+              <code>&nbsp;&nbsp;console.log("hi");</code> 和 <code>console.log("hi");</code> 会被判定为<strong>相同行</strong>。<br><br>
+              <span class="tt-label">适用场景</span>
+              对比不同 IDE / 编辑器复制的代码、只关心逻辑改动而不关心缩进格式时勾选。<br><br>
+              <span class="tt-label">注意</span>
+              行<strong>中间</strong>的空白仍会参与对比；如需严格对比所有差异，请勿勾选。
+            </span>
+          </span>
+        </label>
+      </div>
+      <div class="diff-stats" id="diffStats" style="display:none;">
+        <div class="diff-stat"><span class="dot add"></span>新增 <span class="num" id="statAdd">0</span> 行</div>
+        <div class="diff-stat"><span class="dot del"></span>删除 <span class="num" id="statDel">0</span> 行</div>
+        <div class="diff-stat"><span class="dot same"></span>相同 <span class="num" id="statSame">0</span> 行</div>
+      </div>
+      <div class="diff-output" id="diffOutput">
+        <div class="diff-empty">输入两侧代码后点击「对比差异」</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ========== Navigation ==========
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    const tool = item.dataset.tool;
+    document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tool).classList.add('active');
+  });
+});
+
+// ========== JSON Tool ==========
+function getJSONInput() {
+  return document.getElementById('jsonInput').value.trim();
+}
+
+function setJSONOutput(text, cls) {
+  const out = document.getElementById('jsonOutput');
+  out.textContent = text;
+  out.className = 'output-area';
+  if (cls) out.classList.add(cls);
+}
+
+function jsonParse(s) {
+  try { return JSON.parse(s); } catch(e) { return null; }
+}
+
+function formatJSON() {
+  const raw = getJSONInput();
+  if (!raw) { setJSONOutput('请输入 JSON 字符串', 'error'); return; }
+  const obj = jsonParse(raw);
+  if (obj === null) { setJSONOutput('JSON 解析失败，请检查格式', 'error'); return; }
+  setJSONOutput(JSON.stringify(obj, null, 2), 'success');
+}
+
+function minifyJSON() {
+  const raw = getJSONInput();
+  if (!raw) { setJSONOutput('请输入 JSON 字符串', 'error'); return; }
+  const obj = jsonParse(raw);
+  if (obj === null) { setJSONOutput('JSON 解析失败，请检查格式', 'error'); return; }
+  setJSONOutput(JSON.stringify(obj), 'success');
+}
+
+function validateJSON() {
+  const raw = getJSONInput();
+  if (!raw) { setJSONOutput('请输入 JSON 字符串', 'error'); return; }
+  const obj = jsonParse(raw);
+  if (obj === null) {
+    let msg = '❌ 无效 JSON\n';
+    try { JSON.parse(raw); } catch(e) { msg += e.message; }
+    setJSONOutput(msg, 'error');
+  } else {
+    setJSONOutput('✅ 有效 JSON\n类型: ' + (Array.isArray(obj) ? 'Array (' + obj.length + ' 项)' : typeof obj === 'object' && obj !== null ? 'Object (' + Object.keys(obj).length + ' 键)' : typeof obj), 'success');
+  }
+}
+
+function escapeJSON() {
+  const raw = document.getElementById('jsonInput').value;
+  if (!raw) { setJSONOutput('请输入内容', 'error'); return; }
+  setJSONOutput(JSON.stringify(raw), 'success');
+}
+
+function unescapeJSON() {
+  const raw = getJSONInput();
+  if (!raw) { setJSONOutput('请输入转义后的 JSON 字符串', 'error'); return; }
+  try {
+    const obj = JSON.parse(raw);
+    setJSONOutput(typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2), 'success');
+  } catch(e) {
+    setJSONOutput('解析失败: ' + e.message, 'error');
+  }
+}
+
+// ========== Timestamp Tool ==========
+function updateCurrentTs() {
+  const now = Date.now();
+  document.getElementById('currentTsSec').textContent = Math.floor(now / 1000);
+  document.getElementById('currentTsMs').textContent = now;
+}
+updateCurrentTs();
+setInterval(updateCurrentTs, 1000);
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function formatDate(d) {
+  return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate())
+    + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds())
+    + '  (周' + ['日','一','二','三','四','五','六'][d.getDay()] + ')';
+}
+
+function tsToDate() {
+  const out = document.getElementById('tsOutput');
+  const raw = document.getElementById('tsInput').value.trim();
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入时间戳'; out.classList.add('error'); return; }
+  let ts = parseInt(raw, 10);
+  if (isNaN(ts)) { out.textContent = '时间戳格式不正确'; out.classList.add('error'); return; }
+  if (ts < 0) ts = 0;
+  const isMs = ts > 1000000000000;
+  const d = isMs ? new Date(ts) : new Date(ts * 1000);
+  if (isNaN(d.getTime())) { out.textContent = '无法解析该时间戳'; out.classList.add('error'); return; }
+  out.textContent = [
+    '输入: ' + ts + (isMs ? ' (毫秒级)' : ' (秒级)'),
+    'UTC:  ' + d.toISOString().replace('T',' ').slice(0,19) + ' UTC',
+    '本地: ' + formatDate(d),
+    'ISO:  ' + d.toISOString()
+  ].join('\n');
+  out.classList.add('success');
+}
+
+function dateToTs() {
+  const out = document.getElementById('tsOutput');
+  const raw = document.getElementById('dateInput').value.trim();
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入日期时间'; out.classList.add('error'); return; }
+  let d = new Date(raw);
+  if (!raw.includes('T') && !raw.includes('Z') && !raw.includes('+') && !raw.includes(' GMT') && !raw.includes('UTC')) {
+    d = new Date(raw.replace(' ', 'T') + (raw.includes('+') ? '' : '+08:00'));
+  }
+  if (isNaN(d.getTime())) {
+    const ms = Date.parse(raw);
+    if (isNaN(ms)) { out.textContent = '无法解析日期，请使用格式如 2025-05-28 08:10:00'; out.classList.add('error'); return; }
+    d = new Date(ms);
+  }
+  const sec = Math.floor(d.getTime() / 1000);
+  const ms = d.getTime();
+  out.textContent = [
+    '解析日期: ' + formatDate(d),
+    '秒级时间戳: ' + sec,
+    '毫秒级时间戳: ' + ms,
+    'UTC: ' + d.toISOString()
+  ].join('\n');
+  out.classList.add('success');
+}
+
+// ========== AB Test Calculator ==========
+function switchABSub(name) {
+  document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.sub-tab[data-sub="' + name + '"]').classList.add('active');
+  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('sub-' + name).classList.add('active');
+}
+
+// Normal CDF using Abramowitz and Stegun approximation
+function normCDF(x) {
+  const a1 =  0.254829592;
+  const a2 = -0.284496736;
+  const a3 =  1.421413741;
+  const a4 = -1.453152027;
+  const a5 =  1.061405429;
+  const p  =  0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x) / Math.sqrt(2);
+  const t = 1.0 / (1.0 + p * x);
+  const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+  return 0.5 * (1.0 + sign * y);
+}
+
+// Inverse normal CDF (quantile) - Odeh & Evans approximation
+function normInv(p) {
+  if (p <= 0 || p >= 1) return NaN;
+  const a0 = 2.50662823884;
+  const a1 = -18.61500062529;
+  const a2 = 41.39119773534;
+  const a3 = -25.44106049637;
+  const b1 = -8.47351093090;
+  const b2 = 23.08336743743;
+  const b3 = -21.06224101826;
+  const b4 = 3.13082909833;
+  const c0 = 0.3374754822726147;
+  const c1 = 0.9761690190917186;
+  const c2 = 0.1607979714918209;
+  const c3 = 0.0276438810333863;
+  const c4 = 0.0038405729373609;
+  const c5 = 0.0003951896511919;
+  const c6 = 0.0000321767881768;
+  const c7 = 0.0000002888167364;
+  const c8 = 0.0000003960315187;
+
+  const y = p - 0.5;
+  if (Math.abs(y) < 0.42) {
+    const r = y * y;
+    return y * (((a3 * r + a2) * r + a1) * r + a0) / ((((b4 * r + b3) * r + b2) * r + b1) * r + 1);
+  }
+  const r = p < 0.5 ? p : 1 - p;
+  const s = Math.log(-Math.log(r));
+  const z = c0 + s * (c1 + s * (c2 + s * (c3 + s * (c4 + s * (c5 + s * (c6 + s * (c7 + s * c8)))))));
+  return p < 0.5 ? -z : z;
+}
+
+function calcSignificance() {
+  const aV = parseInt(document.getElementById('aVisitors').value) || 0;
+  const aC = parseInt(document.getElementById('aConversions').value) || 0;
+  const bV = parseInt(document.getElementById('bVisitors').value) || 0;
+  const bC = parseInt(document.getElementById('bConversions').value) || 0;
+  const alpha = parseFloat(document.getElementById('alphaSelect').value);
+
+  const container = document.getElementById('sigResult');
+  if (aV <= 0 || bV <= 0 || aC < 0 || bC < 0) {
+    container.innerHTML = '';
+    return;
+  }
+  if (aC > aV || bC > bV) {
+    container.innerHTML = '<div class="result-card"><div class="result-verdict verdict-not-sig">转化数不能大于访客数</div></div>';
+    return;
+  }
+
+  const pA = aC / aV;
+  const pB = bC / bV;
+  const pPool = (aC + bC) / (aV + bV);
+  const se = Math.sqrt(pPool * (1 - pPool) * (1/aV + 1/bV));
+
+  let zScore = 0;
+  let pValue = 1;
+  if (se > 0) {
+    zScore = (pB - pA) / se;
+    pValue = 2 * (1 - normCDF(Math.abs(zScore)));
+  }
+
+  const sig = pValue < alpha;
+  const lift = pA > 0 ? ((pB - pA) / pA * 100) : 0;
+  const zCrit = Math.abs(normInv(alpha / 2));
+
+  container.innerHTML =
+    '<div class="result-card">'
+    + '<div class="result-row"><span class="result-label">对照组转化率</span><span class="result-value">' + (pA * 100).toFixed(2) + '% (' + aC + '/' + aV + ')</span></div>'
+    + '<div class="result-row"><span class="result-label">实验组转化率</span><span class="result-value">' + (pB * 100).toFixed(2) + '% (' + bC + '/' + bV + ')</span></div>'
+    + '<div class="result-row"><span class="result-label">相对提升</span><span class="result-value">' + (lift >= 0 ? '+' : '') + lift.toFixed(2) + '%</span></div>'
+    + '<div class="result-row"><span class="result-label">Z 值</span><span class="result-value">' + zScore.toFixed(4) + '</span></div>'
+    + '<div class="result-row"><span class="result-label">临界 Z 值 (±)</span><span class="result-value">' + zCrit.toFixed(4) + '</span></div>'
+    + '<div class="result-row"><span class="result-label">P 值</span><span class="result-value">' + pValue.toFixed(6) + '</span></div>'
+    + '<div class="result-row"><span class="result-label">显著性</span><span class="result-value ' + (sig ? 'sig-yes' : 'sig-no') + '">' + (sig ? '✅ 显著' : '❌ 不显著') + '</span></div>'
+    + '<div class="result-verdict ' + (sig ? 'verdict-sig' : 'verdict-not-sig') + '">'
+    + (sig
+      ? '在 ' + ((1-alpha)*100).toFixed(0) + '% 置信水平下，实验组与对照组存在统计显著差异'
+      : '在 ' + ((1-alpha)*100).toFixed(0) + '% 置信水平下，未能检测到统计显著差异')
+    + '</div></div>';
+}
+
+function calcSampleSize() {
+  const baseRate = parseFloat(document.getElementById('baseRate').value) / 100;
+  const mdePct = parseFloat(document.getElementById('mde').value) / 100;
+  const alpha = parseFloat(document.getElementById('ssAlpha').value);
+  const power = parseFloat(document.getElementById('power').value);
+
+  const container = document.getElementById('ssResult');
+  if (isNaN(baseRate) || isNaN(mdePct) || baseRate <= 0 || baseRate >= 1 || mdePct === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const p1 = baseRate;
+  const p2 = baseRate * (1 + mdePct);
+  if (p2 <= 0 || p2 >= 1) {
+    container.innerHTML = '<div class="result-card"><div class="result-verdict verdict-not-sig">实验组预期转化率需在 0%~100% 之间，请调整参数</div></div>';
+    return;
+  }
+
+  const zAlpha = normInv(1 - alpha / 2);
+  const zBeta  = normInv(power);
+  const pBar = (p1 + p2) / 2;
+  const n = Math.ceil(2 * (zAlpha + zBeta) * (zAlpha + zBeta) * pBar * (1 - pBar) / ((p2 - p1) * (p2 - p1)));
+  const diffAbs = (p2 - p1) * 100;
+  const diffRel = mdePct * 100;
+
+  container.innerHTML =
+    '<div class="result-card">'
+    + '<div class="result-row"><span class="result-label">对照组转化率</span><span class="result-value">' + (p1 * 100).toFixed(2) + '%</span></div>'
+    + '<div class="result-row"><span class="result-label">实验组目标转化率</span><span class="result-value">' + (p2 * 100).toFixed(2) + '%</span></div>'
+    + '<div class="result-row"><span class="result-label">绝对变化</span><span class="result-value">' + (diffAbs >= 0 ? '+' : '') + diffAbs.toFixed(2) + ' pp</span></div>'
+    + '<div class="result-row"><span class="result-label">相对变化</span><span class="result-value">' + (diffRel >= 0 ? '+' : '') + diffRel.toFixed(1) + '%</span></div>'
+    + '<div class="result-row"><span class="result-label">置信水平</span><span class="result-value">' + ((1 - alpha) * 100).toFixed(0) + '%</span></div>'
+    + '<div class="result-row"><span class="result-label">统计功效</span><span class="result-value">' + (power * 100).toFixed(0) + '%</span></div>'
+    + '<div class="result-verdict verdict-sig">每组最少需要 <strong>' + n.toLocaleString() + '</strong> 个样本<br><span style="font-weight:400;font-size:11px;opacity:0.7;">总计: ' + (n * 2).toLocaleString() + ' 个样本 (两组)</span></div>'
+    + '</div>';
+}
+
+// ========== CSV ↔ JSON ==========
+function getCSVDelimiter() {
+  const val = document.getElementById('csvDelimiter').value;
+  if (val === '\\t') return '\t';
+  return val;
+}
+
+function parseCSV(text, delim) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < text.length && text[i + 1] === '"') {
+          cell += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        cell += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === delim) {
+        row.push(cell);
+        cell = '';
+      } else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && i + 1 < text.length && text[i + 1] === '\n') i++;
+        row.push(cell);
+        cell = '';
+        rows.push(row);
+        row = [];
+      } else {
+        cell += ch;
+      }
+    }
+  }
+  row.push(cell);
+  if (row.length > 1 || row[0] !== '') rows.push(row);
+  return rows;
+}
+
+function csvToJSON() {
+  const raw = document.getElementById('csvInput').value;
+  const out = document.getElementById('csvOutput');
+  out.className = 'output-area';
+  if (!raw.trim()) { out.textContent = '请输入 CSV 数据'; out.classList.add('error'); return; }
+  const delim = getCSVDelimiter();
+  const rows = parseCSV(raw, delim);
+  if (rows.length < 2) { out.textContent = 'CSV 至少需要表头和数据行'; out.classList.add('error'); return; }
+  const headers = rows[0];
+  const result = [];
+  for (let i = 1; i < rows.length; i++) {
+    const obj = {};
+    for (let j = 0; j < headers.length; j++) {
+      obj[headers[j]] = rows[i][j] !== undefined ? rows[i][j] : '';
+    }
+    result.push(obj);
+  }
+  out.textContent = JSON.stringify(result, null, 2);
+  out.classList.add('success');
+}
+
+function jsonToCSV() {
+  const raw = document.getElementById('csvInput').value.trim();
+  const out = document.getElementById('csvOutput');
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入 JSON 数据'; out.classList.add('error'); return; }
+  let arr;
+  try { arr = JSON.parse(raw); } catch(e) { out.textContent = 'JSON 解析失败: ' + e.message; out.classList.add('error'); return; }
+  if (!Array.isArray(arr) || arr.length === 0) { out.textContent = '需要输入一个对象数组，如 [{...}, {...}]'; out.classList.add('error'); return; }
+  const delim = getCSVDelimiter();
+  const headers = Object.keys(arr[0]);
+  const escapeCSV = (v) => {
+    const s = String(v ?? '');
+    if (s.includes(delim) || s.includes('"') || s.includes('\n') || s.includes('\r')) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  };
+  const lines = [headers.map(escapeCSV).join(delim)];
+  for (const obj of arr) {
+    lines.push(headers.map(h => escapeCSV(obj[h])).join(delim));
+  }
+  out.textContent = lines.join('\n');
+  out.classList.add('success');
+}
+
+function autoDetectCSVJSON() {
+  const raw = document.getElementById('csvInput').value.trim();
+  if (!raw) return;
+  if (raw.startsWith('{') || raw.startsWith('[')) {
+    jsonToCSV();
+  } else {
+    csvToJSON();
+  }
+}
+
+// ========== SQL Formatter ==========
+const SQL_KEYWORDS = new Set([
+  'SELECT','FROM','WHERE','AND','OR','NOT','IN','IS','NULL','TRUE','FALSE',
+  'AS','ON','JOIN','LEFT','RIGHT','INNER','OUTER','FULL','CROSS','NATURAL',
+  'GROUP','BY','ORDER','ASC','DESC','HAVING','LIMIT','OFFSET','UNION','ALL',
+  'INSERT','INTO','VALUES','UPDATE','SET','DELETE','CREATE','TABLE','ALTER',
+  'ADD','DROP','COLUMN','INDEX','IF','EXISTS','PRIMARY','KEY','FOREIGN',
+  'REFERENCES','DEFAULT','CHECK','UNIQUE','CONSTRAINT','CASCADE','DISTINCT',
+  'BETWEEN','LIKE','COUNT','SUM','AVG','MIN','MAX','COALESCE','NULLIF','CAST',
+  'CASE','WHEN','THEN','ELSE','END','OVER','PARTITION','ROW','NUMBER','RANK',
+  'WITH','RECURSIVE','EXCEPT','INTERSECT','FETCH','FIRST','NEXT','ROWS','ONLY',
+  'TRUNCATE','MERGE','EXPLAIN','ANALYZE','VACUUM','BEGIN','COMMIT','ROLLBACK',
+  'GRANT','REVOKE','LATERAL','WINDOW','QUALIFY','ILIKE','SIMILAR','REGEXP',
+]);
+
+const SQL_CLAUSES = ['SELECT','FROM','WHERE','GROUP BY','ORDER BY','HAVING',
+  'LIMIT','OFFSET','UNION','INTERSECT','EXCEPT','INSERT INTO','VALUES',
+  'UPDATE','SET','DELETE FROM','CREATE TABLE','ALTER TABLE','DROP TABLE',
+  'JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','OUTER JOIN','FULL JOIN',
+  'CROSS JOIN','NATURAL JOIN','ON','AND','OR','WITH'];
+
+function formatSQL() {
+  const raw = document.getElementById('sqlInput').value.trim();
+  const out = document.getElementById('sqlOutput');
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入 SQL 语句'; out.classList.add('error'); return; }
+
+  const chunks = [];
+  let lastIdx = 0;
+  let i = 0;
+
+  while (i < raw.length) {
+    if (raw[i] === "'") {
+      let j = i + 1;
+      while (j < raw.length) {
+        if (raw[j] === "'" && raw[j + 1] === "'") { j += 2; continue; }
+        if (raw[j] === "'") { j++; break; }
+        j++;
+      }
+      i = j;
+      continue;
+    }
+    if (raw[i] === '/' && raw[i + 1] === '*') {
+      if (i > lastIdx) chunks.push({ type: 'sql', text: raw.slice(lastIdx, i) });
+      let j = raw.indexOf('*/', i + 2);
+      if (j === -1) j = raw.length; else j += 2;
+      chunks.push({ type: 'comment', text: raw.slice(i, j) });
+      i = j;
+      lastIdx = j;
+      continue;
+    }
+    if (raw[i] === '-' && raw[i + 1] === '-') {
+      if (i > lastIdx) chunks.push({ type: 'sql', text: raw.slice(lastIdx, i) });
+      let j = raw.indexOf('\n', i);
+      if (j === -1) j = raw.length;
+      chunks.push({ type: 'comment', text: raw.slice(i, j) });
+      i = (j < raw.length) ? j + 1 : j;
+      lastIdx = i;
+      continue;
+    }
+    i++;
+  }
+  if (lastIdx < raw.length) chunks.push({ type: 'sql', text: raw.slice(lastIdx) });
+
+  let result = '';
+  for (const chunk of chunks) {
+    if (chunk.type === 'sql') {
+      result += formatSQLChunk(chunk.text);
+    } else {
+      result += chunk.text + '\n';
+    }
+  }
+
+  result = highlightSQL(result.trim());
+  out.innerHTML = '<div class="sql-output">' + result + '</div>';
+}
+
+function formatSQLChunk(sqlText) {
+  let sql = sqlText.replace(/\s+/g, ' ').trim()
+    .replace(/\s*,\s*/g, ', ')
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')');
+  if (!sql) return '';
+
+  const kwList = 'SELECT|FROM|WHERE|GROUP\\s+BY|ORDER\\s+BY|HAVING|LIMIT|OFFSET|'
+    + 'UNION\\s+ALL|UNION|INTERSECT|EXCEPT|INSERT\\s+INTO|VALUES|UPDATE|SET|DELETE\\s+FROM|'
+    + 'CREATE\\s+TABLE|ALTER\\s+TABLE|DROP\\s+TABLE|'
+    + 'JOIN|LEFT\\s+JOIN|RIGHT\\s+JOIN|INNER\\s+JOIN|OUTER\\s+JOIN|FULL\\s+JOIN|CROSS\\s+JOIN|NATURAL\\s+JOIN|'
+    + 'ON|AND|OR|CASE|WHEN|THEN|ELSE|END|WITH|AS';
+  const caseKws = new Set(['case', 'when', 'then', 'else', 'end']);
+
+  const kwReg = new RegExp('\\b(' + kwList + ')\\b', 'gi');
+  const IND = '    ';
+
+  const tokens = [];
+  let lastIdx = 0, m, pdepth = 0;
+  const re = new RegExp(kwReg.source, 'gi');
+  while ((m = re.exec(sql)) !== null) {
+    let seg = sql.slice(lastIdx, m.index);
+    for (let c of seg) {
+      if (c === '(') pdepth++;
+      else if (c === ')') pdepth = Math.max(0, pdepth - 1);
+    }
+    const txt = seg.trim();
+    if (txt) tokens.push({ t: 'tx', v: txt });
+
+    const kw = m[0].toLowerCase().replace(/\s+/g, ' ');
+    if (caseKws.has(kw) && pdepth > 0) {
+      const last = tokens[tokens.length - 1];
+      if (last && last.t === 'tx') last.v += ' ' + m[0];
+      else tokens.push({ t: 'tx', v: m[0] });
+    } else {
+      tokens.push({ t: 'kw', v: kw });
+    }
+    lastIdx = re.lastIndex;
+  }
+  if (lastIdx < sql.length) {
+    tokens.push({ t: 'tx', v: sql.slice(lastIdx).trim() });
+  }
+
+  let out = '';
+  let depth = 0;
+  let fieldList = false;
+  let prevKW = null;
+
+  for (let i = 0; i < tokens.length; i++) {
+    const tk = tokens[i];
+
+    if (tk.t === 'kw') {
+      const kw = tk.v;
+      prevKW = kw;
+      fieldList = (kw === 'select' || kw === 'group by' || kw === 'order by');
+
+      if (['select', 'with', 'insert into', 'create table', 'alter table', 'drop table', 'delete from'].includes(kw)) {
+        if (out) out += '\n\n';
+        out += kw + '\n';
+        depth = 1;
+      } else if (kw === 'case') {
+        out += IND.repeat(depth) + kw + '\n';
+        depth++;
+      } else if (kw === 'when') {
+        out += IND.repeat(depth) + kw + ' ';
+      } else if (kw === 'then') {
+        out += ' ' + kw + '\n';
+      } else if (kw === 'else') {
+        out += IND.repeat(depth) + kw;
+      } else if (kw === 'end') {
+        depth = Math.max(0, depth - 1);
+        out += IND.repeat(depth) + kw;
+      } else if (['from', 'where', 'group by', 'order by', 'having', 'limit', 'offset'].includes(kw)) {
+        out += '\n' + kw + '\n';
+        depth = 1;
+      } else if (kw === 'on') {
+        out += '\n' + IND.repeat(Math.max(0, depth - 1)) + kw + '\n';
+      } else if (['and', 'or'].includes(kw)) {
+        out += '\n' + IND.repeat(depth) + kw + '\n';
+      } else if (['join', 'left join', 'right join', 'inner join', 'outer join', 'full join', 'cross join', 'natural join'].includes(kw)) {
+        out += '\n' + IND.repeat(Math.max(0, depth - 1)) + kw + '\n';
+      } else if (['union', 'union all', 'intersect', 'except'].includes(kw)) {
+        out += '\n' + kw + '\n';
+        depth = 1;
+      } else if (kw === 'update') {
+        if (out) out += '\n\n';
+        out += kw + '\n';
+        depth = 1;
+      } else if (['set', 'values'].includes(kw)) {
+        out += '\n' + kw + '\n';
+        depth = 1;
+      }
+    } else {
+      let txt = tk.v;
+
+      if (fieldList) {
+        const items = splitTopComma(txt);
+        for (let j = 0; j < items.length; j++) {
+          let item = items[j].trim();
+          if (!item) continue;
+          let prefix = j === 0 ? IND.repeat(depth) : IND.repeat(depth) + ',';
+          if (item.startsWith('(') && /\bselect\b/i.test(item)) {
+            out += IND.repeat(depth) + '(\n' + IND.repeat(depth + 1) + item.slice(1).trim() + '\n' + IND.repeat(depth) + ')';
+          } else {
+            out += prefix + item;
+          }
+          if (j < items.length - 1 || out.slice(-1) !== '\n') out += '\n';
+        }
+      } else if (prevKW === 'when') {
+        out += txt;
+      } else if (prevKW === 'else') {
+        out += ' ' + txt + '\n';
+      } else if (prevKW === 'end') {
+        if (txt.trim()) out += ' ' + txt.trim();
+        out += '\n';
+      } else {
+        if (txt.startsWith('(') && /\bselect\b/i.test(txt)) {
+          out += '(\n' + IND.repeat(depth + 1) + txt.slice(1).trim();
+        } else if (txt.endsWith(')')) {
+          const inner = txt.slice(0, -1).trim();
+          if (inner) out += inner + '\n';
+          out += IND.repeat(Math.max(0, depth - 1)) + ')';
+        } else {
+          if (depth > 0) out += IND.repeat(depth) + txt;
+          else out += txt;
+        }
+      }
+    }
+  }
+
+  return out.trimEnd();
+}
+
+function splitTopComma(text) {
+  const result = [];
+  let depth = 0;
+  let cur = '';
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '(') { depth++; cur += ch; }
+    else if (ch === ')') { depth--; cur += ch; }
+    else if (ch === ',' && depth === 0) { result.push(cur.trim()); cur = ''; }
+    else { cur += ch; }
+  }
+  if (cur.trim()) result.push(cur.trim());
+  return result;
+}
+
+function highlightSQL(sql) {
+  let out = '';
+  let i = 0;
+  while (i < sql.length) {
+    // String literals
+    if (sql[i] === "'") {
+      let j = i + 1;
+      while (j < sql.length) {
+        if (sql[j] === "'" && sql[j+1] === "'") { j += 2; continue; }
+        if (sql[j] === "'") { j++; break; }
+        j++;
+      }
+      out += '<span class="str">' + escapeHTML(sql.slice(i, j)) + '</span>';
+      i = j;
+      continue;
+    }
+    // Line comments
+    if (sql[i] === '-' && sql[i+1] === '-') {
+      let j = sql.indexOf('\n', i);
+      if (j === -1) j = sql.length;
+      out += '<span class="cmt">' + escapeHTML(sql.slice(i, j)) + '</span>';
+      i = j;
+      continue;
+    }
+    // Block comments
+    if (sql[i] === '/' && sql[i+1] === '*') {
+      const j = sql.indexOf('*/', i + 2);
+      if (j === -1) { out += escapeHTML(sql.slice(i)); break; }
+      out += '<span class="cmt">' + escapeHTML(sql.slice(i, j + 2)) + '</span>';
+      i = j + 2;
+      continue;
+    }
+    // Numbers
+    if (/[0-9]/.test(sql[i]) && (i === 0 || /[\s,(=<>!+\-*/]/.test(sql[i-1]))) {
+      let j = i;
+      while (j < sql.length && /[0-9.e]/.test(sql[j])) j++;
+      out += '<span class="num">' + escapeHTML(sql.slice(i, j)) + '</span>';
+      i = j;
+      continue;
+    }
+    // Words
+    if (/[a-zA-Z_]/.test(sql[i])) {
+      let j = i;
+      while (j < sql.length && /[a-zA-Z0-9_]/.test(sql[j])) j++;
+      const word = sql.slice(i, j);
+      const upper = word.toUpperCase();
+      if (SQL_KEYWORDS.has(upper)) {
+        out += '<span class="kw">' + escapeHTML(word) + '</span>';
+      } else if (j < sql.length && sql[j] === '(') {
+        out += '<span class="fn">' + escapeHTML(word) + '</span>';
+      } else {
+        out += escapeHTML(word);
+      }
+      i = j;
+      continue;
+    }
+    out += escapeHTML(sql[i]);
+    i++;
+  }
+  return out;
+}
+
+function compressSQL() {
+  const raw = document.getElementById('sqlInput').value.trim();
+  const out = document.getElementById('sqlOutput');
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入 SQL 语句'; out.classList.add('error'); return; }
+  out.textContent = raw.replace(/\s+/g, ' ').trim();
+  out.classList.add('success');
+}
+
+// ========== Regex Tester ==========
+let regexFlags = 'gim';
+
+function toggleFlag(btn, flag) {
+  btn.classList.toggle('active');
+  updateFlags();
+  runRegex();
+}
+
+function updateFlags() {
+  const flags = [];
+  document.querySelectorAll('#panel-regex .flag-btn.active').forEach(b => {
+    flags.push(b.dataset.flag);
+  });
+  regexFlags = flags.join('');
+}
+
+function runRegex() {
+  const pattern = document.getElementById('regexPattern').value;
+  const text = document.getElementById('regexText').value;
+  const hl = document.getElementById('regexHighlight');
+  const ml = document.getElementById('regexMatchList');
+
+  if (!pattern || !text) {
+    hl.textContent = text || '';
+    ml.innerHTML = '';
+    return;
+  }
+
+  let re;
+  try {
+    re = new RegExp(pattern, regexFlags);
+  } catch(e) {
+    hl.innerHTML = '<span style="color:rgba(255,130,130,0.85);">正则错误: ' + escapeHTML(e.message) + '</span>';
+    ml.innerHTML = '';
+    return;
+  }
+
+  // Highlight matches
+  const globalRe = new RegExp(pattern, regexFlags.includes('g') ? regexFlags : regexFlags + 'g');
+  let result = '';
+  let lastIdx = 0;
+  let match;
+  const matches = [];
+
+  while ((match = globalRe.exec(text)) !== null) {
+    const groups = match.slice(1);
+    matches.push({ index: match.index, text: match[0], groups: groups.length ? groups : null });
+    result += escapeHTML(text.slice(lastIdx, match.index));
+    if (groups.length > 0) {
+      // Build highlighted match with group coloring
+      let matchHTML = '';
+      let groupStart = match.index;
+      for (let g = 0; g <= groups.length; g++) {
+        const groupText = g === 0 ? match[0] : groups[g - 1];
+        if (groupText === undefined) continue;
+        const groupIdx = text.indexOf(groupText, groupStart);
+        let prefix = text.slice(groupStart, groupIdx);
+        matchHTML += escapeHTML(prefix);
+        matchHTML += '<span class="' + (g === 0 ? 'match' : 'group') + '">' + escapeHTML(groupText) + '</span>';
+        groupStart = groupIdx + groupText.length;
+      }
+      result += '<span class="match">' + matchHTML + '</span>';
+    } else {
+      result += '<span class="match">' + escapeHTML(match[0]) + '</span>';
+    }
+    lastIdx = globalRe.lastIndex;
+    if (match[0].length === 0) {
+      if (lastIdx >= text.length) break;
+      lastIdx++;
+      globalRe.lastIndex = lastIdx;
+    }
+  }
+  result += escapeHTML(text.slice(lastIdx));
+  hl.innerHTML = result;
+
+  // Match list
+  if (matches.length === 0) {
+    ml.innerHTML = '<div class="match-entry" style="color:rgba(255,255,255,0.25);">无匹配</div>';
+  } else {
+    ml.innerHTML = '<div class="match-entry" style="color:rgba(255,255,255,0.3);">共 <strong>' + matches.length + '</strong> 处匹配</div>'
+      + matches.map((m, mi) => {
+        let gs = '';
+        if (m.groups) {
+          gs = ' &nbsp;<span style="color:rgba(200,180,255,0.6);">[' + m.groups.map(g => g || '(空)').join(', ') + ']</span>';
+        }
+        return '<div class="match-entry"><span class="match-idx">#' + (mi+1) + ' idx=' + m.index + '</span><span class="match-text">' + escapeHTML(m.text) + '</span>' + gs + '</div>';
+      }).join('');
+  }
+}
+
+function escapeHTML(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ========== URL Codec ==========
+function urlEncode() {
+  const raw = document.getElementById('urlInput').value;
+  const out = document.getElementById('urlOutput');
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入内容'; out.classList.add('error'); return; }
+  out.textContent = encodeURIComponent(raw);
+  out.classList.add('success');
+}
+function urlDecode() {
+  const raw = document.getElementById('urlInput').value.trim();
+  const out = document.getElementById('urlOutput');
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入内容'; out.classList.add('error'); return; }
+  try { out.textContent = decodeURIComponent(raw); out.classList.add('success'); }
+  catch(e) { out.textContent = '解码失败: ' + e.message; out.classList.add('error'); }
+}
+function urlEncodeURI() {
+  const raw = document.getElementById('urlInput').value;
+  const out = document.getElementById('urlOutput');
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入内容'; out.classList.add('error'); return; }
+  out.textContent = encodeURI(raw);
+  out.classList.add('success');
+}
+function urlDecodeURI() {
+  const raw = document.getElementById('urlInput').value.trim();
+  const out = document.getElementById('urlOutput');
+  out.className = 'output-area';
+  if (!raw) { out.textContent = '请输入内容'; out.classList.add('error'); return; }
+  try { out.textContent = decodeURI(raw); out.classList.add('success'); }
+  catch(e) { out.textContent = '解码失败: ' + e.message; out.classList.add('error'); }
+}
+
+// ========== Random Generator ==========
+function switchRandType() {
+  const t = document.getElementById('randType').value;
+  document.getElementById('randIntOpts').style.display = t === 'int' ? '' : 'none';
+  document.getElementById('randFloatOpts').style.display = t === 'float' ? '' : 'none';
+  document.getElementById('randUUIDOpts').style.display = t === 'uuid' ? '' : 'none';
+  document.getElementById('randStrOpts').style.display = t === 'string' ? '' : 'none';
+}
+switchRandType();
+
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+function generateRandom() {
+  const type = document.getElementById('randType').value;
+  const out = document.getElementById('randOutput');
+  out.className = 'output-area';
+
+  let results = [];
+
+  if (type === 'int') {
+    const min = parseInt(document.getElementById('randMin').value) || 1;
+    const max = parseInt(document.getElementById('randMax').value) || 100;
+    const count = Math.min(parseInt(document.getElementById('randCount').value) || 10, 1000);
+    for (let i = 0; i < count; i++) {
+      results.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+  } else if (type === 'float') {
+    const min = parseFloat(document.getElementById('randFloatMin').value) || 0;
+    const max = parseFloat(document.getElementById('randFloatMax').value) || 1;
+    const dec = parseInt(document.getElementById('randFloatDec').value) || 4;
+    const count = Math.min(parseInt(document.getElementById('randFloatCount').value) || 10, 1000);
+    for (let i = 0; i < count; i++) {
+      results.push((min + Math.random() * (max - min)).toFixed(dec));
+    }
+  } else if (type === 'uuid') {
+    const count = Math.min(parseInt(document.getElementById('randUUIDCount').value) || 5, 500);
+    for (let i = 0; i < count; i++) {
+      results.push(generateUUID());
+    }
+  } else if (type === 'string') {
+    const len = Math.min(parseInt(document.getElementById('randStrLen').value) || 16, 1000);
+    const count = Math.min(parseInt(document.getElementById('randStrCount').value) || 5, 500);
+    const charset = document.getElementById('randStrCharset').value;
+    const pools = {
+      alphanum: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      alpha: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+      num: '0123456789',
+      hex: '0123456789abcdef',
+      lower: 'abcdefghijklmnopqrstuvwxyz',
+      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    };
+    const pool = pools[charset] || pools.alphanum;
+    for (let i = 0; i < count; i++) {
+      let s = '';
+      for (let j = 0; j < len; j++) s += pool[Math.floor(Math.random() * pool.length)];
+      results.push(s);
+    }
+  }
+
+  out.textContent = results.join('\n');
+  out.classList.add('success');
+}
+
+// ========== Code Diff ==========
+function computeLCS(a, b) {
+  const m = a.length, n = b.length;
+  // Use Uint32Array-backed table for memory efficiency on large inputs
+  const width = n + 1;
+  const dp = new Uint32Array((m + 1) * width);
+  for (let i = m - 1; i >= 0; i--) {
+    const rowBase = i * width;
+    const nextBase = (i + 1) * width;
+    for (let j = n - 1; j >= 0; j--) {
+      if (a[i] === b[j]) {
+        dp[rowBase + j] = dp[nextBase + j + 1] + 1;
+      } else {
+        dp[rowBase + j] = Math.max(dp[nextBase + j], dp[rowBase + j + 1]);
+      }
+    }
+  }
+  // Backtrack to produce op list
+  const ops = [];
+  let i = 0, j = 0;
+  while (i < m && j < n) {
+    if (a[i] === b[j]) {
+      ops.push({ type: 'same', a: a[i], ai: i, bi: j });
+      i++; j++;
+    } else if (dp[(i + 1) * width + j] >= dp[i * width + j + 1]) {
+      ops.push({ type: 'del', a: a[i], ai: i });
+      i++;
+    } else {
+      ops.push({ type: 'add', b: b[j], bi: j });
+      j++;
+    }
+  }
+  while (i < m) { ops.push({ type: 'del', a: a[i], ai: i }); i++; }
+  while (j < n) { ops.push({ type: 'add', b: b[j], bi: j }); j++; }
+  return ops;
+}
+
+function runDiff() {
+  const ignoreWs = document.getElementById('diffIgnoreWs').checked;
+  let oldText = document.getElementById('diffOld').value;
+  let newText = document.getElementById('diffNew').value;
+  const out = document.getElementById('diffOutput');
+  const stats = document.getElementById('diffStats');
+
+  if (!oldText.trim() && !newText.trim()) {
+    out.innerHTML = '<div class="diff-empty">请输入两侧代码</div>';
+    stats.style.display = 'none';
+    return;
+  }
+
+  let oldLines = oldText.replace(/\r\n?/g, '\n').split('\n');
+  let newLines = newText.replace(/\r\n?/g, '\n').split('\n');
+
+  // Strip trailing empty line produced by trailing newline
+  if (oldLines.length && oldLines[oldLines.length - 1] === '') oldLines.pop();
+  if (newLines.length && newLines[newLines.length - 1] === '') newLines.pop();
+
+  const cmpOld = ignoreWs ? oldLines.map(l => l.trim()) : oldLines;
+  const cmpNew = ignoreWs ? newLines.map(l => l.trim()) : newLines;
+
+  // Guard against huge inputs that would blow up memory (each cell = 4 bytes)
+  const cells = (cmpOld.length + 1) * (cmpNew.length + 1);
+  const MAX_CELLS = 40 * 1000 * 1000; // ~160MB Uint32 cap
+  if (cells > MAX_CELLS) {
+    out.innerHTML = '<div class="diff-empty" style="color:rgba(255,130,130,0.85);">代码行数过多（' + cmpOld.length + ' × ' + cmpNew.length + '），请分段对比</div>';
+    stats.style.display = 'none';
+    return;
+  }
+
+  const ops = computeLCS(cmpOld, cmpNew);
+
+  let addCount = 0, delCount = 0, sameCount = 0;
+  let html = '';
+  let oldLn = 1, newLn = 1;
+
+  for (const op of ops) {
+    if (op.type === 'same') {
+      sameCount++;
+      const lineText = oldLines[oldLn - 1];
+      html += '<div class="diff-line same">'
+        + '<span class="ln"><span>' + oldLn + '</span><span>' + newLn + '</span></span>'
+        + '<span class="sign"> </span>'
+        + '<span class="code">' + (escapeHTML(lineText) || '&nbsp;') + '</span>'
+        + '</div>';
+      oldLn++; newLn++;
+    } else if (op.type === 'del') {
+      delCount++;
+      const lineText = oldLines[oldLn - 1];
+      html += '<div class="diff-line del">'
+        + '<span class="ln"><span>' + oldLn + '</span><span></span></span>'
+        + '<span class="sign">−</span>'
+        + '<span class="code">' + (escapeHTML(lineText) || '&nbsp;') + '</span>'
+        + '</div>';
+      oldLn++;
+    } else { // add
+      addCount++;
+      const lineText = newLines[newLn - 1];
+      html += '<div class="diff-line add">'
+        + '<span class="ln"><span></span><span>' + newLn + '</span></span>'
+        + '<span class="sign">+</span>'
+        + '<span class="code">' + (escapeHTML(lineText) || '&nbsp;') + '</span>'
+        + '</div>';
+      newLn++;
+    }
+  }
+
+  out.innerHTML = html || '<div class="diff-empty">两侧完全一致</div>';
+  document.getElementById('statAdd').textContent = addCount;
+  document.getElementById('statDel').textContent = delCount;
+  document.getElementById('statSame').textContent = sameCount;
+  stats.style.display = 'flex';
+}
+
+function swapDiff() {
+  const o = document.getElementById('diffOld');
+  const n = document.getElementById('diffNew');
+  const tmp = o.value;
+  o.value = n.value;
+  n.value = tmp;
+  runDiff();
+}
+
+function clearDiff() {
+  document.getElementById('diffOld').value = '';
+  document.getElementById('diffNew').value = '';
+  document.getElementById('diffOutput').innerHTML = '<div class="diff-empty">输入两侧代码后点击「对比差异」</div>';
+  document.getElementById('diffStats').style.display = 'none';
+}
+</script>
+</body>
+</html>

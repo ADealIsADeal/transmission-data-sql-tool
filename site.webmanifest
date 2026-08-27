@@ -1,0 +1,20 @@
+{
+  "name": "传输中台数据自助",
+  "short_name": "数据自助",
+  "start_url": "/dwd-sql-tool-20260803/",
+  "display": "standalone",
+  "background_color": "#f3f6fb",
+  "theme_color": "#edf5ff",
+  "icons": [
+    {
+      "src": "/dwd-sql-tool-20260803/favicon-32.png?v=20260810",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/dwd-sql-tool-20260803/apple-touch-icon.png?v=20260810",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
