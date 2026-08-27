@@ -24,6 +24,8 @@ jobs:
       - name: Deploy static files to CloudBase
         env:
           TCB_ENV_ID: xinjiang-d7gocy20t90474602
-          TENCENTCLOUD_SECRET_ID: ${{ secrets.TENCENTCLOUD_SECRET_ID }}
-          TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
-        run: tcb hosting deploy . -e "$TCB_ENV_ID"
+          TCB_SECRET_ID: ${{ secrets.TENCENTCLOUD_SECRET_ID }}
+          TCB_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
+        run: |
+          tcb login --apiKeyId "$TCB_SECRET_ID" --apiKey "$TCB_SECRET_KEY"
+          tcb hosting deploy . -e "$TCB_ENV_ID"
