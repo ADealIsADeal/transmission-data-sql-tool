@@ -1,0 +1,62 @@
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    #page-metrics .metric-source-banner{display:flex;justify-content:space-between;gap:12px;padding:0 2px 16px;color:var(--muted);font-size:12px}
+    #page-metrics .metric-source-banner strong{font-weight:600;color:var(--text)}
+    #page-metrics .metric-table-wrap{padding:0;overflow:hidden}
+    .metric-overview{width:100%;border-collapse:collapse;font-size:14px;line-height:1.65;text-align:left}
+    .metric-overview th,.metric-overview td{padding:14px 20px;border-bottom:1px solid var(--line);vertical-align:middle}
+    .metric-overview thead th{background:var(--soft);font-size:12px;font-weight:600;color:var(--muted)}
+    .metric-overview th:first-child{width:205px}.metric-overview th:nth-child(2){width:100px}.metric-overview th:last-child{width:85px}
+    .metric-overview tbody th{font-weight:600}.metric-overview tbody tr:last-child>*{border-bottom:0}.metric-overview tbody tr:hover{background:var(--soft)}
+    .metric-name-link,.metric-detail-link,.source-link{border:0;background:transparent;font:inherit;cursor:pointer;text-align:left;padding:0;color:var(--blue)}
+    .metric-name-link{color:var(--text)}.metric-name-link:hover,.source-link:hover{text-decoration:underline;text-underline-offset:4px}.metric-detail-link{white-space:nowrap;font-size:13px}
+    .metric-name-link:focus-visible,.source-link:focus-visible,.metric-detail-link:focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:3px}
+    #metricDialog{width:min(900px,calc(100vw - 32px))}#infoDialog{width:min(1120px,calc(100vw - 32px))}
+    .metric-detail-lead{font-size:17px;line-height:1.7;margin:0 0 22px;font-weight:550}
+    .metric-detail-tabs{display:flex;gap:24px;border-bottom:1px solid var(--line);margin-bottom:22px}
+    .metric-detail-tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:0 0 12px;color:var(--muted);font:inherit;cursor:pointer}
+    .metric-detail-tabs button.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:650}
+    .metric-explanation{margin-bottom:22px}.metric-explanation h3{margin:0 0 8px;font-size:14px}.metric-explanation p{line-height:1.85;margin:6px 0;font-size:14px}
+    .source-note{background:var(--soft);border-radius:10px;padding:12px 16px;color:var(--muted);font-size:12px;line-height:1.8}
+    .source-caption{font-size:12px!important;color:var(--muted);line-height:1.7;overflow-wrap:anywhere}
+    .source-table-name{display:block;font-size:12px;line-height:1.7;overflow-wrap:anywhere;margin:8px 0 12px}
+    .source-link{display:inline-block;font-size:12px;line-height:1.7;margin:4px 10px 4px 0}
+    .production-sql{display:block!important;background:#111b2b;color:#dce6f5!important;padding:16px;border:1px solid #26344a;border-radius:10px;font-size:12px!important;line-height:1.75!important;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;max-height:450px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .production-sql code{color:inherit!important;font-size:inherit!important;background:none!important}
+    .production-sql .kw,.production-sql .fn{color:#a9c6ff}.production-sql .str{color:#b8deb7}.production-sql .com{color:#8da0b9}
+    .metric-source-field{padding:12px 0;border-bottom:1px solid var(--line)}.metric-source-field .production-sql{margin:4px 0}
+    .numbered-sql{max-height:65vh;white-space:pre;overflow-wrap:normal}.source-code-line{display:block;min-height:21px}.source-code-line i{display:inline-block;width:45px;color:#7c91ae;user-select:none;font-style:normal}.source-highlight{background:#344967;outline:1px solid #789bca}
+    #fieldLineage .field-layout{grid-template-columns:minmax(260px,330px) minmax(0,1fr);align-items:start;gap:18px;min-height:0!important}
+    #fieldLineage .field-list{max-height:calc(100vh - 270px);overflow:auto;min-width:0}
+    #fieldLineage .production-field-table{min-width:0;width:100%;table-layout:fixed;font-size:12px}
+    #fieldLineage .production-field-table th{position:sticky;top:0;background:var(--panel);z-index:1}
+    #fieldLineage .production-field-table th:first-child{width:67%}
+    #fieldLineage .production-field-table td{padding:8px 12px;white-space:normal;overflow-wrap:anywhere}
+    #fieldLineage .production-field-table tr.selected-field{background:var(--soft);box-shadow:inset 3px 0 var(--blue)}
+    .field-select{display:block;width:100%;border:0;background:none;color:var(--text);text-align:left;padding:4px 0;font:inherit;cursor:pointer}
+    .field-select strong{display:block;font-size:13px;font-weight:600}.field-select code{display:block;color:var(--muted);font-size:11px;margin-top:4px;overflow-wrap:anywhere}
+    #fieldDetailPanel{position:static;max-height:none;padding:24px;min-width:0;overflow:hidden}
+    .field-detail-heading{display:flex;align-items:start;justify-content:space-between;gap:12px}.field-detail-heading h2{margin:0 0 6px}.field-detail-heading code{font-size:12px}
+    #fieldDetailPanel h3{margin:24px 0 12px}#fieldDetailPanel h3 small{font-weight:400;font-size:12px;color:var(--muted);margin-left:8px}
+    .production-origin{background:var(--soft);border-radius:10px;padding:12px;font-size:11px;line-height:1.8;overflow-wrap:anywhere;max-height:150px;overflow:auto}
+    .production-chain{border-left:2px solid var(--line);margin:16px 0 0 8px;padding-left:18px}
+    .production-step{margin:14px 0;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--soft)}
+    .production-step summary{cursor:pointer;font-weight:600;font-size:14px}.production-step summary small{font-size:11px;color:var(--muted);font-weight:400;margin-left:12px}
+    .production-expression{padding-top:12px;border-top:1px solid var(--line);margin-top:12px;min-width:0}.production-expression>b{font-size:12px}.production-expression .production-sql{margin:8px 0;max-height:230px}.production-expression .source-caption{margin:4px 0}
+    .field-context{margin-top:20px;font-size:13px;line-height:1.8}.field-context summary{cursor:pointer;font-weight:600}.field-used-metrics{display:flex;flex-wrap:wrap;gap:4px 12px}
+    @media(max-width:760px){.metric-overview th,.metric-overview td{padding:12px 10px;font-size:12px}.metric-overview th:first-child{width:115px}.metric-overview th:nth-child(2){width:55px}.metric-overview th:last-child{width:48px}.metric-overview .tag{font-size:10px;padding:2px 4px}.metric-detail-link{font-size:11px}#page-metrics .metric-source-banner{flex-direction:column;gap:4px}#fieldLineage .field-layout{grid-template-columns:1fr}#fieldLineage .field-list{max-height:280px}#fieldDetailPanel{padding:16px}.metric-detail-tabs{gap:18px}.production-chain{padding-left:10px}.production-step{padding:10px}.metric-detail-lead{font-size:15px}}
+    @media(max-width:720px){
+      .topbar{position:relative!important;height:auto!important}.topbar-inner{height:auto!important;min-height:68px;gap:8px;flex-wrap:wrap;padding:10px 0!important}.topbar .brand{font-size:15px}.topbar .nav{order:2;flex:0 0 100%;width:100%;min-height:42px;position:static;margin:0;overflow-x:auto}.topbar .nav button{font-size:12px;padding-left:9px!important;padding-right:9px!important}
+      #page-metrics .toolbar input,#fieldLineage .toolbar input{flex:1 0 100%;width:100%;min-width:0}
+      #page-metrics .toolbar select,#fieldLineage .toolbar select{flex:1;min-width:0}
+      .metric-overview thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+      .metric-overview tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px 12px;padding:14px;border-bottom:1px solid var(--line)}
+      .metric-overview tbody th,.metric-overview tbody td{width:auto!important;border:0;padding:0;font-size:13px}
+      .metric-overview tbody th{grid-column:1;grid-row:1}.metric-overview tbody td:nth-child(2){grid-column:2;grid-row:1}
+      .metric-overview tbody td:nth-child(3){grid-column:1/-1;grid-row:2;color:var(--muted)}
+      .metric-overview tbody td:nth-child(4){grid-column:3;grid-row:1}.metric-overview .metric-detail-link{font-size:12px}
+    }
+
+    @media(min-width:761px){
+      #fieldLineage .field-layout{height:calc(100dvh - 280px);min-height:360px!important;align-items:stretch}
+      #fieldLineage .field-list,#fieldLineage #fieldDetailPanel{height:100%;min-height:0;max-height:none;align-self:stretch;overflow:auto;overscroll-behavior:contain}
+    }

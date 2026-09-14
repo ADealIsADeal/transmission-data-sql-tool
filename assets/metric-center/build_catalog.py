@@ -1,0 +1,99 @@
+"""Extract exact SELECT expressions and source locations; no SQL is executed."""
+from pathlib import Path
+import re,json,hashlib,argparse
+ROOT=Path(__file__).resolve().parents[2]
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--source',type=Path,required=True,help='线上 SQL 文件路径')
+args=parser.parse_args()
+sql=args.source.read_text()
+# Mask comments and quoted strings while preserving character positions and line numbers.
+def mask(s):
+    return re.sub(r"--[^\n]*|/\*[\s\S]*?\*/|'(?:\\.|''|[^'\\])*'|\"(?:\\.|[^\"\\])*\"",lambda m:''.join('\n' if c=='\n' else ' ' for c in m[0]),s)
+masked=mask(sql)
+headers=list(re.finditer(r'--  FILE:\s+(\S+)',sql))
+labels=['子任务 DWS','分片 DWS','统一 DWD','分片去重 DWD','移动端小时 DWD','PC 小时 DWD']
+stages=[];queries=[]
+for si,h in enumerate(headers):
+    start=h.end();end=headers[si+1].start() if si+1<len(headers) else len(sql)
+    tokens=[];depth=0
+    for t in re.finditer(r'\b\w+\b|[(),;]',masked[start:end]):
+        if t[0]==')':depth-=1
+        tokens.append((t[0].lower(),start+t.start(),start+t.end(),depth))
+        if t[0]=='(':depth+=1
+    stage_queries=[]
+    for ti,t in enumerate(tokens):
+        if t[0]!='select':continue
+        stop=next((j for j in range(ti+1,len(tokens)) if tokens[j][0]=='from' and tokens[j][3]==t[3]),None)
+        if stop is None:continue
+        cuts=[t[2]]+[x[1] for x in tokens[ti+1:stop] if x[0]==',' and x[3]==t[3]]+[tokens[stop][1]]
+        cols={}
+        for a,b in zip(cuts,cuts[1:]):
+            while a<b and (sql[a].isspace() or sql[a]==','):a+=1
+            raw=sql[a:b].strip();clean=mask(raw).strip()
+            alias=re.search(r'\bas\s+(\w+)\s*$',clean,re.I)
+            if alias:name=alias[1];body=raw[:alias.start()].strip()
+            elif re.fullmatch(r'(?:\w+\.)?\w+',clean):name=clean.split('.')[-1];body=raw
+            else:
+                alias=re.search(r'\s+(\w+)\s*$',clean)
+                if not alias:raise ValueError(raw)
+                name=alias[1];body=raw[:alias.start()].strip()
+            cols[name]={'expression':raw,'body':body,'line':sql.count('\n',0,a)+1}
+        qi=len(stage_queries);qid=f'{si}:{qi}'
+        stage_queries.append(qid)
+        queries.append({'id':qid,'stage':si,'columns':cols})
+    # Only the executable statement, excluding commented DDL.
+    active=[t for t in tokens if t[0] in ('with','insert')]
+    a=active[0][1];b=next(t[2] for t in tokens if t[0]==';' and t[1]>a)
+    table=re.search(r'insert\s+overwrite\s+(?:table\s+)?([\w.]+)',masked[a:b],re.I)[1]
+    ddl={m[1]:{'type':m[2],'comment':m[3]} for m in re.finditer(r"--\s*,?\s*(\w+)\s+([\w]+(?:\([^)]*\))?)\s+comment\s+'([^']*)'",sql[start:end],re.I)}
+    stages.append({'id':si,'label':labels[si],'table':table,'sql':sql[a:b],'line':sql.count('\n',0,a)+1,'queries':stage_queries,'schema':ddl})
+print([(s['label'],s['queries']) for s in stages])
+for q in queries:print(q['id'],len(q['columns']),list(q['columns'])[:3])
+# Explicit relation bindings from FROM/JOIN clauses in the supplied SQL.
+bindings={
+ '0:0':{'_':['1:0']},
+ '1:0':{'download':['1:1'],'gcid':['1:2'],'_':['1:1']},
+ '1:1':{'_':['2:2']},'1:2':{'_':['dw_xlyun.pre_xlyun_mp_gcid_info_accum']},
+ '2:0':{'d':['3:2'],'hfk':['2:1']},'2:1':{'_':['dw_xlyun.dim_xlyun_transfer_gcid_forbidden_hfk_d_inc']},
+ '2:2':{'joined':['2:0'],'dim_pub1':['2:3'],'dim_pub2':['2:4']},
+ '2:3':{'_':['dw_xlyun.dim_pub_sundry_manual_full']},'2:4':{'_':['dw_xlyun.dim_pub_sundry_manual_full']},
+ '3:0':{'_':['5:0']},'3:1':{'_':['4:0']},'3:2':{'ranked':['3:0','3:1']},
+ '4:0':{'raw':['4:1'],'_':['4:1']},'4:1':{'_':['complat_odl.stat_heartbeat']},
+ '5:0':{'raw':['5:1'],'_':['5:1']},'5:1':{'_':['complat_odl.stat_event']}
+}
+assert set(bindings)=={q['id'] for q in queries}
+qmap={q['id']:q for q in queries}
+keywords=set('case when then else end as cast string bigint int decimal null true false and or not is in distinct over partition by order desc asc like rlike between regexp rows range current row preceding following date timestamp double float boolean array map struct'.split())
+for q in queries:
+    q['bindings']=bindings[q['id']]
+    for name,col in q['columns'].items():
+        code=mask(col['body']);refs=[]
+        for m in re.finditer(r'\b([a-zA-Z_]\w*)(?:\.([a-zA-Z_]\w*))?',code):
+            word,field=m[1],m[2]
+            if not field and (word.lower() in keywords or re.match(r'\s*\(',code[m.end():])):continue
+            targets=q['bindings'].get(word if field else '_',[])
+            if not targets and not field:
+                targets=[x for xs in q['bindings'].values() for x in xs if x in qmap and word in qmap[x]['columns']]
+            for target in targets:
+                f=field or word
+                if target in qmap and f not in qmap[target]['columns']:continue
+                ref={'query':target,'field':f}
+                if ref not in refs:refs.append(ref)
+        col['refs']=refs
+sql_dir=ROOT/'assets/metric-center/sql'
+sql_dir.mkdir(exist_ok=True)
+for stage in stages:
+    (sql_dir/(stage['table'].split('.')[-1]+'.sql')).write_text(stage['sql']+'\n')
+# DWS output fields; partition metadata is included where selected.
+result={'file':'血缘更新.sql','sha256':hashlib.sha256(sql.encode()).hexdigest(),'stages':stages,'queries':queries,'fields':list(dict.fromkeys([*qmap['0:0']['columns'],*qmap['1:0']['columns']]))}
+(ROOT/'assets/metric-center/catalog.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
+page=ROOT/'传输库血缘与自助取数.html';html=page.read_text()
+block='<script type="application/json" id="productionCatalog">'+json.dumps(result,ensure_ascii=False).replace('<','\\u003c')+'</script>'
+html=re.sub(r'<script type="application/json" id="productionCatalog">[\s\S]*?</script>\s*','',html)
+html=html.replace('  <script>','  '+block+'\n  <script>',1)
+runtime=(ROOT/'assets/metric-center/center.js').read_text()
+style=(ROOT/'assets/metric-center/center.css').read_text()
+html=re.sub(r'    // BEGIN GENERATED METRIC CENTER[\s\S]*?    // END GENERATED METRIC CENTER',lambda m:'    // BEGIN GENERATED METRIC CENTER\n'+runtime+'    // END GENERATED METRIC CENTER',html)
+html=re.sub(r'    /\* BEGIN GENERATED METRIC CENTER \*/[\s\S]*?    /\* END GENERATED METRIC CENTER \*/',lambda m:'    /* BEGIN GENERATED METRIC CENTER */\n'+style+'    /* END GENERATED METRIC CENTER */',html)
+page.write_text(html)
+(ROOT/'app.html').write_text(html)

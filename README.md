@@ -15,7 +15,11 @@
 
 | 文件 | 说明 |
 | --- | --- |
-| `传输库血缘与自助取数.html` | 网站入口页面 |
+| `index.html` | 四页导航首页 |
+| `自助取数.html`、`指标中心.html`、`数据血缘.html`、`常用工具.html` | 独立页面入口，加载 app.html |
+| `app.html` | 共享应用页面 |
+| `传输库血缘与自助取数.html` | 与 app.html 同步的兼容入口 |
+| `assets/metric-center/` | 指标中心、字段血缘模块与 SQL 提取目录 |
 | `dev_toolkit.html` | 内嵌的常用工具页面 |
 | `site.webmanifest` | PWA 配置 |
 | `favicon*`、`apple-touch-icon.png`、`safari-pinned-tab.svg` | 网站图标资源 |
@@ -28,18 +32,32 @@
 python3 -m http.server 8000
 ```
 
-然后访问 <http://localhost:8000/传输库血缘与自助取数.html>。
+然后访问 <http://localhost:8000/>，或直接进入 <http://localhost:8000/指标中心.html>。
 
 ## 部署
 
-项目可部署到 GitHub Pages、CloudBase、Nginx 或其他静态托管服务。部署时请将整个项目目录作为网站根目录，并使用 `传输库血缘与自助取数.html` 作为入口页面。
+项目可部署到 GitHub Pages、CloudBase、Nginx 或其他静态托管服务。部署时请将整个项目目录作为网站根目录，并使用 `index.html` 作为导航首页。
 
 ## 注意事项
 
-- 本项目不包含原始 SQL 文件、业务数据或数据库连接信息。
+- 页面内嵌线上加工 SQL 摘录与字段来源目录；不包含业务数据或数据库连接信息。
 - 页面生成的是查询模板，实际执行前请根据目标数据仓库的 SQL 方言和权限进行校验。
-- 如果部署平台要求默认入口文件名为 `index.html`，请在平台配置中指定入口页面，或另行复制入口文件。
+- 保留四页导航及两个共享应用入口；更新应用时应同步 `app.html` 和 `传输库血缘与自助取数.html`。
 
 ## License
 
 本项目暂未声明开源许可证。未经许可，请勿将其中的业务规则、字段信息或页面内容用于商业用途。
+
+## 指标中心与字段血缘更新
+
+提供 20 项指标的概览、口径说明、查询 SQL、来源字段与线上 SQL 行号。字段血缘覆盖分片层 78 个、子任务层 77 个 SELECT 输出字段。源文件包含 6 个 DWD/DWS 加工任务，不包含最终 ADS 聚合；页面明确区分线上加工原文与指标查询模板。当前查询继续保持不限制 1TB。
+
+修改 center.js 或 center.css 后重新生成：
+
+```bash
+python3 assets/metric-center/build_catalog.py --source /path/to/血缘更新.sql
+```
+
+命令更新目录 JSON、源文件哈希，并同步两个应用入口。提取器的 FROM/JOIN 绑定针对当前六个任务；新增或调整子查询时须同步检查 bindings。字段链路展示字段值的直接依赖，关联条件与过滤上下文可查看对应完整 SQL。DDL 注释类型仅作说明，不代表已连接线上库校验。
+
+字段血缘桌面布局两侧等高、独立滚动。线上加工按目标表拆为 `assets/metric-center/sql/` 中的六个 SQL 文件，可在页面下载；展示行号以每张表文件从 1 开始，目录保留原文件位置用于追溯。
