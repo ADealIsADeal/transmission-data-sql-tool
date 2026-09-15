@@ -79,3 +79,16 @@
     @media(max-width:600px){#metricDialogBody{padding:16px}#metricDialog .metric-detail-tabs button{font-size:12px;padding:10px 5px}#metricDialog .metric-source-table,#metricDialog .metric-source-field{padding:12px}}
     #metricDialog .metric-detail-tabs button{background:transparent!important;color:var(--muted)!important;box-shadow:none!important;border:0!important}
     #metricDialog .metric-detail-tabs button[aria-selected="true"]{background:var(--blue)!important;color:#fff!important;box-shadow:0 2px 6px rgba(20,40,90,.14)!important}
+
+    #tableDetailPanel{padding:20px}
+    .table-detail-title h2{font-size:17px;margin:10px 0 7px}
+    .table-detail-title>code{display:block;font-size:11px;line-height:1.7;overflow-wrap:anywhere;color:var(--muted)}
+    .table-description{font-size:13px;line-height:1.85;margin:18px 0;color:var(--text);overflow-wrap:anywhere}
+    .table-facts{margin:0 0 20px;padding:12px 14px;border-radius:10px;background:var(--soft)}
+    .table-facts>div{display:grid;grid-template-columns:70px minmax(0,1fr);gap:10px;padding:5px 0;font-size:12px;line-height:1.7}
+    .table-facts dt{color:var(--muted)}.table-facts dd{margin:0;overflow-wrap:anywhere}
+    .table-relations{margin:18px 0}.table-relations h3{display:flex;align-items:center;gap:8px;font-size:13px;margin:0 0 10px}.table-relations h3>span{font-size:11px;color:var(--muted);font-weight:400}
+    .table-related{display:grid;position:relative;width:100%;text-align:left;padding:11px 26px 11px 12px;margin:7px 0;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--text);cursor:pointer;gap:5px}
+    .table-related strong{font-size:12px;font-weight:550}.table-related code{font-size:10px;line-height:1.6;overflow-wrap:anywhere;color:var(--muted)}.table-related>span{position:absolute;right:10px;top:12px;color:var(--blue)}.table-related:hover{border-color:var(--blue)}
+    .table-no-related{color:var(--muted);font-size:12px;margin:0}
+    #tableDetailPanel .side-links{padding-top:16px;border-top:1px solid var(--line)}
