@@ -53,7 +53,7 @@
     }
     function openProductionSql(stage,line){
       const item=production.stages[stage];$('#infoDialogTitle').textContent=`${item.label} · 线上加工 SQL`;
-      $('#infoDialogBody').innerHTML=`<p class="source-caption">${esc(item.file)} · 独立表加工 SQL</p><code class="source-table-name">${esc(item.table)}</code><a class="source-link" href="${item.file.split('/').map(encodeURIComponent).join('/')}" download>下载本表 SQL</a><pre class="production-sql numbered-sql"><code>${item.sql.split('\n').map((row,i)=>`<span class="source-code-line ${item.line+i===line?'source-highlight':''}" data-line="${item.line+i}"><i>${i+1}</i>${esc(row)||' '}</span>`).join('')}</code></pre>`;
+      $('#infoDialogBody').innerHTML=`<p class="source-caption">${esc(item.file)} · 独立表加工 SQL</p><code class="source-table-name">${esc(item.table)}</code><a class="source-link" href="${item.file.split('/').map(encodeURIComponent).join('/')}" download>下载本表 SQL</a><pre class="production-sql numbered-sql"><code>${sqlToHtml(item.sql).split('\n').map((row,i)=>`<span class="source-code-line ${item.line+i===line?'source-highlight':''}" data-line="${item.line+i}"><i>${i+1}</i>${row||' '}</span>`).join('')}</code></pre>`;
       $('#infoDialog').showModal();requestAnimationFrame(()=>$('.source-highlight',$('#infoDialogBody'))?.scrollIntoView({block:'center'}));
     }
     function openMetric(id){
@@ -121,9 +121,4 @@
         <details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(productionScope)}</p><p>关联字段的匹配键、维表筛选与 SQL 上下文可在各层完整 SQL 中查看；上方链路展示字段值的直接依赖。</p>${steps.map(stage=>sourceButton(stage,production.stages[stage].line,production.stages[stage].label)).join('')}</details>
         <h3>直接用于指标</h3><div class="field-used-metrics">${used.map(m=>`<button class="source-link" data-metric-link="${m.id}">${esc(m.cn)}</button>`).join('')||'<span class="source-caption">当前指标未直接引用，可用于维度、筛选或上游加工。</span>'}</div>`;
       bindProduction($('#fieldDetailPanel'));bindCrossLinks($('#fieldDetailPanel'));$('#fieldDetailPanel').scrollTop=0;
-    }
-    function renderLogic(){
-      const q=$('#logicSearch').value.trim().toLowerCase();
-      $('#tableLogicGrid').innerHTML=production.stages.filter(s=>!q||`${s.table} ${s.label} ${s.sql}`.toLowerCase().includes(q)).slice().reverse().map(s=>`<article class="card table-logic-card"><div class="table-logic-head"><h2>${s.label}</h2><code>${esc(s.table)}</code></div><div class="table-logic-body">${sourceButton(s.id,s.line,'展开线上完整 SQL')}<p class="source-caption">${esc(s.file)} · ${s.sql.split('\n').length} 行 SQL 原文</p></div></article>`).join('')||'<p>没有找到匹配的加工 SQL。</p>';
-      $('#logicGrid').innerHTML='';bindProduction($('#tableLogicGrid'));
     }
