@@ -113,6 +113,12 @@ runtime=(ROOT/'assets/metric-center/center.js').read_text()+(ROOT/'assets/heartb
 style=(ROOT/'assets/metric-center/center.css').read_text()+(ROOT/'assets/heartbeat/heartbeat.css').read_text()
 html=re.sub(r'    // BEGIN GENERATED METRIC CENTER[\s\S]*?    // END GENERATED METRIC CENTER',lambda m:'    // BEGIN GENERATED METRIC CENTER\n'+runtime+'    // END GENERATED METRIC CENTER',html)
 html=re.sub(r'    /\* BEGIN GENERATED METRIC CENTER \*/[\s\S]*?    /\* END GENERATED METRIC CENTER \*/',lambda m:'    /* BEGIN GENERATED METRIC CENTER */\n'+style+'    /* END GENERATED METRIC CENTER */',html)
+# Both spaces share the same selectors, including responsive and dark styles.
+style_end=html.index('</style>')
+shared_css=html[:style_end]
+for original, counterpart in {'page-lineage':'page-heartbeat','tableLineage':'hbTableView','fieldLineage':'hbFieldView','tableDetailPanel':'hbTableDetail','fieldDetailPanel':'hbFieldDetail'}.items():
+    shared_css=re.sub(r'(?<!:is\()#'+original+r'\b', ':is(#'+original+',#'+counterpart+')', shared_css)
+html=shared_css+html[style_end:]
 page.write_text(html)
 (ROOT/'app.html').write_text(html)
 

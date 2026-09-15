@@ -257,13 +257,13 @@
     .generation-alert{position:fixed;z-index:120;top:86px;right:24px;width:min(420px,calc(100vw - 32px));padding:14px 16px;border:1px solid rgba(220,72,72,.28);border-radius:12px;background:rgba(255,248,248,.94);color:#8f2525;box-shadow:0 16px 42px rgba(92,31,31,.18),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%)}.generation-alert-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}.generation-alert-head strong{font-size:14px}.generation-alert-close{width:26px;height:26px;padding:0;border:0;border-radius:7px;background:transparent;color:inherit;font-size:18px;cursor:pointer}.generation-alert-close:hover{background:rgba(143,37,37,.08)}.generation-alert ul{margin:0;padding-left:19px;font-size:13px;line-height:1.65}.generation-alert-actions{display:flex;justify-content:flex-end;margin-top:9px}.generation-alert .btn{border-color:rgba(143,37,37,.24);color:#8f2525;background:rgba(255,255,255,.56)}@media(prefers-color-scheme:dark){.generation-alert{border-color:rgba(255,124,124,.24);background:rgba(63,25,30,.92);color:#ffc2c2;box-shadow:0 18px 46px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.055)}.generation-alert-close:hover{background:rgba(255,255,255,.07)}.generation-alert .btn{border-color:rgba(255,194,194,.2);color:#ffd0d0;background:rgba(255,255,255,.06)}}
 
     /* Shared data-workbench language for Metrics and Lineage */
-    #page-metrics>.hero,#page-lineage>.hero{display:flex;align-items:center;min-height:52px;margin:0 0 10px;padding:0 2px;background:transparent;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
-    #page-metrics>.hero h1,#page-lineage>.hero h1{margin:0;font-size:20px;line-height:28px;letter-spacing:-.01em}
-    #page-metrics>.hero p,#page-lineage>.hero p{margin:2px 0 0;font-size:12px;line-height:18px;color:var(--muted)}
-    #page-metrics>.toolbar,#fieldLineage>.toolbar,#logicLineage>.toolbar{min-height:54px;margin-bottom:12px;padding:9px 10px;border-radius:12px;gap:8px}
-    #page-metrics>.toolbar input,#page-metrics>.toolbar select,#fieldLineage>.toolbar input,#fieldLineage>.toolbar select,#logicLineage>.toolbar input{height:34px;border-radius:8px;font-size:13px;background:rgba(255,255,255,.34)}
-    #page-metrics>.toolbar input,#fieldLineage>.toolbar input,#logicLineage>.toolbar input{min-width:260px;flex:1}
-    #page-metrics>.toolbar .pill,#fieldLineage>.toolbar .pill,#logicLineage>.toolbar .pill{margin-left:auto}
+    #page-metrics>.hero,:is(#page-lineage,#page-heartbeat)>.hero{display:flex;align-items:center;min-height:52px;margin:0 0 10px;padding:0 2px;background:transparent;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+    #page-metrics>.hero h1,:is(#page-lineage,#page-heartbeat)>.hero h1{margin:0;font-size:20px;line-height:28px;letter-spacing:-.01em}
+    #page-metrics>.hero p,:is(#page-lineage,#page-heartbeat)>.hero p{margin:2px 0 0;font-size:12px;line-height:18px;color:var(--muted)}
+    #page-metrics>.toolbar,:is(#fieldLineage,#hbFieldView)>.toolbar,#logicLineage>.toolbar{min-height:54px;margin-bottom:12px;padding:9px 10px;border-radius:12px;gap:8px}
+    #page-metrics>.toolbar input,#page-metrics>.toolbar select,:is(#fieldLineage,#hbFieldView)>.toolbar input,:is(#fieldLineage,#hbFieldView)>.toolbar select,#logicLineage>.toolbar input{height:34px;border-radius:8px;font-size:13px;background:rgba(255,255,255,.34)}
+    #page-metrics>.toolbar input,:is(#fieldLineage,#hbFieldView)>.toolbar input,#logicLineage>.toolbar input{min-width:260px;flex:1}
+    #page-metrics>.toolbar .pill,:is(#fieldLineage,#hbFieldView)>.toolbar .pill,#logicLineage>.toolbar .pill{margin-left:auto}
 
     #page-metrics .meta-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     #page-metrics .meta-metric-card{padding:14px;border-radius:14px;overflow:hidden}
@@ -281,151 +281,151 @@
     #page-metrics .tag.seq,#page-metrics .tag.task{min-height:24px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(255,255,255,.46)}
     #page-metrics .tag.seq{color:#315fce}#page-metrics .tag.task{color:#7951bb}
 
-    #page-lineage>.lineage-tabs{display:inline-flex;min-height:48px;margin-bottom:12px;padding:5px;border:.5px solid rgba(174,190,215,.24);border-radius:12px;background:rgba(246,249,254,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.62);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%)}
-    #page-lineage>.lineage-tabs .btn{height:36px;min-height:36px;padding:0 15px;border:0!important;border-radius:9px;background:transparent!important;color:var(--muted);box-shadow:none!important;font-size:13px;font-weight:600}
-    #page-lineage>.lineage-tabs .btn:hover{color:var(--text);background:rgba(255,255,255,.48)!important}
-    #page-lineage>.lineage-tabs .btn.active{color:var(--blue)!important;background:rgba(255,255,255,.82)!important;box-shadow:0 5px 16px rgba(35,52,88,.09),inset 0 1px 0 rgba(255,255,255,.9)!important}
-    #page-lineage .lineage-layout,#page-lineage .field-layout{gap:12px}
-    #page-lineage .lineage-layout{grid-template-columns:minmax(0,1fr) 320px}
-    #page-lineage .field-layout{grid-template-columns:minmax(0,1fr) 340px}
-    #page-lineage .lineage-main,#page-lineage .side-detail{padding:14px;border-radius:14px}
-    #page-lineage .lineage-controls{align-items:center;gap:7px;margin-bottom:12px}
-    #page-lineage .lineage-controls .control,#page-lineage .lineage-controls .btn{height:34px;min-height:34px;border-radius:8px;font-size:13px}
-    #page-lineage .lineage-controls input{min-width:220px;flex:1}
-    #page-lineage .legend{gap:5px 10px;font-size:11px;color:var(--muted)}
-    #page-lineage .legend span:before{width:7px;height:7px}
-    #page-lineage .graph{min-height:360px;padding:24px 12px;border:.5px solid rgba(174,190,215,.22);border-radius:12px;background-color:rgba(247,250,255,.25)}
-    #page-lineage .graph-node{width:180px;min-height:88px;padding:11px;border-width:1px;border-radius:11px;background:rgba(255,255,255,.42);box-shadow:0 8px 22px rgba(35,52,88,.07),inset 0 1px 0 rgba(255,255,255,.78)}
-    #page-lineage .graph-node:hover,#page-lineage .graph-node.active{transform:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--node) 16%,transparent),0 9px 24px rgba(35,52,88,.09)}
-    #page-lineage .graph-node strong{margin:4px 0 2px;font-size:13px;line-height:19px}
-    #page-lineage .graph-node code{font-size:10px;line-height:15px}
-    #page-lineage .graph-node small{font-size:10px;line-height:16px}
-    #page-lineage .side-detail{top:88px}
-    #page-lineage .side-detail h2{margin:0 0 4px;font-size:15px;line-height:22px}
-    #page-lineage .side-detail>code{display:block;overflow-wrap:anywhere;color:var(--muted);font-size:11px;line-height:17px}
-    #page-lineage .meta-list{grid-template-columns:92px minmax(0,1fr);margin-top:10px;font-size:12px}
-    #page-lineage .meta-list dt,#page-lineage .meta-list dd{padding:7px 0;border-color:rgba(174,190,215,.18)}
-    #page-lineage .data-table th,#page-lineage .data-table td{padding:10px 12px;font-size:12px}
-    #page-lineage .table-logic-grid,#page-lineage .logic-grid{gap:12px}
-    #page-lineage .table-logic-card,#page-lineage .logic-card{border-radius:14px;overflow:hidden}
+    :is(#page-lineage,#page-heartbeat)>.lineage-tabs{display:inline-flex;min-height:48px;margin-bottom:12px;padding:5px;border:.5px solid rgba(174,190,215,.24);border-radius:12px;background:rgba(246,249,254,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.62);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%)}
+    :is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{height:36px;min-height:36px;padding:0 15px;border:0!important;border-radius:9px;background:transparent!important;color:var(--muted);box-shadow:none!important;font-size:13px;font-weight:600}
+    :is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{color:var(--text);background:rgba(255,255,255,.48)!important}
+    :is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{color:var(--blue)!important;background:rgba(255,255,255,.82)!important;box-shadow:0 5px 16px rgba(35,52,88,.09),inset 0 1px 0 rgba(255,255,255,.9)!important}
+    :is(#page-lineage,#page-heartbeat) .lineage-layout,:is(#page-lineage,#page-heartbeat) .field-layout{gap:12px}
+    :is(#page-lineage,#page-heartbeat) .lineage-layout{grid-template-columns:minmax(0,1fr) 320px}
+    :is(#page-lineage,#page-heartbeat) .field-layout{grid-template-columns:minmax(0,1fr) 340px}
+    :is(#page-lineage,#page-heartbeat) .lineage-main,:is(#page-lineage,#page-heartbeat) .side-detail{padding:14px;border-radius:14px}
+    :is(#page-lineage,#page-heartbeat) .lineage-controls{align-items:center;gap:7px;margin-bottom:12px}
+    :is(#page-lineage,#page-heartbeat) .lineage-controls .control,:is(#page-lineage,#page-heartbeat) .lineage-controls .btn{height:34px;min-height:34px;border-radius:8px;font-size:13px}
+    :is(#page-lineage,#page-heartbeat) .lineage-controls input{min-width:220px;flex:1}
+    :is(#page-lineage,#page-heartbeat) .legend{gap:5px 10px;font-size:11px;color:var(--muted)}
+    :is(#page-lineage,#page-heartbeat) .legend span:before{width:7px;height:7px}
+    :is(#page-lineage,#page-heartbeat) .graph{min-height:360px;padding:24px 12px;border:.5px solid rgba(174,190,215,.22);border-radius:12px;background-color:rgba(247,250,255,.25)}
+    :is(#page-lineage,#page-heartbeat) .graph-node{width:180px;min-height:88px;padding:11px;border-width:1px;border-radius:11px;background:rgba(255,255,255,.42);box-shadow:0 8px 22px rgba(35,52,88,.07),inset 0 1px 0 rgba(255,255,255,.78)}
+    :is(#page-lineage,#page-heartbeat) .graph-node:hover,:is(#page-lineage,#page-heartbeat) .graph-node.active{transform:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--node) 16%,transparent),0 9px 24px rgba(35,52,88,.09)}
+    :is(#page-lineage,#page-heartbeat) .graph-node strong{margin:4px 0 2px;font-size:13px;line-height:19px}
+    :is(#page-lineage,#page-heartbeat) .graph-node code{font-size:10px;line-height:15px}
+    :is(#page-lineage,#page-heartbeat) .graph-node small{font-size:10px;line-height:16px}
+    :is(#page-lineage,#page-heartbeat) .side-detail{top:88px}
+    :is(#page-lineage,#page-heartbeat) .side-detail h2{margin:0 0 4px;font-size:15px;line-height:22px}
+    :is(#page-lineage,#page-heartbeat) .side-detail>code{display:block;overflow-wrap:anywhere;color:var(--muted);font-size:11px;line-height:17px}
+    :is(#page-lineage,#page-heartbeat) .meta-list{grid-template-columns:92px minmax(0,1fr);margin-top:10px;font-size:12px}
+    :is(#page-lineage,#page-heartbeat) .meta-list dt,:is(#page-lineage,#page-heartbeat) .meta-list dd{padding:7px 0;border-color:rgba(174,190,215,.18)}
+    :is(#page-lineage,#page-heartbeat) .data-table th,:is(#page-lineage,#page-heartbeat) .data-table td{padding:10px 12px;font-size:12px}
+    :is(#page-lineage,#page-heartbeat) .table-logic-grid,:is(#page-lineage,#page-heartbeat) .logic-grid{gap:12px}
+    :is(#page-lineage,#page-heartbeat) .table-logic-card,:is(#page-lineage,#page-heartbeat) .logic-card{border-radius:14px;overflow:hidden}
 
-    @media(max-width:1180px){#page-metrics .meta-metric-grid{grid-template-columns:1fr}#page-lineage .lineage-layout,#page-lineage .field-layout{grid-template-columns:1fr}#page-lineage .side-detail{position:static}}
-    @media(max-width:760px){#page-metrics .grain-meta-groups{grid-template-columns:1fr}#page-metrics>.toolbar,#fieldLineage>.toolbar,#logicLineage>.toolbar{align-items:stretch}#page-metrics>.toolbar input,#fieldLineage>.toolbar input,#logicLineage>.toolbar input{min-width:0;width:100%}}
+    @media(max-width:1180px){#page-metrics .meta-metric-grid{grid-template-columns:1fr}:is(#page-lineage,#page-heartbeat) .lineage-layout,:is(#page-lineage,#page-heartbeat) .field-layout{grid-template-columns:1fr}:is(#page-lineage,#page-heartbeat) .side-detail{position:static}}
+    @media(max-width:760px){#page-metrics .grain-meta-groups{grid-template-columns:1fr}#page-metrics>.toolbar,:is(#fieldLineage,#hbFieldView)>.toolbar,#logicLineage>.toolbar{align-items:stretch}#page-metrics>.toolbar input,:is(#fieldLineage,#hbFieldView)>.toolbar input,#logicLineage>.toolbar input{min-width:0;width:100%}}
     @media(prefers-color-scheme:dark){
-      #page-metrics>.toolbar input,#page-metrics>.toolbar select,#fieldLineage>.toolbar input,#fieldLineage>.toolbar select,#logicLineage>.toolbar input{background:rgba(255,255,255,.035)}
+      #page-metrics>.toolbar input,#page-metrics>.toolbar select,:is(#fieldLineage,#hbFieldView)>.toolbar input,:is(#fieldLineage,#hbFieldView)>.toolbar select,#logicLineage>.toolbar input{background:rgba(255,255,255,.035)}
       #page-metrics .meta-metric-head{border-color:rgba(255,255,255,.06)}
       #page-metrics .grain-meta-group{border-color:rgba(255,255,255,.065);background:rgba(255,255,255,.025);box-shadow:inset 0 .5px 0 rgba(255,255,255,.035)}
       #page-metrics .derived-chip{border-color:rgba(255,255,255,.07);background:rgba(255,255,255,.035);box-shadow:inset 0 .5px 0 rgba(255,255,255,.04)}
       #page-metrics .derived-chip:hover{border-color:rgba(174,163,238,.24);background:rgba(255,255,255,.065);color:rgba(255,255,255,.88)}
       #page-metrics .tag.seq,#page-metrics .tag.task{border-color:rgba(255,255,255,.11);background:rgba(255,255,255,.055)}#page-metrics .tag.seq{color:#a9c4ff}#page-metrics .tag.task{color:#d8c0ff}
-      #page-lineage>.lineage-tabs{border-color:rgba(255,255,255,.06);background:rgba(0,0,0,.2);box-shadow:inset 0 .5px 0 rgba(255,255,255,.035)}
-      #page-lineage>.lineage-tabs .btn:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.045)!important}
-      #page-lineage>.lineage-tabs .btn.active{color:rgba(255,255,255,.92)!important;background:rgba(255,255,255,.08)!important;box-shadow:0 5px 16px rgba(0,0,0,.18),inset 0 .5px 0 rgba(255,255,255,.06)!important}
-      #page-lineage .graph{border-color:rgba(255,255,255,.055);background-color:rgba(0,0,0,.18)}
-      #page-lineage .graph-node{background:rgba(255,255,255,.045)!important;box-shadow:0 8px 22px rgba(0,0,0,.18),inset 0 .5px 0 rgba(255,255,255,.055)!important}
-      #page-lineage .meta-list dt,#page-lineage .meta-list dd{border-color:rgba(255,255,255,.055)}
+      :is(#page-lineage,#page-heartbeat)>.lineage-tabs{border-color:rgba(255,255,255,.06);background:rgba(0,0,0,.2);box-shadow:inset 0 .5px 0 rgba(255,255,255,.035)}
+      :is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.045)!important}
+      :is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{color:rgba(255,255,255,.92)!important;background:rgba(255,255,255,.08)!important;box-shadow:0 5px 16px rgba(0,0,0,.18),inset 0 .5px 0 rgba(255,255,255,.06)!important}
+      :is(#page-lineage,#page-heartbeat) .graph{border-color:rgba(255,255,255,.055);background-color:rgba(0,0,0,.18)}
+      :is(#page-lineage,#page-heartbeat) .graph-node{background:rgba(255,255,255,.045)!important;box-shadow:0 8px 22px rgba(0,0,0,.18),inset 0 .5px 0 rgba(255,255,255,.055)!important}
+      :is(#page-lineage,#page-heartbeat) .meta-list dt,:is(#page-lineage,#page-heartbeat) .meta-list dd{border-color:rgba(255,255,255,.055)}
     }
 
     /* High-contrast premium tab states */
-    .nav button,.query-workspace-tab,#page-lineage>.lineage-tabs .btn{position:relative;overflow:hidden;isolation:isolate;transition:color .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease}
-    .nav button:after,.query-workspace-tab:after,#page-lineage>.lineage-tabs .btn:after{content:"";position:absolute;z-index:2;right:22%;bottom:2px;left:22%;height:2px;border-radius:999px;background:linear-gradient(90deg,#315bef,#7a65db);box-shadow:0 0 8px rgba(73,86,224,.42);opacity:0;transform:scaleX(.35);transition:opacity .2s ease,transform .22s ease}
-    .nav button:hover,.query-workspace-tab:hover:not(:disabled),#page-lineage>.lineage-tabs .btn:hover{transform:none;color:#34425a!important;background:rgba(255,255,255,.5)!important}
-    .nav button.active,.query-workspace-tab.active,#page-lineage>.lineage-tabs .btn.active{
+    .nav button,.query-workspace-tab,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{position:relative;overflow:hidden;isolation:isolate;transition:color .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+    .nav button:after,.query-workspace-tab:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:after{content:"";position:absolute;z-index:2;right:22%;bottom:2px;left:22%;height:2px;border-radius:999px;background:linear-gradient(90deg,#315bef,#7a65db);box-shadow:0 0 8px rgba(73,86,224,.42);opacity:0;transform:scaleX(.35);transition:opacity .2s ease,transform .22s ease}
+    .nav button:hover,.query-workspace-tab:hover:not(:disabled),:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{transform:none;color:#34425a!important;background:rgba(255,255,255,.5)!important}
+    .nav button.active,.query-workspace-tab.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{
       color:#2148c3!important;border-color:rgba(65,92,202,.24)!important;
       background:linear-gradient(145deg,rgba(244,247,255,.96),rgba(210,220,255,.82))!important;
       box-shadow:0 8px 22px rgba(47,70,157,.16),0 0 0 .5px rgba(72,96,200,.12),inset 0 1px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(73,96,190,.12)!important;
       font-weight:700;transform:none
     }
-    .nav button.active:after,.query-workspace-tab.active:after,#page-lineage>.lineage-tabs .btn.active:after{opacity:1;transform:scaleX(1)}
-    .query-workspace-tabs,#page-lineage>.lineage-tabs{border-color:rgba(133,151,183,.24)!important;background:linear-gradient(145deg,rgba(225,232,244,.58),rgba(244,247,252,.38))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.76),inset 0 -1px 0 rgba(126,145,177,.09)!important}
+    .nav button.active:after,.query-workspace-tab.active:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active:after{opacity:1;transform:scaleX(1)}
+    .query-workspace-tabs,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{border-color:rgba(133,151,183,.24)!important;background:linear-gradient(145deg,rgba(225,232,244,.58),rgba(244,247,252,.38))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.76),inset 0 -1px 0 rgba(126,145,177,.09)!important}
     .query-workspace-tab:disabled{opacity:.46}
     .query-workspace-tab.active .query-tab-status{color:#3154c8;background:rgba(255,255,255,.52);box-shadow:inset 0 .5px 0 rgba(255,255,255,.72)}
     @media(prefers-color-scheme:dark){
-      .nav,.query-workspace-tabs,#page-lineage>.lineage-tabs{border-color:rgba(255,255,255,.07)!important;background:linear-gradient(145deg,rgba(0,0,0,.28),rgba(255,255,255,.025))!important;box-shadow:inset 0 .5px 0 rgba(255,255,255,.045),inset 0 -1px 0 rgba(0,0,0,.25)!important}
-      .nav button,.query-workspace-tab,#page-lineage>.lineage-tabs .btn{color:rgba(255,255,255,.42)!important}
-      .nav button:hover,.query-workspace-tab:hover:not(:disabled),#page-lineage>.lineage-tabs .btn:hover{color:rgba(255,255,255,.76)!important;background:rgba(255,255,255,.055)!important}
-      .nav button.active,.query-workspace-tab.active,#page-lineage>.lineage-tabs .btn.active{color:#f4f2ff!important;border-color:rgba(165,151,242,.32)!important;background:linear-gradient(145deg,rgba(119,99,207,.42),rgba(60,51,123,.32))!important;box-shadow:0 10px 26px rgba(16,10,58,.38),0 0 0 .5px rgba(177,164,246,.08),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.2)!important}
-      .nav button.active:after,.query-workspace-tab.active:after,#page-lineage>.lineage-tabs .btn.active:after{background:linear-gradient(90deg,#8fb2ff,#c0a8ff);box-shadow:0 0 10px rgba(163,142,255,.55)}
+      .nav,.query-workspace-tabs,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{border-color:rgba(255,255,255,.07)!important;background:linear-gradient(145deg,rgba(0,0,0,.28),rgba(255,255,255,.025))!important;box-shadow:inset 0 .5px 0 rgba(255,255,255,.045),inset 0 -1px 0 rgba(0,0,0,.25)!important}
+      .nav button,.query-workspace-tab,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{color:rgba(255,255,255,.42)!important}
+      .nav button:hover,.query-workspace-tab:hover:not(:disabled),:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{color:rgba(255,255,255,.76)!important;background:rgba(255,255,255,.055)!important}
+      .nav button.active,.query-workspace-tab.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{color:#f4f2ff!important;border-color:rgba(165,151,242,.32)!important;background:linear-gradient(145deg,rgba(119,99,207,.42),rgba(60,51,123,.32))!important;box-shadow:0 10px 26px rgba(16,10,58,.38),0 0 0 .5px rgba(177,164,246,.08),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.2)!important}
+      .nav button.active:after,.query-workspace-tab.active:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active:after{background:linear-gradient(90deg,#8fb2ff,#c0a8ff);box-shadow:0 0 10px rgba(163,142,255,.55)}
       .query-workspace-tab.active .query-tab-status{color:#e1dcff;background:rgba(255,255,255,.09);box-shadow:inset 0 .5px 0 rgba(255,255,255,.08)}
     }
 
     /* Restrained flat segmented navigation */
-    .nav,.query-workspace-tabs,#page-lineage>.lineage-tabs{
+    .nav,.query-workspace-tabs,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{
       gap:3px;border:1px solid rgba(132,149,177,.18)!important;border-radius:10px!important;
       background:rgba(228,234,244,.52)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.58)!important;
       -webkit-backdrop-filter:blur(18px) saturate(125%);backdrop-filter:blur(18px) saturate(125%)
     }
-    .nav{padding:3px}.query-workspace-tabs{padding:7px 9px}.query-workspace-tabs .query-workspace-tab,#page-lineage>.lineage-tabs .btn{height:36px;min-height:36px}
-    .nav button,.query-workspace-tab,#page-lineage>.lineage-tabs .btn{
+    .nav{padding:3px}.query-workspace-tabs{padding:7px 9px}.query-workspace-tabs .query-workspace-tab,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{height:36px;min-height:36px}
+    .nav button,.query-workspace-tab,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{
       border:1px solid transparent!important;border-radius:7px!important;background:transparent!important;
       color:#6f7b8d!important;box-shadow:none!important;font-weight:600;transform:none!important
     }
-    .nav button:hover,.query-workspace-tab:hover:not(:disabled),#page-lineage>.lineage-tabs .btn:hover{
+    .nav button:hover,.query-workspace-tab:hover:not(:disabled),:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{
       border-color:rgba(124,142,172,.12)!important;background:rgba(255,255,255,.38)!important;color:#36445a!important;box-shadow:none!important
     }
-    .nav button.active,.query-workspace-tab.active,#page-lineage>.lineage-tabs .btn.active{
+    .nav button.active,.query-workspace-tab.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{
       border-color:rgba(80,104,176,.2)!important;background:rgba(255,255,255,.82)!important;color:#244bbf!important;
       box-shadow:0 2px 7px rgba(44,60,97,.08),inset 0 1px 0 rgba(255,255,255,.9)!important;font-weight:680
     }
-    .nav button:after,.query-workspace-tab:after,#page-lineage>.lineage-tabs .btn:after{
+    .nav button:after,.query-workspace-tab:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:after{
       right:calc(50% - 9px);bottom:3px;left:auto;width:18px;height:2px;border-radius:1px;
       background:#315bef;box-shadow:none;transform:scaleX(.4)
     }
-    .nav button.active:after,.query-workspace-tab.active:after,#page-lineage>.lineage-tabs .btn.active:after{opacity:.9;transform:scaleX(1)}
+    .nav button.active:after,.query-workspace-tab.active:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active:after{opacity:.9;transform:scaleX(1)}
     .query-workspace-tab.active .query-tab-status{color:#3152bd;background:rgba(49,91,239,.07);box-shadow:none}
     @media(prefers-color-scheme:dark){
-      .nav,.query-workspace-tabs,#page-lineage>.lineage-tabs{border-color:rgba(255,255,255,.065)!important;background:rgba(0,0,0,.2)!important;box-shadow:inset 0 .5px 0 rgba(255,255,255,.035)!important}
-      .nav button,.query-workspace-tab,#page-lineage>.lineage-tabs .btn{color:rgba(255,255,255,.42)!important;background:transparent!important}
-      .nav button:hover,.query-workspace-tab:hover:not(:disabled),#page-lineage>.lineage-tabs .btn:hover{border-color:rgba(255,255,255,.06)!important;background:rgba(255,255,255,.04)!important;color:rgba(255,255,255,.7)!important}
-      .nav button.active,.query-workspace-tab.active,#page-lineage>.lineage-tabs .btn.active{border-color:rgba(154,143,221,.2)!important;background:rgba(255,255,255,.085)!important;color:rgba(255,255,255,.92)!important;box-shadow:0 3px 9px rgba(0,0,0,.2),inset 0 .5px 0 rgba(255,255,255,.07)!important}
-      .nav button.active:after,.query-workspace-tab.active:after,#page-lineage>.lineage-tabs .btn.active:after{background:#a99cf4;box-shadow:none}
+      .nav,.query-workspace-tabs,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{border-color:rgba(255,255,255,.065)!important;background:rgba(0,0,0,.2)!important;box-shadow:inset 0 .5px 0 rgba(255,255,255,.035)!important}
+      .nav button,.query-workspace-tab,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{color:rgba(255,255,255,.42)!important;background:transparent!important}
+      .nav button:hover,.query-workspace-tab:hover:not(:disabled),:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{border-color:rgba(255,255,255,.06)!important;background:rgba(255,255,255,.04)!important;color:rgba(255,255,255,.7)!important}
+      .nav button.active,.query-workspace-tab.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{border-color:rgba(154,143,221,.2)!important;background:rgba(255,255,255,.085)!important;color:rgba(255,255,255,.92)!important;box-shadow:0 3px 9px rgba(0,0,0,.2),inset 0 .5px 0 rgba(255,255,255,.07)!important}
+      .nav button.active:after,.query-workspace-tab.active:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active:after{background:#a99cf4;box-shadow:none}
       .query-workspace-tab.active .query-tab-status{color:#c9c0ff;background:rgba(169,156,244,.1);box-shadow:none}
     }
 
     /* Frameless primary and lineage navigation */
-    .nav,#page-lineage>.lineage-tabs{
+    .nav,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{
       gap:4px;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;
       box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important
     }
-    .nav button,#page-lineage>.lineage-tabs .btn{height:38px;min-height:38px;padding:0 15px;border:0!important;border-radius:7px!important;background:transparent!important;box-shadow:none!important}
-    .nav button:hover,#page-lineage>.lineage-tabs .btn:hover{background:rgba(255,255,255,.34)!important;color:#36445a!important}
-    .nav button.active,#page-lineage>.lineage-tabs .btn.active{
+    .nav button,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{height:38px;min-height:38px;padding:0 15px;border:0!important;border-radius:7px!important;background:transparent!important;box-shadow:none!important}
+    .nav button:hover,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{background:rgba(255,255,255,.34)!important;color:#36445a!important}
+    .nav button.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{
       border:0!important;background:rgba(255,255,255,.7)!important;color:#244bbf!important;
       box-shadow:0 2px 7px rgba(44,60,97,.07),inset 0 0 0 1px rgba(105,124,165,.1)!important
     }
-    .nav button:after,#page-lineage>.lineage-tabs .btn:after{bottom:1px}
+    .nav button:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:after{bottom:1px}
     @media(prefers-color-scheme:dark){
-      .nav,#page-lineage>.lineage-tabs{border:0!important;background:transparent!important;box-shadow:none!important}
-      .nav button,#page-lineage>.lineage-tabs .btn{background:transparent!important}
-      .nav button:hover,#page-lineage>.lineage-tabs .btn:hover{background:rgba(255,255,255,.04)!important;color:rgba(255,255,255,.72)!important}
-      .nav button.active,#page-lineage>.lineage-tabs .btn.active{background:rgba(255,255,255,.075)!important;color:rgba(255,255,255,.92)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.055)!important}
+      .nav,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{border:0!important;background:transparent!important;box-shadow:none!important}
+      .nav button,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{background:transparent!important}
+      .nav button:hover,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{background:rgba(255,255,255,.04)!important;color:rgba(255,255,255,.72)!important}
+      .nav button.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{background:rgba(255,255,255,.075)!important;color:rgba(255,255,255,.92)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.055)!important}
     }
 
     /* Full-width underline tabs: no boxes */
-    .nav,#page-lineage>.lineage-tabs{
+    .nav,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{
       display:flex;align-items:stretch;gap:0;padding:0!important;border:0!important;border-bottom:1px solid rgba(126,143,170,.2)!important;
       border-radius:0!important;background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important
     }
-    #page-lineage>.lineage-tabs{width:100%;min-height:44px;margin-bottom:14px}
-    .nav button,#page-lineage>.lineage-tabs .btn,
-    .nav button:hover,#page-lineage>.lineage-tabs .btn:hover,
-    .nav button.active,#page-lineage>.lineage-tabs .btn.active{
+    :is(#page-lineage,#page-heartbeat)>.lineage-tabs{width:100%;min-height:44px;margin-bottom:14px}
+    .nav button,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn,
+    .nav button:hover,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover,
+    .nav button.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{
       position:relative;height:44px;min-height:44px;padding:0 18px;border:0!important;border-radius:0!important;
       background:transparent!important;box-shadow:none!important;transform:none!important
     }
-    .nav button,#page-lineage>.lineage-tabs .btn{color:#7b8698!important;font-weight:580}
-    .nav button:hover,#page-lineage>.lineage-tabs .btn:hover{color:#34425a!important}
-    .nav button.active,#page-lineage>.lineage-tabs .btn.active{color:#244bbf!important;font-weight:700}
-    .nav button:after,#page-lineage>.lineage-tabs .btn:after{
+    .nav button,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{color:#7b8698!important;font-weight:580}
+    .nav button:hover,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{color:#34425a!important}
+    .nav button.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{color:#244bbf!important;font-weight:700}
+    .nav button:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:after{
       right:12px;bottom:-1px;left:12px;width:auto;height:2px;border-radius:2px 2px 0 0;background:#315bef;
       box-shadow:none;opacity:0;transform:scaleX(.4);transform-origin:center
     }
-    .nav button.active:after,#page-lineage>.lineage-tabs .btn.active:after{opacity:1;transform:scaleX(1)}
+    .nav button.active:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active:after{opacity:1;transform:scaleX(1)}
     @media(prefers-color-scheme:dark){
-      .nav,#page-lineage>.lineage-tabs{border-bottom-color:rgba(255,255,255,.08)!important;background:transparent!important}
-      .nav button,#page-lineage>.lineage-tabs .btn,.nav button:hover,#page-lineage>.lineage-tabs .btn:hover,.nav button.active,#page-lineage>.lineage-tabs .btn.active{border:0!important;background:transparent!important;box-shadow:none!important}
-      .nav button,#page-lineage>.lineage-tabs .btn{color:rgba(255,255,255,.4)!important}.nav button:hover,#page-lineage>.lineage-tabs .btn:hover{color:rgba(255,255,255,.7)!important}.nav button.active,#page-lineage>.lineage-tabs .btn.active{color:rgba(255,255,255,.92)!important}
-      .nav button.active:after,#page-lineage>.lineage-tabs .btn.active:after{background:#9e91ef;box-shadow:none}
+      .nav,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{border-bottom-color:rgba(255,255,255,.08)!important;background:transparent!important}
+      .nav button,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn,.nav button:hover,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover,.nav button.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{border:0!important;background:transparent!important;box-shadow:none!important}
+      .nav button,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{color:rgba(255,255,255,.4)!important}.nav button:hover,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{color:rgba(255,255,255,.7)!important}.nav button.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{color:rgba(255,255,255,.92)!important}
+      .nav button.active:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active:after{background:#9e91ef;box-shadow:none}
     }
 
     /* Align every tab system to one baseline */
@@ -492,11 +492,11 @@
     #page-builder .metric-pane,#page-builder .dimension-pane{align-self:stretch}
     #page-builder .canvas-pane{height:100%}
     #page-builder .query-workspace{min-height:100%}
-    #page-metrics .meta-metric-grid,#page-lineage .lineage-layout,#page-lineage .field-layout{align-items:stretch}
-    #page-metrics .meta-metric-card,#page-lineage .lineage-main,#page-lineage .field-list{align-self:stretch}
-    #page-lineage #tableLineage .lineage-main{display:flex;flex-direction:column}
-    #page-lineage #tableLineage .graph{flex:1;height:auto}
-    @media(max-width:980px){#page-builder .workbench,#page-metrics .meta-metric-grid,#page-lineage .lineage-layout,#page-lineage .field-layout{min-height:0!important}#page-builder .metric-pane,#page-builder .dimension-pane{align-self:auto}#page-builder .query-workspace{min-height:0}}
+    #page-metrics .meta-metric-grid,:is(#page-lineage,#page-heartbeat) .lineage-layout,:is(#page-lineage,#page-heartbeat) .field-layout{align-items:stretch}
+    #page-metrics .meta-metric-card,:is(#page-lineage,#page-heartbeat) .lineage-main,:is(#page-lineage,#page-heartbeat) .field-list{align-self:stretch}
+    :is(#page-lineage,#page-heartbeat) :is(#tableLineage,#hbTableView) .lineage-main{display:flex;flex-direction:column}
+    :is(#page-lineage,#page-heartbeat) :is(#tableLineage,#hbTableView) .graph{flex:1;height:auto}
+    @media(max-width:980px){#page-builder .workbench,#page-metrics .meta-metric-grid,:is(#page-lineage,#page-heartbeat) .lineage-layout,:is(#page-lineage,#page-heartbeat) .field-layout{min-height:0!important}#page-builder .metric-pane,#page-builder .dimension-pane{align-self:auto}#page-builder .query-workspace{min-height:0}}
     @media(prefers-color-scheme:dark){.brand-mark{border-color:rgba(160,190,231,.16);background:#293650;color:#e1ecff;box-shadow:0 5px 16px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.055)}.brand-sparkle{color:#7fd8e8}}
     .tag.user{color:var(--amber);background:#fff4df;border-color:#f2dfbd}.flat-metric-choice .builder-grain.user{color:var(--amber)!important;border-color:#ead8b5!important;background:rgba(255,244,223,.72)!important}@media(prefers-color-scheme:dark){.tag.user{color:rgba(220,170,90,.9);background:rgba(180,120,50,.1);border-color:rgba(220,170,90,.18)}.flat-metric-choice .builder-grain.user{color:#f5c985!important;border-color:rgba(220,170,90,.2)!important;background:rgba(126,83,28,.22)!important}}
     #page-metrics .metric-section{padding:16px;overflow:hidden}
@@ -536,48 +536,48 @@
     /* Metric-center grain tags use the same visual tokens as self-service */
     #page-metrics .metric-section-head .tag.seq,#page-metrics .metric-section-head .tag.task{min-width:auto;min-height:24px;padding:2px 8px;border:1px solid rgba(185,199,220,.52)!important;border-radius:999px;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(244,247,252,.64))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.88)!important;font-size:12px;font-weight:600;line-height:18px;letter-spacing:0}
     #page-metrics .metric-section-head .tag.seq{color:#315fce!important;background:#e8f0ff!important;border-color:#c8d8fa!important}#page-metrics .metric-section-head .tag.task{color:#7951bb!important;background:#f0e8fc!important;border-color:#ddcaf5!important}
-    #page-lineage .lineage-step{display:grid;gap:7px;align-content:center;min-width:0}
-    #page-lineage .lineage-step-inputs{display:grid;gap:5px;padding:7px;border:1px dashed rgba(121,81,187,.26);border-radius:10px;background:rgba(121,81,187,.045)}
-    #page-lineage .lineage-step-inputs .graph-node{min-height:66px;padding:8px;border-style:solid}
-    #page-lineage .lineage-step-inputs .graph-node strong{font-size:11px;line-height:16px}#page-lineage .lineage-step-inputs .graph-node code{font-size:9px;line-height:13px}#page-lineage .lineage-step-inputs .graph-node small{display:none}
-    #page-lineage .lineage-join-label{text-align:center;color:#7951bb;font-size:10px;font-weight:650;line-height:14px}
-    #page-lineage .lineage-query-inputs{display:grid;gap:5px;padding:7px;border:1px dashed rgba(14,116,144,.48);border-radius:10px;background:rgba(14,116,144,.05)}
-    #page-lineage .lineage-query-inputs .graph-node{min-height:66px;padding:8px;border:1px dashed rgba(14,116,144,.58)!important;background:rgba(235,249,251,.72)!important;box-shadow:none!important}
-    #page-lineage .lineage-query-inputs .graph-node strong{font-size:11px;line-height:16px}#page-lineage .lineage-query-inputs .graph-node code{font-size:9px;line-height:13px}#page-lineage .lineage-query-inputs .graph-node small{display:none}
-    #page-lineage .lineage-query-label{text-align:center;color:#0e7490;font-size:10px;font-weight:650;line-height:14px}
-    @media(prefers-color-scheme:dark){#page-metrics .metric-section-head .tag.seq{color:#b8ceff!important;background:rgba(60,94,165,.38)!important;border-color:rgba(112,150,235,.3)!important}#page-metrics .metric-section-head .tag.task{color:#dfcaff!important;background:rgba(102,66,151,.4)!important;border-color:rgba(178,137,236,.3)!important}#page-lineage .lineage-step-inputs{border-color:rgba(202,169,248,.2);background:rgba(121,81,187,.08)}#page-lineage .lineage-join-label{color:#d8c0ff}#page-lineage .lineage-query-inputs{border-color:rgba(95,205,219,.3);background:rgba(14,116,144,.09)}#page-lineage .lineage-query-inputs .graph-node{border-color:rgba(95,205,219,.35)!important;background:rgba(20,74,84,.25)!important}#page-lineage .lineage-query-label{color:#8de2dd}}
+    :is(#page-lineage,#page-heartbeat) .lineage-step{display:grid;gap:7px;align-content:center;min-width:0}
+    :is(#page-lineage,#page-heartbeat) .lineage-step-inputs{display:grid;gap:5px;padding:7px;border:1px dashed rgba(121,81,187,.26);border-radius:10px;background:rgba(121,81,187,.045)}
+    :is(#page-lineage,#page-heartbeat) .lineage-step-inputs .graph-node{min-height:66px;padding:8px;border-style:solid}
+    :is(#page-lineage,#page-heartbeat) .lineage-step-inputs .graph-node strong{font-size:11px;line-height:16px}:is(#page-lineage,#page-heartbeat) .lineage-step-inputs .graph-node code{font-size:9px;line-height:13px}:is(#page-lineage,#page-heartbeat) .lineage-step-inputs .graph-node small{display:none}
+    :is(#page-lineage,#page-heartbeat) .lineage-join-label{text-align:center;color:#7951bb;font-size:10px;font-weight:650;line-height:14px}
+    :is(#page-lineage,#page-heartbeat) .lineage-query-inputs{display:grid;gap:5px;padding:7px;border:1px dashed rgba(14,116,144,.48);border-radius:10px;background:rgba(14,116,144,.05)}
+    :is(#page-lineage,#page-heartbeat) .lineage-query-inputs .graph-node{min-height:66px;padding:8px;border:1px dashed rgba(14,116,144,.58)!important;background:rgba(235,249,251,.72)!important;box-shadow:none!important}
+    :is(#page-lineage,#page-heartbeat) .lineage-query-inputs .graph-node strong{font-size:11px;line-height:16px}:is(#page-lineage,#page-heartbeat) .lineage-query-inputs .graph-node code{font-size:9px;line-height:13px}:is(#page-lineage,#page-heartbeat) .lineage-query-inputs .graph-node small{display:none}
+    :is(#page-lineage,#page-heartbeat) .lineage-query-label{text-align:center;color:#0e7490;font-size:10px;font-weight:650;line-height:14px}
+    @media(prefers-color-scheme:dark){#page-metrics .metric-section-head .tag.seq{color:#b8ceff!important;background:rgba(60,94,165,.38)!important;border-color:rgba(112,150,235,.3)!important}#page-metrics .metric-section-head .tag.task{color:#dfcaff!important;background:rgba(102,66,151,.4)!important;border-color:rgba(178,137,236,.3)!important}:is(#page-lineage,#page-heartbeat) .lineage-step-inputs{border-color:rgba(202,169,248,.2);background:rgba(121,81,187,.08)}:is(#page-lineage,#page-heartbeat) .lineage-join-label{color:#d8c0ff}:is(#page-lineage,#page-heartbeat) .lineage-query-inputs{border-color:rgba(95,205,219,.3);background:rgba(14,116,144,.09)}:is(#page-lineage,#page-heartbeat) .lineage-query-inputs .graph-node{border-color:rgba(95,205,219,.35)!important;background:rgba(20,74,84,.25)!important}:is(#page-lineage,#page-heartbeat) .lineage-query-label{color:#8de2dd}}
     /* Centered main lineage with production satellites above and one AB bridge below */
-    #page-lineage .lineage-flow-grid{display:grid;grid-template-columns:repeat(6,minmax(160px,1fr) 34px) minmax(160px,1fr);grid-template-rows:auto 24px 24px auto 42px auto;align-items:center;column-gap:0;row-gap:5px;min-width:1324px;padding:10px 4px 18px}
-    #page-lineage .lineage-main-layer{display:grid;gap:8px;align-content:center;align-self:center;grid-row:4;min-width:0}
-    #page-lineage .lineage-main-layer .graph-node{width:100%;min-height:88px}
-    #page-lineage .lineage-main-title{align-self:end;grid-row:3;text-align:center;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-    #page-lineage .lineage-main-arrow{grid-row:4;text-align:center;color:#94a3b8;font-size:22px}
-    #page-lineage .lineage-production-satellite{align-self:end;display:grid;gap:5px;min-width:0}
-    #page-lineage .lineage-production-satellite .lineage-step-inputs{padding:6px}
-    #page-lineage .lineage-production-satellite .graph-node{width:100%;min-height:62px}
-    #page-lineage .lineage-production-link{position:relative;align-self:stretch;min-height:24px}
-    #page-lineage .lineage-production-link:before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:1px dashed rgba(121,81,187,.5)}
-    #page-lineage .lineage-production-link:after{content:"关联后生成";position:absolute;top:3px;left:calc(50% + 7px);color:#7951bb;font-size:9px;white-space:nowrap}
-    #page-lineage .lineage-ab-bridge{position:relative;align-self:stretch;grid-row:5;min-height:42px}
-    #page-lineage .lineage-ab-bridge .bridge-horizontal,#page-lineage .lineage-ab-bridge .bridge-left,#page-lineage .lineage-ab-bridge .bridge-right,#page-lineage .lineage-ab-bridge .bridge-center{position:absolute;display:block;border-color:rgba(14,116,144,.62);border-style:dashed}
-    #page-lineage .lineage-ab-bridge .bridge-horizontal{top:18px;right:16.67%;left:16.67%;border-width:1px 0 0}
-    #page-lineage .lineage-ab-bridge .bridge-left{top:0;left:16.67%;height:19px;border-width:0 0 0 1px}
-    #page-lineage .lineage-ab-bridge .bridge-right{top:0;right:16.67%;height:19px;border-width:0 1px 0 0}
-    #page-lineage .lineage-ab-bridge .bridge-center{top:18px;bottom:0;left:50%;border-width:0 0 0 1px}
-    #page-lineage .lineage-ab-bridge em{position:absolute;top:20px;left:calc(50% + 7px);color:#0e7490;font-size:9px;font-style:normal;white-space:nowrap}
-    #page-lineage .lineage-ab-node{grid-row:6;justify-self:center;width:190px!important;min-height:72px!important;border:1px dashed rgba(14,116,144,.58)!important;background:rgba(235,249,251,.72)!important;box-shadow:none!important}
-    #page-lineage .lineage-ab-holder{grid-row:6;display:grid;justify-items:center}.lineage-ab-holder .graph-node{width:190px!important;min-height:72px!important;border:1px dashed rgba(14,116,144,.58)!important;background:rgba(235,249,251,.72)!important;box-shadow:none!important}
-    @media(prefers-color-scheme:dark){#page-lineage .lineage-production-link:before{border-left-color:rgba(202,169,248,.4)}#page-lineage .lineage-production-link:after{color:#d8c0ff}#page-lineage .lineage-ab-bridge .bridge-horizontal,#page-lineage .lineage-ab-bridge .bridge-left,#page-lineage .lineage-ab-bridge .bridge-right,#page-lineage .lineage-ab-bridge .bridge-center{border-color:rgba(95,205,219,.42)}#page-lineage .lineage-ab-bridge em{color:#8de2dd}#page-lineage .lineage-ab-node,#page-lineage .lineage-ab-holder .graph-node{border-color:rgba(95,205,219,.35)!important;background:rgba(20,74,84,.25)!important}}
+    :is(#page-lineage,#page-heartbeat) .lineage-flow-grid{display:grid;grid-template-columns:repeat(6,minmax(160px,1fr) 34px) minmax(160px,1fr);grid-template-rows:auto 24px 24px auto 42px auto;align-items:center;column-gap:0;row-gap:5px;min-width:1324px;padding:10px 4px 18px}
+    :is(#page-lineage,#page-heartbeat) .lineage-main-layer{display:grid;gap:8px;align-content:center;align-self:center;grid-row:4;min-width:0}
+    :is(#page-lineage,#page-heartbeat) .lineage-main-layer .graph-node{width:100%;min-height:88px}
+    :is(#page-lineage,#page-heartbeat) .lineage-main-title{align-self:end;grid-row:3;text-align:center;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    :is(#page-lineage,#page-heartbeat) .lineage-main-arrow{grid-row:4;text-align:center;color:#94a3b8;font-size:22px}
+    :is(#page-lineage,#page-heartbeat) .lineage-production-satellite{align-self:end;display:grid;gap:5px;min-width:0}
+    :is(#page-lineage,#page-heartbeat) .lineage-production-satellite .lineage-step-inputs{padding:6px}
+    :is(#page-lineage,#page-heartbeat) .lineage-production-satellite .graph-node{width:100%;min-height:62px}
+    :is(#page-lineage,#page-heartbeat) .lineage-production-link{position:relative;align-self:stretch;min-height:24px}
+    :is(#page-lineage,#page-heartbeat) .lineage-production-link:before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:1px dashed rgba(121,81,187,.5)}
+    :is(#page-lineage,#page-heartbeat) .lineage-production-link:after{content:"关联后生成";position:absolute;top:3px;left:calc(50% + 7px);color:#7951bb;font-size:9px;white-space:nowrap}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-bridge{position:relative;align-self:stretch;grid-row:5;min-height:42px}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-horizontal,:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-left,:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-right,:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-center{position:absolute;display:block;border-color:rgba(14,116,144,.62);border-style:dashed}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-horizontal{top:18px;right:16.67%;left:16.67%;border-width:1px 0 0}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-left{top:0;left:16.67%;height:19px;border-width:0 0 0 1px}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-right{top:0;right:16.67%;height:19px;border-width:0 1px 0 0}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-center{top:18px;bottom:0;left:50%;border-width:0 0 0 1px}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-bridge em{position:absolute;top:20px;left:calc(50% + 7px);color:#0e7490;font-size:9px;font-style:normal;white-space:nowrap}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-node{grid-row:6;justify-self:center;width:190px!important;min-height:72px!important;border:1px dashed rgba(14,116,144,.58)!important;background:rgba(235,249,251,.72)!important;box-shadow:none!important}
+    :is(#page-lineage,#page-heartbeat) .lineage-ab-holder{grid-row:6;display:grid;justify-items:center}.lineage-ab-holder .graph-node{width:190px!important;min-height:72px!important;border:1px dashed rgba(14,116,144,.58)!important;background:rgba(235,249,251,.72)!important;box-shadow:none!important}
+    @media(prefers-color-scheme:dark){:is(#page-lineage,#page-heartbeat) .lineage-production-link:before{border-left-color:rgba(202,169,248,.4)}:is(#page-lineage,#page-heartbeat) .lineage-production-link:after{color:#d8c0ff}:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-horizontal,:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-left,:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-right,:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge .bridge-center{border-color:rgba(95,205,219,.42)}:is(#page-lineage,#page-heartbeat) .lineage-ab-bridge em{color:#8de2dd}:is(#page-lineage,#page-heartbeat) .lineage-ab-node,:is(#page-lineage,#page-heartbeat) .lineage-ab-holder .graph-node{border-color:rgba(95,205,219,.35)!important;background:rgba(20,74,84,.25)!important}}
     /* Calm, legible dark-mode states */
     @media(prefers-color-scheme:dark){
       :root{--muted:#a8b2c2}
       body{color:#eef2f8}
       .hero p,.pane-head span,.canvas-title p,.metric-card-definition,.fresh-inline,.graph-node small,.meta-list dt,.shelf-empty{color:#a8b2c2!important}
       input::placeholder,textarea::placeholder{color:rgba(222,229,240,.46)!important}
-      .nav,.query-workspace-tabs,#page-lineage>.lineage-tabs{background:transparent!important;border-color:rgba(255,255,255,.09)!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-      .nav button,.nav button:hover,.nav button.active,.query-workspace-tab,.query-workspace-tab:hover:not(:disabled),.query-workspace-tab.active,#page-lineage>.lineage-tabs .btn,#page-lineage>.lineage-tabs .btn:hover,#page-lineage>.lineage-tabs .btn.active{background:transparent!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-      .nav button,.query-workspace-tab,#page-lineage>.lineage-tabs .btn{color:rgba(235,240,248,.52)!important}.nav button:hover,.query-workspace-tab:hover:not(:disabled),#page-lineage>.lineage-tabs .btn:hover{color:rgba(245,248,252,.78)!important}.nav button.active,.query-workspace-tab.active,#page-lineage>.lineage-tabs .btn.active{color:#f5f7fb!important}
-      .nav button.active:after,.query-workspace-tab.active:after,#page-lineage>.lineage-tabs .btn.active:after{background:#9e91ef!important;box-shadow:none!important}
+      .nav,.query-workspace-tabs,:is(#page-lineage,#page-heartbeat)>.lineage-tabs{background:transparent!important;border-color:rgba(255,255,255,.09)!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+      .nav button,.nav button:hover,.nav button.active,.query-workspace-tab,.query-workspace-tab:hover:not(:disabled),.query-workspace-tab.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{background:transparent!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+      .nav button,.query-workspace-tab,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn{color:rgba(235,240,248,.52)!important}.nav button:hover,.query-workspace-tab:hover:not(:disabled),:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn:hover{color:rgba(245,248,252,.78)!important}.nav button.active,.query-workspace-tab.active,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active{color:#f5f7fb!important}
+      .nav button.active:after,.query-workspace-tab.active:after,:is(#page-lineage,#page-heartbeat)>.lineage-tabs .btn.active:after{background:#9e91ef!important;box-shadow:none!important}
       #page-builder .field-list-compact .choice-card,#page-builder .field-list-compact .dim-card,#page-builder .query-shelf .chips .chip-check{color:rgba(235,240,248,.56)!important;background:rgba(255,255,255,.025)!important;border-color:rgba(255,255,255,.07)!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
       #page-builder .field-list-compact .choice-card:hover,#page-builder .field-list-compact .dim-card:hover,#page-builder .query-shelf .chips .chip-check:hover{color:rgba(245,248,252,.82)!important;background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.14)!important;box-shadow:none!important}
       #page-builder .metric-pane .choice-card:has(input:checked),#page-builder .metric-pane .choice-card:has(input:checked):hover{color:#dce7ff!important;background:rgba(76,105,179,.2)!important;border-color:rgba(126,157,230,.48)!important;box-shadow:inset 3px 0 0 #83a4ef!important}
@@ -647,29 +647,29 @@
     .production-sql .kw,.production-sql .fn{color:#a9c6ff}.production-sql .str{color:#b8deb7}.production-sql .com{color:#8da0b9}
     .metric-source-field{padding:12px 0;border-bottom:1px solid var(--line)}.metric-source-field .production-sql{margin:4px 0}
     .numbered-sql{max-height:65vh;white-space:pre;overflow-wrap:normal}.source-code-line{display:block;min-height:21px}.source-code-line i{display:inline-block;width:45px;color:#7c91ae;user-select:none;font-style:normal}.source-highlight{background:#344967;outline:1px solid #789bca}
-    #fieldLineage .field-layout{grid-template-columns:minmax(260px,330px) minmax(0,1fr);align-items:start;gap:18px;min-height:0!important}
-    #fieldLineage .field-list{max-height:calc(100vh - 270px);overflow:auto;min-width:0}
-    #fieldLineage .production-field-table{min-width:0;width:100%;table-layout:fixed;font-size:12px}
-    #fieldLineage .production-field-table th{position:sticky;top:0;background:var(--panel);z-index:1}
-    #fieldLineage .production-field-table th:first-child{width:67%}
-    #fieldLineage .production-field-table td{padding:8px 12px;white-space:normal;overflow-wrap:anywhere}
-    #fieldLineage .production-field-table tr.selected-field{background:var(--soft);box-shadow:inset 3px 0 var(--blue)}
+    :is(#fieldLineage,#hbFieldView) .field-layout{grid-template-columns:minmax(260px,330px) minmax(0,1fr);align-items:start;gap:18px;min-height:0!important}
+    :is(#fieldLineage,#hbFieldView) .field-list{max-height:calc(100vh - 270px);overflow:auto;min-width:0}
+    :is(#fieldLineage,#hbFieldView) .production-field-table{min-width:0;width:100%;table-layout:fixed;font-size:12px}
+    :is(#fieldLineage,#hbFieldView) .production-field-table th{position:sticky;top:0;background:var(--panel);z-index:1}
+    :is(#fieldLineage,#hbFieldView) .production-field-table th:first-child{width:67%}
+    :is(#fieldLineage,#hbFieldView) .production-field-table td{padding:8px 12px;white-space:normal;overflow-wrap:anywhere}
+    :is(#fieldLineage,#hbFieldView) .production-field-table tr.selected-field{background:var(--soft);box-shadow:inset 3px 0 var(--blue)}
     .field-select{display:block;width:100%;border:0;background:none;color:var(--text);text-align:left;padding:4px 0;font:inherit;cursor:pointer}
     .field-select strong{display:block;font-size:13px;font-weight:600}.field-select code{display:block;color:var(--muted);font-size:11px;margin-top:4px;overflow-wrap:anywhere}
-    #fieldDetailPanel{position:static;max-height:none;padding:24px;min-width:0;overflow:hidden}
+    :is(#fieldDetailPanel,#hbFieldDetail){position:static;max-height:none;padding:24px;min-width:0;overflow:hidden}
     .field-detail-heading{display:flex;align-items:start;justify-content:space-between;gap:12px}.field-detail-heading h2{margin:0 0 6px}.field-detail-heading code{font-size:12px}
-    #fieldDetailPanel h3{margin:24px 0 12px}#fieldDetailPanel h3 small{font-weight:400;font-size:12px;color:var(--muted);margin-left:8px}
+    :is(#fieldDetailPanel,#hbFieldDetail) h3{margin:24px 0 12px}:is(#fieldDetailPanel,#hbFieldDetail) h3 small{font-weight:400;font-size:12px;color:var(--muted);margin-left:8px}
     .production-origin{background:var(--soft);border-radius:10px;padding:12px;font-size:11px;line-height:1.8;overflow-wrap:anywhere;max-height:150px;overflow:auto}
     .production-chain{border-left:2px solid var(--line);margin:16px 0 0 8px;padding-left:18px}
     .production-step{margin:14px 0;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--soft)}
     .production-step summary{cursor:pointer;font-weight:600;font-size:14px}.production-step summary small{font-size:11px;color:var(--muted);font-weight:400;margin-left:12px}
     .production-expression{padding-top:12px;border-top:1px solid var(--line);margin-top:12px;min-width:0}.production-expression>b{font-size:12px}.production-expression .production-sql{margin:8px 0;max-height:230px}.production-expression .source-caption{margin:4px 0}
     .field-context{margin-top:20px;font-size:13px;line-height:1.8}.field-context summary{cursor:pointer;font-weight:600}.field-used-metrics{display:flex;flex-wrap:wrap;gap:4px 12px}
-    @media(max-width:760px){.metric-overview th,.metric-overview td{padding:12px 10px;font-size:12px}.metric-overview th:first-child{width:115px}.metric-overview th:nth-child(2){width:55px}.metric-overview th:last-child{width:48px}.metric-overview .tag{font-size:10px;padding:2px 4px}.metric-detail-link{font-size:11px}#page-metrics .metric-source-banner{flex-direction:column;gap:4px}#fieldLineage .field-layout{grid-template-columns:1fr}#fieldLineage .field-list{max-height:280px}#fieldDetailPanel{padding:16px}.metric-detail-tabs{gap:18px}.production-chain{padding-left:10px}.production-step{padding:10px}.metric-detail-lead{font-size:15px}}
+    @media(max-width:760px){.metric-overview th,.metric-overview td{padding:12px 10px;font-size:12px}.metric-overview th:first-child{width:115px}.metric-overview th:nth-child(2){width:55px}.metric-overview th:last-child{width:48px}.metric-overview .tag{font-size:10px;padding:2px 4px}.metric-detail-link{font-size:11px}#page-metrics .metric-source-banner{flex-direction:column;gap:4px}:is(#fieldLineage,#hbFieldView) .field-layout{grid-template-columns:1fr}:is(#fieldLineage,#hbFieldView) .field-list{max-height:280px}:is(#fieldDetailPanel,#hbFieldDetail){padding:16px}.metric-detail-tabs{gap:18px}.production-chain{padding-left:10px}.production-step{padding:10px}.metric-detail-lead{font-size:15px}}
     @media(max-width:720px){
       .topbar{position:relative!important;height:auto!important}.topbar-inner{height:auto!important;min-height:68px;gap:8px;flex-wrap:wrap;padding:10px 0!important}.topbar .brand{font-size:15px}.topbar .nav{order:2;flex:0 0 100%;width:100%;min-height:42px;position:static;margin:0;overflow-x:auto}.topbar .nav button{font-size:12px;padding-left:9px!important;padding-right:9px!important}
-      #page-metrics .toolbar input,#fieldLineage .toolbar input{flex:1 0 100%;width:100%;min-width:0}
-      #page-metrics .toolbar select,#fieldLineage .toolbar select{flex:1;min-width:0}
+      #page-metrics .toolbar input,:is(#fieldLineage,#hbFieldView) .toolbar input{flex:1 0 100%;width:100%;min-width:0}
+      #page-metrics .toolbar select,:is(#fieldLineage,#hbFieldView) .toolbar select{flex:1;min-width:0}
       .metric-overview thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
       .metric-overview tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px 12px;padding:14px;border-bottom:1px solid var(--line)}
       .metric-overview tbody th,.metric-overview tbody td{width:auto!important;border:0;padding:0;font-size:13px}
@@ -679,8 +679,8 @@
     }
 
     @media(min-width:761px){
-      #fieldLineage .field-layout{height:calc(100dvh - 280px);min-height:360px!important;align-items:stretch}
-      #fieldLineage .field-list,#fieldLineage #fieldDetailPanel{height:100%;min-height:0;max-height:none;align-self:stretch;overflow:auto;overscroll-behavior:contain}
+      :is(#fieldLineage,#hbFieldView) .field-layout{height:calc(100dvh - 280px);min-height:360px!important;align-items:stretch}
+      :is(#fieldLineage,#hbFieldView) .field-list,:is(#fieldLineage,#hbFieldView) :is(#fieldDetailPanel,#hbFieldDetail){height:100%;min-height:0;max-height:none;align-self:stretch;overflow:auto;overscroll-behavior:contain}
     }
 
     #metricDialogBody{padding:24px}
@@ -702,7 +702,7 @@
     #metricDialog .metric-detail-tabs button{background:transparent!important;color:var(--muted)!important;box-shadow:none!important;border:0!important}
     #metricDialog .metric-detail-tabs button[aria-selected="true"]{background:var(--blue)!important;color:#fff!important;box-shadow:0 2px 6px rgba(20,40,90,.14)!important}
 
-    #tableDetailPanel{padding:20px}
+    :is(#tableDetailPanel,#hbTableDetail){padding:20px}
     .table-detail-title h2{font-size:17px;margin:10px 0 7px}
     .table-detail-title>code{display:block;font-size:11px;line-height:1.7;overflow-wrap:anywhere;color:var(--muted)}
     .table-description{font-size:13px;line-height:1.85;margin:18px 0;color:var(--text);overflow-wrap:anywhere}
@@ -713,18 +713,12 @@
     .table-related{display:grid;position:relative;width:100%;text-align:left;padding:11px 26px 11px 12px;margin:7px 0;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--text);cursor:pointer;gap:5px}
     .table-related strong{font-size:12px;font-weight:550}.table-related code{font-size:10px;line-height:1.6;overflow-wrap:anywhere;color:var(--muted)}.table-related>span{position:absolute;right:10px;top:12px;color:var(--blue)}.table-related:hover{border-color:var(--blue)}
     .table-no-related{color:var(--muted);font-size:12px;margin:0}
-    #tableDetailPanel .side-links{padding-top:16px;border-top:1px solid var(--line)}
+    :is(#tableDetailPanel,#hbTableDetail) .side-links{padding-top:16px;border-top:1px solid var(--line)}
 
     .table-related small{font-size:11px;color:var(--blue);margin-top:3px}.table-related:disabled{cursor:default}.table-related:disabled small{color:var(--muted)}.table-related:disabled:hover{border-color:var(--line)}
 
     .table-current-sql{margin-top:14px}.table-current-sql .btn{width:100%;font-size:13px;color:var(--blue)}
     .space-switcher select{min-width:160px}.space-switcher{position:relative;z-index:1}
-    .hb-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
-    #hbGraph{padding:20px;overflow:auto}.hb-origin{display:grid;gap:8px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--soft);margin-bottom:22px}.hb-origin code{font-size:12px;overflow-wrap:anywhere}.hb-origin small,.hb-lane h3 small{color:var(--muted);font-size:11px;font-weight:400}.hb-lane h3{font-size:14px;margin:20px 0 12px}.hb-lane h3 small{margin-left:10px}.hb-lane-nodes{display:grid;grid-template-columns:minmax(155px,1fr) 22px minmax(155px,1fr) 22px minmax(155px,1fr) 22px minmax(155px,1fr);align-items:center;gap:8px}.hb-lane-nodes .graph-node{width:100%;min-height:138px;min-width:0}.hb-arrow{color:var(--muted);text-align:center}.hb-match{box-shadow:0 0 0 3px #fbbf24}.hb-lane-nodes code{overflow-wrap:anywhere;word-break:break-word}
-    #hbTableDetail,#hbFieldDetail{padding:20px;overflow:auto}#hbTableDetail h2,#hbFieldDetail h2{font-size:17px;overflow-wrap:anywhere}
-    .hb-field-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;height:calc(100dvh - 330px);min-height:380px}.hb-field-list{overflow:auto}.hb-field-layout .production-step{margin-top:12px}.hb-field-layout .production-expression{padding:12px}.hb-field-layout .production-sql{overflow:auto;white-space:pre}
-    @media(max-width:1100px){.hb-layout{grid-template-columns:1fr}.hb-field-layout{grid-template-columns:250px minmax(0,1fr)}}
-    @media(max-width:700px){.hb-field-layout{grid-template-columns:1fr;height:auto}.hb-field-list{max-height:280px}.space-switcher .source-caption{width:100%}#hbFieldDetail{max-height:70vh}}
     /* END GENERATED METRIC CENTER */
 </style>
 </head>
@@ -832,17 +826,37 @@
     </section>
 
     <section class="page" id="page-heartbeat">
-      <div class="hero"><div><h1>心跳上报 · 数据血缘</h1><p>独立展示心跳链路的表、字段与线上 SQL。</p></div></div>
+      <div class="hero"><div><h1>数据血缘</h1><p>查看真实上下游方向、表详情以及字段加工链路。</p></div></div>
       <div class="lineage-tabs"><button class="btn active" data-hb-tab="table">表血缘</button><button class="btn" data-hb-tab="field">字段血缘</button></div>
       <div id="hbTableView">
-        <div class="card toolbar"><input id="hbTableSearch" type="search" placeholder="搜索心跳表名" aria-label="搜索心跳表名"><span class="pill">8 个任务 · 上行 / 下行</span></div>
-        <div class="hb-layout"><div class="card" id="hbGraph"></div><aside class="card" id="hbTableDetail"></aside></div>
+        <div class="lineage-layout">
+          <div class="card lineage-main" id="hbCanvas">
+            <div class="lineage-controls">
+              <input class="control" id="hbTableSearch" type="search" placeholder="搜索表中文名或表名">
+              <select class="control" id="hbDirection"><option value="all">查看全链路</option><option value="up">仅查看上游</option><option value="down">仅查看下游</option></select>
+              <select class="control" id="hbDepth"><option value="1">展开一级</option><option value="2">展开二级</option><option value="3" selected>展开三级</option></select>
+              <button class="btn" id="hbFullscreen">全屏查看</button>
+              <div class="legend"><span style="--c:#64748b">原始表</span><span style="--c:#2563eb">DWD</span><span style="--c:#087f7b">DWS</span><span style="--c:#b45309">ADS</span><span style="--c:#64748b">ODS</span></div>
+            </div>
+            <div class="graph" id="hbGraph"></div>
+          </div>
+          <aside class="card side-detail" id="hbTableDetail"></aside>
+        </div>
       </div>
       <div id="hbFieldView" class="hidden">
-        <div class="card toolbar"><select id="hbFieldTable" aria-label="心跳字段所在表"></select><input id="hbFieldSearch" type="search" placeholder="搜索心跳字段" aria-label="搜索心跳字段"><span class="pill" id="hbFieldCount"></span></div>
-        <div class="hb-field-layout"><div class="card table-wrap hb-field-list"><table class="data-table"><thead><tr><th>字段</th></tr></thead><tbody id="hbFieldRows"></tbody></table></div><aside class="card" id="hbFieldDetail"></aside></div>
+        <div class="card toolbar">
+          <input id="hbFieldSearch" type="search" placeholder="搜索字段中文名、字段名或原始来源">
+          <select id="hbFieldTable" aria-label="心跳字段所在表"><option value="task">子任务 DWS</option><option value="seq">分片 DWS</option></select>
+          <select id="hbFieldFamily"><option value="">全部字段分类</option><option>标识行为</option><option>资源用户</option><option>速度质量</option><option>流量</option><option>结果地域</option><option>任务属性</option></select>
+          <span class="pill" id="hbFieldCount"></span>
+        </div>
+        <div class="field-layout">
+          <div class="card field-list table-wrap"><table class="data-table production-field-table"><thead><tr><th>字段</th><th>当前层规则</th></tr></thead><tbody id="hbFieldRows"></tbody></table></div>
+          <aside class="card side-detail" id="hbFieldDetail"></aside>
+        </div>
       </div>
     </section>
+
     <section class="page" id="page-toolkit">
       <div class="card toolkit-shell">
         <iframe class="toolkit-frame" id="toolkitFrame" title="常用工具" src="dev_toolkit.html?embedded=1&v=20260824b" loading="lazy" allow="clipboard-read; clipboard-write"></iframe>
@@ -986,7 +1000,7 @@
     $$('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));$$('[data-go-builder]').forEach(b=>b.onclick=()=>showPage('builder'));
     const toolkitFrame=$('#toolkitFrame');let toolkitResizeObserver=null;const toolkitThemeMedia=window.matchMedia('(prefers-color-scheme: dark)');
     function syncToolkitTheme(doc=toolkitFrame.contentDocument){if(!doc?.body)return;doc.body.classList.add('embedded');doc.body.classList.toggle('light',!toolkitThemeMedia.matches)}
-    const viewportWorkspaces=['#page-builder .workbench','#page-metrics .meta-metric-grid','#page-lineage #tableLineage .lineage-layout','#page-lineage #fieldLineage .field-layout'];
+    const viewportWorkspaces=['#page-builder .workbench','#page-metrics .meta-metric-grid','#page-lineage #tableLineage .lineage-layout','#page-lineage #fieldLineage .field-layout','#page-heartbeat #hbTableView .lineage-layout','#page-heartbeat #hbFieldView .field-layout'];
     function syncViewportWorkspaces(){viewportWorkspaces.forEach(selector=>{const el=$(selector);if(!el)return;if(window.innerWidth<=980){el.style.minHeight='';return}if(el.offsetParent===null)return;const top=Math.max(68,el.getBoundingClientRect().top),height=Math.max(420,window.innerHeight-top-40);el.style.minHeight=height+'px'})}
     function bindToolkitAutoHeight(){try{const doc=toolkitFrame.contentDocument,app=doc&&doc.querySelector('.app-shell');if(!app)return;syncToolkitTheme(doc);const sync=()=>{const available=Math.max(520,window.innerHeight-toolkitFrame.getBoundingClientRect().top-24),content=Math.ceil(app.scrollHeight);toolkitFrame.style.height=Math.max(available,content)+'px'};if(toolkitResizeObserver)toolkitResizeObserver.disconnect();toolkitResizeObserver=new ResizeObserver(sync);toolkitResizeObserver.observe(app);doc.addEventListener('click',()=>requestAnimationFrame(sync));window.addEventListener('resize',sync,{passive:true});sync()}catch(e){/* Same-origin local tool is expected; keep CSS fallback height otherwise. */}}
     toolkitFrame.addEventListener('load',bindToolkitAutoHeight);toolkitThemeMedia.addEventListener('change',()=>syncToolkitTheme());if(toolkitFrame.contentDocument?.readyState==='complete')bindToolkitAutoHeight();
@@ -1203,6 +1217,13 @@
     const hbQueries=Object.fromEntries(heartbeat.queries.map(q=>[q.id,q]));
     const hbStages=Object.fromEntries(heartbeat.stages.map(s=>[s.id,s]));
     const hbState={tab:'table',table:heartbeat.stages.find(s=>s.layer==='DWD'&&s.direction==='download').id,field:'dcdn_download_bytes'};
+    hbState.fieldTable=hbState.table;
+    const hbTables=heartbeat.stages.map(s=>({...s,cn:s.label,name:s.table,type:s.layer.toLowerCase(),layer:['PRE','ODS','DWD','DWS','ADS'].indexOf(s.layer),grain:s.layer==='ODS'?'上报事件':s.layer==='DWD'?'去重上报':s.layer==='DWS'?(s.direction==='download'?'任务 × 5 分钟 × 流量类别':'用户 × 5 分钟 × 流量类别'):'业务维度 × 5 分钟',frequency:'每日',up:s.upstream.map(t=>t.split('.').pop()),down:heartbeat.stages.filter(x=>x.upstream.includes(s.table)).map(x=>x.id)}));
+    const hbRawName=heartbeat.stages.find(s=>s.layer==='ODS').upstream[0];
+    hbTables.unshift({id:hbRawName.split('.').pop(),name:hbRawName,cn:'心跳原始事件日志',type:'raw',layer:0,grain:'事件上报',frequency:'小时',up:[],down:heartbeat.stages.filter(s=>s.layer==='ODS').map(s=>s.id),note:'共享原始 JSON 来源；下行事件 4660/10015，上行事件 4686/10016。当前目录未提供该表加工 SQL。'});
+    const hbTableById=id=>hbTables.find(t=>t.id===id);
+    const hbFieldFamily=id=>/bytes|traffic_category/.test(id)?'流量':/time|duration/.test(id)?'速度质量':/country|province|city|carrier/.test(id)?'结果地域':/vip|gcid|nat_type/.test(id)?'资源用户':/id$|seq|platform|purpose|status|^ds$/.test(id)?'标识行为':'任务属性';
+    function hbFieldName(s,f){return ({task_id:'任务 ID',sub_task_id:'子任务 ID',peer_id:'节点 ID',app_seq_id:'任务 ID',traceid:'行为 ID',record_seq:'上报序号',task_purpose:'任务用途',initial_cfg_strategy_name:'启动配置策略',task_cfg_strategy_name:'任务配置策略',dcdn_download_bytes:'DCDN 流量',pcdn_peer_bytes:'PCDN 流量',origin_bytes3d:'三方原始流量',origin_bytes_xl:'迅雷原始流量',download_bytes_current:'下行流量',upload_bytes_current:'上行流量',duration_current:'周期时长',server_time_5min:'5 分钟区间',service_name:'产品名称'})[f]||fieldNames[f]||s.schema[f]?.comment?.split(/[，,；;（(]/)[0]||f}
     function hbSourceButton(stage,line=1,label='查看线上 SQL'){return `<button class="source-link" data-hb-source="${stage}" data-hb-line="${line}">${esc(label)} · 第 ${line} 行</button>`}
     function bindHeartbeat(root){
       $$('[data-hb-source]',root).forEach(b=>b.onclick=()=>{
@@ -1211,7 +1232,7 @@
         $('#infoDialogBody').innerHTML=`<p class="source-caption">${esc(s.file)}</p><code class="source-table-name">${esc(s.table)}</code><a class="source-link" href="${s.file.split('/').map(encodeURIComponent).join('/')}" download>下载本表 SQL</a><pre class="production-sql numbered-sql"><code>${sqlToHtml(s.sql).split('\n').map((row,i)=>`<span class="source-code-line ${i+1===line?'source-highlight':''}"><i>${i+1}</i>${row||' '}</span>`).join('')}</code></pre>`;
         $('#infoDialog').showModal();requestAnimationFrame(()=>$('.source-highlight',$('#infoDialogBody'))?.scrollIntoView({block:'center'}));
       });
-      $$('[data-hb-table]',root).forEach(b=>b.onclick=()=>{hbState.table=b.dataset.hbTable;$('#hbFieldTable').value=hbState.table;renderHeartbeat()});
+      $$('[data-hb-table]',root).forEach(b=>b.onclick=()=>{hbState.table=b.dataset.hbTable;if(hbStages[hbState.table]){hbState.fieldTable=hbState.table;$('#hbFieldTable').value=hbState.fieldTable;}renderHeartbeat()});
       $$('[data-hb-field]',root).forEach(b=>b.onclick=()=>{hbState.field=b.dataset.hbField;renderHeartbeatFields()});
     }
     function hbTrace(field){
@@ -1221,37 +1242,41 @@
         const c=q.columns[f];if(!c)return;
         nodes.push({stage:q.stage,field:f,...c});c.refs.forEach(r=>visit(r.query,r.field));
       }
-      visit(hbStages[hbState.table].queries[0],field);return {nodes,external};
+      visit(hbStages[hbState.fieldTable].queries[0],field);return {nodes,external};
     }
     function renderHeartbeat(){
-      const selected=hbStages[hbState.table],search=$('#hbTableSearch').value.trim().toLowerCase();
-      const layers=['ODS','DWD','DWS','ADS'];
-      const source=heartbeat.stages.find(s=>s.layer==='ODS').upstream[0];
-      $('#hbGraph').innerHTML=`<div class="hb-origin"><span class="tag">PRE · 原始事件</span><code>${esc(source)}</code><small>共享来源，按事件名分别进入下行与上行链路 · 未提供该表加工 SQL</small></div>${['download','upload'].map(direction=>`<section class="hb-lane"><h3>${direction==='download'?'下行 · 下载任务':'上行 · 上传用户'} <small>${direction==='download'?'4660 / 10015':'4686 / 10016'}</small></h3><div class="hb-lane-nodes">${layers.map((layer,i)=>{const s=heartbeat.stages.find(x=>x.direction===direction&&x.layer===layer),match=search&&`${s.label} ${s.table}`.toLowerCase().includes(search);return `${i?'<span class="hb-arrow" aria-hidden="true">→</span>':''}<button class="graph-node ${s.id===selected.id?'active':''} ${match?'hb-match':''}" style="--node:${typeColor[layer.toLowerCase()]||'#64748b'}" data-hb-table="${s.id}"><span class="tag">${layer}</span><strong>${esc(s.label)}</strong><code>${esc(s.id)}</code><small>${Object.keys(hbQueries[s.queries[0]].columns).length} 个字段 · 每日分区</small></button>`}).join('')}</div></section>`).join('')}`;
-      const upstream=selected.upstream,downstream=heartbeat.stages.filter(s=>s.upstream.includes(selected.table));
-      $('#hbTableDetail').innerHTML=`<h2>${esc(selected.label)}</h2><code class="source-table-name">${esc(selected.table)}</code><p class="table-description">${esc(selected.note)}</p>${hbSourceButton(selected.id)}<h3>上游表</h3>${upstream.map(t=>{const s=heartbeat.stages.find(x=>x.table===t);return s?`<button class="table-related" data-hb-table="${s.id}"><strong>${esc(s.label)}</strong><code>${esc(t)}</code></button>`:`<p class="source-caption">${esc(t)}<br>未提供加工 SQL</p>`}).join('')}<h3>下游表</h3>${downstream.map(s=>`<button class="table-related" data-hb-table="${s.id}"><strong>${esc(s.label)}</strong><code>${esc(s.table)}</code></button>`).join('')||'<p class="source-caption">当前目录中无下游任务</p>'}<button class="btn small" id="hbExploreFields">查看本表字段血缘</button>`;
+      const selected=hbTableById(hbState.table),search=$('#hbTableSearch').value.trim().toLowerCase(),direction=$('#hbDirection').value,depth=+$('#hbDepth').value;
+      let allowed=new Set(hbTables.map(t=>t.id));
+      if(direction!=='all'){allowed=new Set([selected.id]);let frontier=[selected.id];for(let i=0;i<depth;i++){frontier=[...new Set(frontier.flatMap(id=>hbTableById(id)[direction==='up'?'up':'down']))];frontier.forEach(id=>allowed.add(id))}}
+      const list=hbTables.filter(t=>allowed.has(t.id)),layers=[...new Set(list.map(t=>t.layer))].sort((a,b)=>a-b),titles=['原始日志','上报明细','心跳去重','主题聚合','看板应用'];
+      const node=t=>`<button class="graph-node ${t.id===selected.id?'active':''}" style="--node:${typeColor[t.type]||'#64748b'};${search&&`${t.cn} ${t.name}`.toLowerCase().includes(search)?'box-shadow:0 0 0 4px #fbbf24;':''}" data-hb-table="${t.id}"><span class="tag">${t.type.toUpperCase()}</span><strong>${esc(t.cn)}</strong><code>${esc(t.name.split('.').pop())}</code><small>${esc(t.grain)} · ${t.frequency}</small></button>`;
+      $('#hbGraph').innerHTML=`<div class="lineage-flow-grid" style="grid-template-columns:repeat(${Math.max(0,layers.length-1)},minmax(160px,1fr) 34px) minmax(160px,1fr);min-width:${layers.length*160+Math.max(0,layers.length-1)*34}px">${layers.map((layer,i)=>`<div class="lineage-main-title" style="grid-column:${i*2+1}">${titles[layer]}</div><div class="lineage-main-layer" style="grid-column:${i*2+1}">${list.filter(t=>t.layer===layer).map(node).join('')}</div>${i?`<div class="lineage-main-arrow" style="grid-column:${i*2}">→</div>`:''}`).join('')}</div>`;
+      const stage=hbStages[selected.id],related=ids=>ids.length?ids.map(id=>{const t=hbTableById(id),hasSql=!!hbStages[id];return `<button class="table-related" ${hasSql?`data-hb-source="${id}" data-hb-line="1" aria-label="查看${esc(t.cn)}线上 SQL"`:'disabled'}><strong>${esc(t.cn)}</strong><code>${esc(t.name.split('.').pop())}</code><small>${hasSql?'查看线上 SQL':'未提供加工 SQL'}</small></button>`}).join(''):'<p class="table-no-related">无</p>';
+      $('#hbTableDetail').innerHTML=`<div class="table-detail-title"><span class="tag">${selected.type.toUpperCase()}</span><h2>${esc(selected.cn)}</h2><code>${esc(selected.name.split('.').pop())}</code></div><div class="table-current-sql">${stage?`<button class="btn" data-hb-source="${stage.id}" data-hb-line="1">查看当前表 SQL</button>`:'<span class="source-caption">当前表未提供加工 SQL</span>'}</div><p class="table-description">${esc(selected.note)}</p><dl class="table-facts"><div><dt>数据粒度</dt><dd>${esc(selected.grain)}</dd></div><div><dt>更新频率</dt><dd>${selected.frequency}</dd></div></dl><section class="table-relations"><h3>上游表 <span>${selected.up.length}</span></h3>${related(selected.up)}</section><section class="table-relations"><h3>下游表 <span>${selected.down.length}</span></h3>${related(selected.down)}</section><div class="side-links"><button class="btn small" data-hb-direction="up">仅看上游</button><button class="btn small" data-hb-direction="down">仅看下游</button></div>`;
       bindHeartbeat($('#hbTableView'));
-      $('#hbExploreFields').onclick=()=>setHeartbeatTab('field');
+      $$('[data-hb-direction]').forEach(b=>b.onclick=()=>{$('#hbDirection').value=b.dataset.hbDirection;renderHeartbeat()});
       renderHeartbeatFields();
     }
     function renderHeartbeatFields(){
-      const s=hbStages[hbState.table],root=hbQueries[s.queries[0]],search=$('#hbFieldSearch').value.trim().toLowerCase();
-      const fields=Object.keys(root.columns).filter(f=>!search||`${f} ${s.schema[f]?.comment||''} ${root.columns[f].expression}`.toLowerCase().includes(search));
+      const s=hbStages[hbState.fieldTable],root=hbQueries[s.queries[0]],search=$('#hbFieldSearch').value.trim().toLowerCase(),family=$('#hbFieldFamily').value;
+      const fields=Object.keys(root.columns).filter(f=>(!family||hbFieldFamily(f)===family)&&(!search||`${f} ${s.schema[f]?.comment||''} ${JSON.stringify(hbTrace(f))}`.toLowerCase().includes(search)));
       if(!fields.includes(hbState.field))hbState.field=fields[0]||'';
       $('#hbFieldCount').textContent=`${fields.length} 个字段`;
-      $('#hbFieldRows').innerHTML=fields.map(f=>`<tr class="${f===hbState.field?'selected-field':''}"><td><button class="field-select" data-hb-field="${f}" aria-pressed="${f===hbState.field}"><strong>${esc(s.schema[f]?.comment?.split(/[，；]/)[0]||f)}</strong><code>${esc(f)}</code></button></td></tr>`).join('')||'<tr><td>没有匹配字段</td></tr>';
+      $('#hbFieldRows').innerHTML=fields.map(f=>`<tr class="${f===hbState.field?'selected-field':''}"><td><button class="field-select" data-hb-field="${f}" aria-pressed="${f===hbState.field}"><strong>${esc(hbFieldName(s,f))}</strong><code>${esc(f)}</code></button></td><td>${esc(fieldRule(root.columns[f]))}</td></tr>`).join('')||'<tr><td colspan="2" class="metric-empty">没有匹配字段</td></tr>';
       const f=hbState.field;
       if(!f){$('#hbFieldDetail').innerHTML='<p class="source-caption">请选择或搜索字段。</p>';return}
       const trace=hbTrace(f),col=root.columns[f];
-      $('#hbFieldDetail').innerHTML=`<h2>${esc(f)}</h2><p class="source-caption">${esc(s.schema[f]?.comment||'SQL 输出字段')} · ${esc(s.schema[f]?.type||'未声明类型')}</p><h3>当前层表达式</h3>${sqlPanel(col.expression)}${hbSourceButton(s.id,col.line)}<h3>字段血缘 <small>从原始来源到当前层</small></h3><div class="production-origin">${trace.external.map(x=>`<code>${esc(x.table)}.${esc(x.field)}</code>`).join('<br>')||'由 SQL 常量或系统函数生成，无直接原始字段。'}</div>${[...new Set(trace.nodes.map(n=>n.stage))].reverse().map(id=>`<details class="production-step" open><summary>${esc(hbStages[id].label)}</summary>${trace.nodes.filter(n=>n.stage===id).sort((a,b)=>a.line-b.line).map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${n.note?`<p class="source-caption">${esc(n.note)}</p>`:''}${hbSourceButton(id,n.line)}</div>`).join('')}</details>`).join('')}<p class="source-caption">血缘展示字段值的直接依赖；去重、过滤及分组条件请查看各层完整 SQL。</p>`;
-      bindHeartbeat($('#hbFieldView'));
+      $('#hbFieldDetail').innerHTML=`<div class="field-detail-heading"><div><h2>${esc(hbFieldName(s,f))}</h2><code>${esc(f)}</code></div><span class="tag">${esc(s.label)}</span></div><p class="source-caption">${esc(s.schema[f]?.comment||'SQL SELECT 输出列')} · 类型注释：${esc(s.schema[f]?.type||'未在 DDL 注释中声明')}</p><h3>当前层加工</h3>${sqlPanel(col.expression)}${hbSourceButton(s.id,col.line)}<h3>字段血缘 <small>从原始来源到当前层</small></h3><div class="production-origin">${trace.external.map(x=>`<code>${esc(x.table)}.${esc(x.field)}</code>`).join('<br>')||'由 SQL 常量或系统函数生成，无直接原始字段。'}</div><div class="production-chain">${[...new Set(trace.nodes.map(n=>n.stage))].reverse().map(id=>`<details class="production-step" ${id===s.id?'open':''}><summary><span>${esc(hbStages[id].label)}</span><small>${trace.nodes.filter(n=>n.stage===id).length} 项相关表达式</small></summary><code class="source-table-name">${esc(hbStages[id].table)}</code>${trace.nodes.filter(n=>n.stage===id).sort((a,b)=>a.line-b.line).map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${n.note?`<p class="source-caption">${esc(n.note)}</p>`:''}${hbSourceButton(id,n.line)}<p class="source-caption">输入：${n.refs.map(r=>esc(r.field)).join('、')||'固定值 / 常量'}</p></div>`).join('')}</details>`).join('')}</div><details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(s.note)}</p><p>上方链路展示字段值的直接依赖；过滤和分组条件可在各层完整 SQL 中查看。</p>${[...new Set(trace.nodes.map(n=>n.stage))].map(id=>hbSourceButton(id,1,hbStages[id].label)).join('')}</details>`;
+      bindHeartbeat($('#hbFieldView'));$('#hbFieldDetail').scrollTop=0;
+      const selected=$('.selected-field',$('#hbFieldRows')),pane=$('#hbFieldView .field-list');if(selected&&pane){const y=selected.offsetTop;if(y<pane.scrollTop||y+selected.offsetHeight>pane.scrollTop+pane.clientHeight)pane.scrollTop=Math.max(0,y-pane.clientHeight/2)}
     }
     function setHeartbeatTab(tab){hbState.tab=tab;$$('[data-hb-tab]').forEach(b=>b.classList.toggle('active',b.dataset.hbTab===tab));$('#hbTableView').classList.toggle('hidden',tab!=='table');$('#hbFieldView').classList.toggle('hidden',tab!=='field');renderHeartbeat()}
     function initHeartbeat(){
       $('#hbFieldTable').innerHTML=heartbeat.stages.slice().sort((a,b)=>a.direction.localeCompare(b.direction)||['ODS','DWD','DWS','ADS'].indexOf(a.layer)-['ODS','DWD','DWS','ADS'].indexOf(b.layer)).map(s=>`<option value="${s.id}">${esc(s.label)}</option>`).join('');
-      $('#hbFieldTable').value=hbState.table;
-      $('#hbFieldTable').onchange=()=>{hbState.table=$('#hbFieldTable').value;renderHeartbeat()};
-      $('#hbTableSearch').oninput=renderHeartbeat;$('#hbFieldSearch').oninput=renderHeartbeatFields;
+      $('#hbFieldTable').value=hbState.fieldTable;
+      $('#hbFieldTable').onchange=()=>{hbState.fieldTable=$('#hbFieldTable').value;renderHeartbeatFields()};
+      ['hbTableSearch','hbDirection','hbDepth'].forEach(id=>$('#'+id).oninput=renderHeartbeat);['hbFieldSearch','hbFieldFamily'].forEach(id=>$('#'+id).oninput=renderHeartbeatFields);
+      $('#hbFullscreen').onclick=()=>{const c=$('#hbCanvas');c.classList.toggle('fullscreen');$('#hbFullscreen').textContent=c.classList.contains('fullscreen')?'退出全屏':'全屏查看'};
       $$('[data-hb-tab]').forEach(b=>b.onclick=()=>setHeartbeatTab(b.dataset.hbTab));
       renderHeartbeat();
     }
