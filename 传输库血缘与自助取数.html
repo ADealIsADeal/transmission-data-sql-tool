@@ -682,6 +682,25 @@
       #fieldLineage .field-layout{height:calc(100dvh - 280px);min-height:360px!important;align-items:stretch}
       #fieldLineage .field-list,#fieldLineage #fieldDetailPanel{height:100%;min-height:0;max-height:none;align-self:stretch;overflow:auto;overscroll-behavior:contain}
     }
+
+    #metricDialogBody{padding:24px}
+    #metricDialog .metric-detail-lead{font-size:16px;line-height:1.65;margin-bottom:20px;padding:0}
+    #metricDialog .metric-summary-label{display:block;color:var(--muted);font-size:11px;font-weight:500;margin-bottom:7px;line-height:1.5}
+    #metricDialog .metric-detail-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:5px;margin:0 0 24px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+    #metricDialog .metric-detail-tabs button{border:0;border-radius:8px;padding:11px 8px;font-size:14px;line-height:1.4;text-align:center;transition:background .15s,color .15s}
+    #metricDialog .metric-detail-tabs button:hover{background:color-mix(in srgb,var(--blue) 8%,transparent)}
+    #metricDialog .metric-detail-tabs button.active{background:var(--blue);color:#fff;font-weight:650;box-shadow:0 2px 6px rgba(20,40,90,.14)}
+    #metricDialog .metric-detail-tabs button:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+    #metricDialog .metric-source-table{padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--soft);margin-bottom:24px}
+    #metricDialog .metric-source-table code{margin:0;color:var(--text);font-size:13px}
+    #metricDialog .metric-section-title{margin:0 0 12px}#metricDialog .metric-section-title h3{font-size:14px;margin:0 0 5px}#metricDialog .metric-section-title>span{font-size:12px;color:var(--muted)}
+    #metricDialog .metric-source-field{padding:16px;border:1px solid var(--line);border-radius:12px;margin:0 0 12px}
+    #metricDialog .metric-field-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}#metricDialog .metric-field-heading>code{font-size:13px;font-weight:650;overflow-wrap:anywhere}#metricDialog .metric-field-heading .source-link{margin:0;white-space:nowrap}
+    #metricDialog .metric-field-actions{margin-top:8px}#metricDialog .metric-field-actions .source-link{margin:0}
+    #metricDialog .metric-sql-heading{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}#metricDialog .metric-sql-heading h3{margin:0;font-size:14px}#metricDialog .metric-sql-heading p{margin:6px 0 0}#metricDialog .metric-sql-heading button{flex-shrink:0}
+    @media(max-width:600px){#metricDialogBody{padding:16px}#metricDialog .metric-detail-tabs button{font-size:12px;padding:10px 5px}#metricDialog .metric-source-table,#metricDialog .metric-source-field{padding:12px}}
+    #metricDialog .metric-detail-tabs button{background:transparent!important;color:var(--muted)!important;box-shadow:none!important;border:0!important}
+    #metricDialog .metric-detail-tabs button[aria-selected="true"]{background:var(--blue)!important;color:#fff!important;box-shadow:0 2px 6px rgba(20,40,90,.14)!important}
     /* END GENERATED METRIC CENTER */
 </style>
 </head>
@@ -1075,19 +1094,20 @@
       const m=metricById(id),stage=m.grain==='seq'?1:0,grain=m.grain==='seq'?'seq':'task',used=metricSourceFields(m);state.currentMetric=id;
       const relevant=used.length?used:['seqid','parentid','download_url','peerid','platform','action_type'];
       $('#metricDialogTitle').textContent=m.cn;$('#metricDialogSub').textContent=`${m.id} · ${m.unit}`;
-      $('#metricDialogBody').innerHTML=`<div class="metric-detail-lead">${esc(metricSummary(m))}</div>
+      $('#metricDialogBody').innerHTML=`<div class="metric-detail-lead"><span class="metric-summary-label">指标口径</span>${esc(metricSummary(m))}</div>
         <div class="metric-detail-tabs" role="tablist" aria-label="指标详情"><button role="tab" aria-selected="true" aria-controls="metric-tab-definition" id="metric-tab-button-definition" data-metric-tab="definition" class="active">口径说明</button><button role="tab" aria-selected="false" aria-controls="metric-tab-sql" id="metric-tab-button-sql" data-metric-tab="sql">计算 SQL</button><button role="tab" aria-selected="false" aria-controls="metric-tab-source" id="metric-tab-button-source" data-metric-tab="source">来源与血缘</button></div>
         <section id="metric-tab-definition" role="tabpanel" aria-labelledby="metric-tab-button-definition" data-metric-panel="definition">
           <div class="metric-explanation"><h3>如何计算</h3><p>${esc(metricNotes[m.id][1])}</p>${m.ratio?'<p>分母为 0 返回 NULL；SQL 返回小数比例，百分比展示时乘以 100。</p>':''}${m.grain==='user'?"<p>peerid 的 NULL 在子任务层转为 N/A，计数时会作为一个去重值。</p>":''}</div>
           <div class="metric-explanation"><h3>数据范围</h3><p>${esc(productionScope)}</p><p>线上 DWS 加工与当前自助取数均不限制 1TB；使用时应保持分子、分母的日期和业务筛选一致。</p></div>
           <div class="source-note">依据：血缘更新.sql。字段加工来自线上原文；指标聚合沿用当前指标定义，源文件不含最终 ADS 聚合。</div>
         </section>
-        <section id="metric-tab-sql" role="tabpanel" aria-labelledby="metric-tab-button-sql" data-metric-panel="sql" hidden><p class="source-caption">单日期基础查询，可替换日期并追加业务条件。</p><button class="btn small" id="copyMetricSql">复制 SQL</button>${sqlPanel(metricCalculationSql(m))}</section>
-        <section id="metric-tab-source" role="tabpanel" aria-labelledby="metric-tab-button-source" data-metric-panel="source" hidden><h3>直接来源</h3><code class="source-table-name">${esc(m.sourceTable)}</code>${sourceButton(stage,production.stages[stage].line,'查看完整加工 SQL')}<h3>字段加工与上游</h3><div class="metric-source-fields">${relevant.map(f=>{const col=productionQueries[stage===1?'1:0':'0:0'].columns[f];return col?`<div class="metric-source-field"><button class="source-link" data-prod-field="${f}" data-prod-grain="${grain}">${esc(f)} → 字段血缘</button>${sqlPanel(col.expression)}${sourceButton(stage,col.line)}</div>`:''}).join('')}</div></section>`;
+        <section id="metric-tab-sql" role="tabpanel" aria-labelledby="metric-tab-button-sql" data-metric-panel="sql" hidden><div class="metric-sql-heading"><div><h3>指标计算 SQL</h3><p class="source-caption">单日期基础查询，可替换日期并追加业务条件。</p></div><button class="btn small" id="copyMetricSql">复制 SQL</button></div>${sqlPanel(metricCalculationSql(m))}</section>
+        <section id="metric-tab-source" role="tabpanel" aria-labelledby="metric-tab-button-source" data-metric-panel="source" hidden><div class="metric-source-table"><span class="metric-summary-label">直接来源表 · ${stage===1?'分片 DWS':'子任务 DWS'}</span><code class="source-table-name">${esc(m.sourceTable)}</code></div><div class="metric-section-title"><h3>来源字段</h3><span>${used.length?'计算使用的字段及其加工表达式':'记录计数对应的标识与分组字段'}</span></div><div class="metric-source-fields">${relevant.map(f=>{const col=productionQueries[stage===1?'1:0':'0:0'].columns[f];return col?`<div class="metric-source-field"><div class="metric-field-heading"><code>${esc(f)}</code><button class="source-link" data-prod-field="${f}" data-prod-grain="${grain}">查看字段血缘 →</button></div><span class="metric-summary-label">本层加工表达式</span>${sqlPanel(col.expression)}<div class="metric-field-actions">${sourceButton(stage,col.line)}</div></div>`:''}).join('')}</div></section>`;
       $$('[data-metric-tab]',$('#metricDialogBody')).forEach(b=>b.onclick=()=>{
-        $$('[data-metric-tab]',$('#metricDialogBody')).forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b))});
+        $$('[data-metric-tab]',$('#metricDialogBody')).forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b));x.tabIndex=x===b?0:-1});
         $$('[data-metric-panel]',$('#metricDialogBody')).forEach(x=>x.hidden=x.dataset.metricPanel!==b.dataset.metricTab);
       });
+      const tabs=$$('[data-metric-tab]',$('#metricDialogBody'));tabs.forEach((b,i)=>{b.tabIndex=i===0?0:-1;b.onkeydown=e=>{const next=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i+tabs.length-1)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:null;if(next!==null){e.preventDefault();tabs[next].click();tabs[next].focus()}}});
       $('#copyMetricSql').onclick=async()=>{try{await navigator.clipboard.writeText(metricCalculationSql(m));$('#copyMetricSql').textContent='已复制'}catch{$('#copyMetricSql').textContent='请选中下方 SQL 复制'}};
       bindProduction($('#metricDialogBody'));$('#metricDialog').showModal();
     }

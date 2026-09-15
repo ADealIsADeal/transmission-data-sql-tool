@@ -60,3 +60,22 @@
       #fieldLineage .field-layout{height:calc(100dvh - 280px);min-height:360px!important;align-items:stretch}
       #fieldLineage .field-list,#fieldLineage #fieldDetailPanel{height:100%;min-height:0;max-height:none;align-self:stretch;overflow:auto;overscroll-behavior:contain}
     }
+
+    #metricDialogBody{padding:24px}
+    #metricDialog .metric-detail-lead{font-size:16px;line-height:1.65;margin-bottom:20px;padding:0}
+    #metricDialog .metric-summary-label{display:block;color:var(--muted);font-size:11px;font-weight:500;margin-bottom:7px;line-height:1.5}
+    #metricDialog .metric-detail-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:5px;margin:0 0 24px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+    #metricDialog .metric-detail-tabs button{border:0;border-radius:8px;padding:11px 8px;font-size:14px;line-height:1.4;text-align:center;transition:background .15s,color .15s}
+    #metricDialog .metric-detail-tabs button:hover{background:color-mix(in srgb,var(--blue) 8%,transparent)}
+    #metricDialog .metric-detail-tabs button.active{background:var(--blue);color:#fff;font-weight:650;box-shadow:0 2px 6px rgba(20,40,90,.14)}
+    #metricDialog .metric-detail-tabs button:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+    #metricDialog .metric-source-table{padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--soft);margin-bottom:24px}
+    #metricDialog .metric-source-table code{margin:0;color:var(--text);font-size:13px}
+    #metricDialog .metric-section-title{margin:0 0 12px}#metricDialog .metric-section-title h3{font-size:14px;margin:0 0 5px}#metricDialog .metric-section-title>span{font-size:12px;color:var(--muted)}
+    #metricDialog .metric-source-field{padding:16px;border:1px solid var(--line);border-radius:12px;margin:0 0 12px}
+    #metricDialog .metric-field-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}#metricDialog .metric-field-heading>code{font-size:13px;font-weight:650;overflow-wrap:anywhere}#metricDialog .metric-field-heading .source-link{margin:0;white-space:nowrap}
+    #metricDialog .metric-field-actions{margin-top:8px}#metricDialog .metric-field-actions .source-link{margin:0}
+    #metricDialog .metric-sql-heading{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}#metricDialog .metric-sql-heading h3{margin:0;font-size:14px}#metricDialog .metric-sql-heading p{margin:6px 0 0}#metricDialog .metric-sql-heading button{flex-shrink:0}
+    @media(max-width:600px){#metricDialogBody{padding:16px}#metricDialog .metric-detail-tabs button{font-size:12px;padding:10px 5px}#metricDialog .metric-source-table,#metricDialog .metric-source-field{padding:12px}}
+    #metricDialog .metric-detail-tabs button{background:transparent!important;color:var(--muted)!important;box-shadow:none!important;border:0!important}
+    #metricDialog .metric-detail-tabs button[aria-selected="true"]{background:var(--blue)!important;color:#fff!important;box-shadow:0 2px 6px rgba(20,40,90,.14)!important}
