@@ -97,3 +97,9 @@ html=re.sub(r'    // BEGIN GENERATED METRIC CENTER[\s\S]*?    // END GENERATED M
 html=re.sub(r'    /\* BEGIN GENERATED METRIC CENTER \*/[\s\S]*?    /\* END GENERATED METRIC CENTER \*/',lambda m:'    /* BEGIN GENERATED METRIC CENTER */\n'+style+'    /* END GENERATED METRIC CENTER */',html)
 page.write_text(html)
 (ROOT/'app.html').write_text(html)
+
+# Version iframe URLs when the embedded application changes.
+version=hashlib.sha256(html.encode()).hexdigest()[:12]
+for name in ['自助取数.html','指标中心.html','数据血缘.html','常用工具.html']:
+    entry=ROOT/name
+    entry.write_text(re.sub(r'src="app\.html(?:\?v=[a-zA-Z0-9]+)?"', 'src="app.html?v='+version+'"', entry.read_text()))
