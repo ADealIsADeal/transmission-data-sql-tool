@@ -92,3 +92,5 @@
     .table-related strong{font-size:12px;font-weight:550}.table-related code{font-size:10px;line-height:1.6;overflow-wrap:anywhere;color:var(--muted)}.table-related>span{position:absolute;right:10px;top:12px;color:var(--blue)}.table-related:hover{border-color:var(--blue)}
     .table-no-related{color:var(--muted);font-size:12px;margin:0}
     #tableDetailPanel .side-links{padding-top:16px;border-top:1px solid var(--line)}
+
+    .table-related small{font-size:11px;color:var(--blue);margin-top:3px}.table-related:disabled{cursor:default}.table-related:disabled small{color:var(--muted)}.table-related:disabled:hover{border-color:var(--line)}
