@@ -30,7 +30,7 @@
     }
     function metricCalculationSql(m){
       const expression=(m.grain==='seq'?seqSql:taskSql)[m.id].replace(/\b[bt]\./g,'');
-      return `-- 基于线上 DWS 字段的指标查询；不是源文件中的 ADS SQL\n-- 日期格式 YYYYMMDD；默认包含下载与取回，可追加业务筛选\n-- 占比返回 0～1，展示百分比时乘以 100\nSELECT\n    ${expression}\nFROM ${m.sourceTable}\nWHERE ds = '\${date}';`;
+      return `-- 日期格式 YYYYMMDD；默认包含下载与取回，可追加业务筛选\n-- 占比返回 0～1，展示百分比时乘以 100\nSELECT\n    ${expression}\nFROM ${m.sourceTable}\nWHERE ds = '\${date}';`;
     }
     function renderMetrics(){
       const q=$('#metricSearch').value.trim().toLowerCase(),cat=$('#metricCategory').value,grain=$('#metricGrain').value;
@@ -65,7 +65,7 @@
         <section id="metric-tab-definition" role="tabpanel" aria-labelledby="metric-tab-button-definition" data-metric-panel="definition">
           <div class="metric-explanation"><h3>如何计算</h3><p>${esc(metricNotes[m.id][1])}</p>${m.ratio?'<p>分母为 0 返回 NULL；SQL 返回小数比例，百分比展示时乘以 100。</p>':''}${m.grain==='user'?"<p>peerid 的 NULL 在子任务层转为 N/A，计数时会作为一个去重值。</p>":''}</div>
           <div class="metric-explanation"><h3>数据范围</h3><p>${esc(productionScope)}</p><p>线上 DWS 加工与当前自助取数均不限制 1TB；使用时应保持分子、分母的日期和业务筛选一致。</p></div>
-          <div class="source-note">依据：血缘更新.sql。字段加工来自线上原文；指标聚合沿用当前指标定义，源文件不含最终 ADS 聚合。</div>
+          <div class="source-note">依据：血缘更新.sql。指标从对应的分片或子任务明细表计算，字段加工可追溯至线上 SQL。</div>
         </section>
         <section id="metric-tab-sql" role="tabpanel" aria-labelledby="metric-tab-button-sql" data-metric-panel="sql" hidden><div class="metric-sql-heading"><div><h3>指标计算 SQL</h3><p class="source-caption">单日期基础查询，可替换日期并追加业务条件。</p></div><button class="btn small" id="copyMetricSql">复制 SQL</button></div>${sqlPanel(metricCalculationSql(m))}</section>
         <section id="metric-tab-source" role="tabpanel" aria-labelledby="metric-tab-button-source" data-metric-panel="source" hidden><div class="metric-source-table"><span class="metric-summary-label">直接来源表 · ${stage===1?'分片 DWS':'子任务 DWS'}</span><code class="source-table-name">${esc(m.sourceTable)}</code></div><div class="metric-section-title"><h3>来源字段</h3><span>${used.length?'计算使用的字段及其加工表达式':'记录计数对应的标识与分组字段'}</span></div><div class="metric-source-fields">${relevant.map(f=>{const col=productionQueries[stage===1?'1:0':'0:0'].columns[f];return col?`<div class="metric-source-field"><div class="metric-field-heading"><code>${esc(f)}</code><button class="source-link" data-prod-field="${f}" data-prod-grain="${grain}">查看字段血缘 →</button></div><span class="metric-summary-label">本层加工表达式</span>${sqlPanel(col.expression)}<div class="metric-field-actions">${sourceButton(stage,col.line)}</div></div>`:''}).join('')}</div></section>`;
