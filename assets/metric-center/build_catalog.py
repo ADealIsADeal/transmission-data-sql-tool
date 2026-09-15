@@ -109,7 +109,7 @@ html=html.replace('  <script>','  '+heartbeat_block+'\n  <script>',1)
 block='<script type="application/json" id="productionCatalog">'+json.dumps(result,ensure_ascii=False).replace('<','\\u003c')+'</script>'
 html=re.sub(r'<script type="application/json" id="productionCatalog">[\s\S]*?</script>\s*','',html)
 html=html.replace('  <script>','  '+block+'\n  <script>',1)
-runtime=(ROOT/'assets/metric-center/center.js').read_text()+(ROOT/'assets/heartbeat/heartbeat.js').read_text()
+runtime=(ROOT/'assets/metric-center/center.js').read_text()+(ROOT/'assets/heartbeat/heartbeat.js').read_text()+(ROOT/'assets/metric-center/canvas-pan.js').read_text()
 style=(ROOT/'assets/metric-center/center.css').read_text()+(ROOT/'assets/heartbeat/heartbeat.css').read_text()
 html=re.sub(r'    // BEGIN GENERATED METRIC CENTER[\s\S]*?    // END GENERATED METRIC CENTER',lambda m:'    // BEGIN GENERATED METRIC CENTER\n'+runtime+'    // END GENERATED METRIC CENTER',html)
 html=re.sub(r'    /\* BEGIN GENERATED METRIC CENTER \*/[\s\S]*?    /\* END GENERATED METRIC CENTER \*/',lambda m:'    /* BEGIN GENERATED METRIC CENTER */\n'+style+'    /* END GENERATED METRIC CENTER */',html)

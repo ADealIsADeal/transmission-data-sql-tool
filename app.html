@@ -718,6 +718,8 @@
     .table-related small{font-size:11px;color:var(--blue);margin-top:3px}.table-related:disabled{cursor:default}.table-related:disabled small{color:var(--muted)}.table-related:disabled:hover{border-color:var(--line)}
 
     .table-current-sql{margin-top:14px}.table-current-sql .btn{width:100%;font-size:13px;color:var(--blue)}
+    #tableGraph,#hbGraph{cursor:grab;user-select:none}
+    #tableGraph.canvas-dragging,#hbGraph.canvas-dragging,#tableGraph.canvas-dragging *,#hbGraph.canvas-dragging *{cursor:grabbing!important}
     .space-switcher select{min-width:160px}.space-switcher{position:relative;z-index:1}
     /* END GENERATED METRIC CENTER */
 </style>
@@ -1202,12 +1204,14 @@
       if(!id){$('#fieldDetailPanel').innerHTML='<p class="source-caption">请选择或搜索字段。</p>';return}
       const f=productionField(id),trace=fieldTrace(id,grain),root=productionQueries[grain==='seq'?'1:0':'0:0'].columns[id];
       const used=metrics.filter(m=>metricSourceFields(m).includes(id));
-      const steps=[...new Set(trace.nodes.map(n=>n.stage))].sort((a,b)=>b-a);
+      const steps=[...new Set(trace.nodes.map(n=>n.stage))].sort((a,b)=>a-b);
       $('#fieldDetailPanel').innerHTML=`<div class="field-detail-heading"><div><h2>${esc(f.cn)}</h2><code>${esc(id)}</code></div><span class="tag">${grain==='seq'?'分片':'子任务'} DWS</span></div><p class="source-caption">${esc(f.comment)} · 类型注释：${esc(f.type)}</p>
         <h3>当前层加工</h3>${sqlPanel(root.expression)}${sourceButton(grain==='seq'?1:0,root.line)}
-        <h3>字段血缘 <small>从原始来源到当前层</small></h3>
-        <div class="production-origin">${trace.external.length?trace.external.map(x=>`<div><code>${esc(x.table)}.${esc(x.field)}</code></div>`).join(''):'由 SQL 固定值或常量生成，无直接原始字段。'}</div>
+        <h3>字段血缘 <small>从当前层向上游追溯</small></h3>
+
         <div class="production-chain">${steps.map(stage=>{const ns=trace.nodes.filter(n=>n.stage===stage).sort((a,b)=>a.line-b.line),item=production.stages[stage];return `<details class="production-step" ${stage<2?'open':''}><summary><span>${item.label}</span><small>${ns.length} 项相关表达式</small></summary><code class="source-table-name">${esc(item.table)}</code>${ns.map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${sourceButton(stage,n.line)}<p class="source-caption">输入：${n.refs.map(r=>esc(r.field)).join('、')||'固定值 / 常量'}</p></div>`).join('')}</details>`}).join('')}</div>
+        <h3>原始来源</h3>
+        <div class="production-origin">${trace.external.length?trace.external.map(x=>`<div><code>${esc(x.table)}.${esc(x.field)}</code></div>`).join(''):'由 SQL 固定值或常量生成，无直接原始字段。'}</div>
         <details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(productionScope)}</p><p>关联字段的匹配键、维表筛选与 SQL 上下文可在各层完整 SQL 中查看；上方链路展示字段值的直接依赖。</p>${steps.map(stage=>sourceButton(stage,production.stages[stage].line,production.stages[stage].label)).join('')}</details>
         <h3>直接用于指标</h3><div class="field-used-metrics">${used.map(m=>`<button class="source-link" data-metric-link="${m.id}">${esc(m.cn)}</button>`).join('')||'<span class="source-caption">当前指标未直接引用，可用于维度、筛选或上游加工。</span>'}</div>`;
       bindProduction($('#fieldDetailPanel'));bindCrossLinks($('#fieldDetailPanel'));$('#fieldDetailPanel').scrollTop=0;
@@ -1266,7 +1270,7 @@
       const f=hbState.field;
       if(!f){$('#hbFieldDetail').innerHTML='<p class="source-caption">请选择或搜索字段。</p>';return}
       const trace=hbTrace(f),col=root.columns[f];
-      $('#hbFieldDetail').innerHTML=`<div class="field-detail-heading"><div><h2>${esc(hbFieldName(s,f))}</h2><code>${esc(f)}</code></div><span class="tag">${esc(s.label)}</span></div><p class="source-caption">${esc(s.schema[f]?.comment||'SQL SELECT 输出列')} · 类型注释：${esc(s.schema[f]?.type||'未在 DDL 注释中声明')}</p><h3>当前层加工</h3>${sqlPanel(col.expression)}${hbSourceButton(s.id,col.line)}<h3>字段血缘 <small>从原始来源到当前层</small></h3><div class="production-origin">${trace.external.map(x=>`<code>${esc(x.table)}.${esc(x.field)}</code>`).join('<br>')||'由 SQL 常量或系统函数生成，无直接原始字段。'}</div><div class="production-chain">${[...new Set(trace.nodes.map(n=>n.stage))].reverse().map(id=>`<details class="production-step" ${id===s.id?'open':''}><summary><span>${esc(hbStages[id].label)}</span><small>${trace.nodes.filter(n=>n.stage===id).length} 项相关表达式</small></summary><code class="source-table-name">${esc(hbStages[id].table)}</code>${trace.nodes.filter(n=>n.stage===id).sort((a,b)=>a.line-b.line).map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${n.note?`<p class="source-caption">${esc(n.note)}</p>`:''}${hbSourceButton(id,n.line)}<p class="source-caption">输入：${n.refs.map(r=>esc(r.field)).join('、')||'固定值 / 常量'}</p></div>`).join('')}</details>`).join('')}</div><details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(s.note)}</p><p>上方链路展示字段值的直接依赖；过滤和分组条件可在各层完整 SQL 中查看。</p>${[...new Set(trace.nodes.map(n=>n.stage))].map(id=>hbSourceButton(id,1,hbStages[id].label)).join('')}</details>`;
+      $('#hbFieldDetail').innerHTML=`<div class="field-detail-heading"><div><h2>${esc(hbFieldName(s,f))}</h2><code>${esc(f)}</code></div><span class="tag">${esc(s.label)}</span></div><p class="source-caption">${esc(s.schema[f]?.comment||'SQL SELECT 输出列')} · 类型注释：${esc(s.schema[f]?.type||'未在 DDL 注释中声明')}</p><h3>当前层加工</h3>${sqlPanel(col.expression)}${hbSourceButton(s.id,col.line)}<h3>字段血缘 <small>从当前层向上游追溯</small></h3><div class="production-chain">${[...new Set(trace.nodes.map(n=>n.stage))].sort((a,b)=>['ADS','DWS','DWD','ODS'].indexOf(hbStages[a].layer)-['ADS','DWS','DWD','ODS'].indexOf(hbStages[b].layer)).map(id=>`<details class="production-step" ${id===s.id?'open':''}><summary><span>${esc(hbStages[id].label)}</span><small>${trace.nodes.filter(n=>n.stage===id).length} 项相关表达式</small></summary><code class="source-table-name">${esc(hbStages[id].table)}</code>${trace.nodes.filter(n=>n.stage===id).sort((a,b)=>a.line-b.line).map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${n.note?`<p class="source-caption">${esc(n.note)}</p>`:''}${hbSourceButton(id,n.line)}<p class="source-caption">输入：${n.refs.map(r=>esc(r.field)).join('、')||'固定值 / 常量'}</p></div>`).join('')}</details>`).join('')}</div><h3>原始来源</h3><div class="production-origin">${trace.external.map(x=>`<code>${esc(x.table)}.${esc(x.field)}</code>`).join('<br>')||'由 SQL 常量或系统函数生成，无直接原始字段。'}</div><details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(s.note)}</p><p>上方链路展示字段值的直接依赖；过滤和分组条件可在各层完整 SQL 中查看。</p>${[...new Set(trace.nodes.map(n=>n.stage))].map(id=>hbSourceButton(id,1,hbStages[id].label)).join('')}</details>`;
       bindHeartbeat($('#hbFieldView'));$('#hbFieldDetail').scrollTop=0;
       const selected=$('.selected-field',$('#hbFieldRows')),pane=$('#hbFieldView .field-list');if(selected&&pane){const y=selected.offsetTop;if(y<pane.scrollTop||y+selected.offsetHeight>pane.scrollTop+pane.clientHeight)pane.scrollTop=Math.max(0,y-pane.clientHeight/2)}
     }
@@ -1280,6 +1284,34 @@
       $$('[data-hb-tab]').forEach(b=>b.onclick=()=>setHeartbeatTab(b.dataset.hbTab));
       renderHeartbeat();
     }
+    // Drag the scrollable canvas; a short press still selects a table card.
+    function enableCanvasPan(canvas){
+      let drag=null,suppressClick=false;
+      canvas.title='按住鼠标左键拖动画布';
+      canvas.addEventListener('pointerdown',e=>{
+        if(e.pointerType!=='mouse'||e.button!==0)return;
+        suppressClick=false;
+        drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:canvas.scrollLeft,top:canvas.scrollTop,moved:false};
+      });
+      window.addEventListener('pointermove',e=>{
+        if(!drag||drag.id!==e.pointerId)return;
+        if(!drag.moved&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<5)return;
+        if(!drag.moved){drag.moved=true;canvas.setPointerCapture(e.pointerId);canvas.classList.add('canvas-dragging')}
+        e.preventDefault();
+        canvas.scrollLeft=drag.left-(e.clientX-drag.x);
+        canvas.scrollTop=drag.top-(e.clientY-drag.y);
+      },{passive:false});
+      function finish(e){
+        if(!drag||drag.id!==e.pointerId)return;
+        suppressClick=drag.moved;drag=null;canvas.classList.remove('canvas-dragging');
+        if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+      }
+      window.addEventListener('pointerup',finish);
+      window.addEventListener('pointercancel',finish);
+      canvas.addEventListener('lostpointercapture',finish);
+      canvas.addEventListener('click',e=>{if(suppressClick){e.preventDefault();e.stopImmediatePropagation();suppressClick=false}},true);
+    }
+    ['tableGraph','hbGraph'].forEach(id=>enableCanvasPan(document.getElementById(id)));
     // END GENERATED METRIC CENTER
     metrics.forEach(m=>{m.definition=metricSummary(m);m.fields=metricSourceFields(m);m.scope=productionScope});
     $('#metricSearch').setAttribute('aria-label','搜索指标');$('#metricCategory').setAttribute('aria-label','指标业务分类');$('#metricGrain').setAttribute('aria-label','指标统计对象');

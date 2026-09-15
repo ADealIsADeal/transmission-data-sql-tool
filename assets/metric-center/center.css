@@ -96,3 +96,5 @@
     .table-related small{font-size:11px;color:var(--blue);margin-top:3px}.table-related:disabled{cursor:default}.table-related:disabled small{color:var(--muted)}.table-related:disabled:hover{border-color:var(--line)}
 
     .table-current-sql{margin-top:14px}.table-current-sql .btn{width:100%;font-size:13px;color:var(--blue)}
+    #tableGraph,#hbGraph{cursor:grab;user-select:none}
+    #tableGraph.canvas-dragging,#hbGraph.canvas-dragging,#tableGraph.canvas-dragging *,#hbGraph.canvas-dragging *{cursor:grabbing!important}

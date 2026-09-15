@@ -112,12 +112,14 @@
       if(!id){$('#fieldDetailPanel').innerHTML='<p class="source-caption">请选择或搜索字段。</p>';return}
       const f=productionField(id),trace=fieldTrace(id,grain),root=productionQueries[grain==='seq'?'1:0':'0:0'].columns[id];
       const used=metrics.filter(m=>metricSourceFields(m).includes(id));
-      const steps=[...new Set(trace.nodes.map(n=>n.stage))].sort((a,b)=>b-a);
+      const steps=[...new Set(trace.nodes.map(n=>n.stage))].sort((a,b)=>a-b);
       $('#fieldDetailPanel').innerHTML=`<div class="field-detail-heading"><div><h2>${esc(f.cn)}</h2><code>${esc(id)}</code></div><span class="tag">${grain==='seq'?'分片':'子任务'} DWS</span></div><p class="source-caption">${esc(f.comment)} · 类型注释：${esc(f.type)}</p>
         <h3>当前层加工</h3>${sqlPanel(root.expression)}${sourceButton(grain==='seq'?1:0,root.line)}
-        <h3>字段血缘 <small>从原始来源到当前层</small></h3>
-        <div class="production-origin">${trace.external.length?trace.external.map(x=>`<div><code>${esc(x.table)}.${esc(x.field)}</code></div>`).join(''):'由 SQL 固定值或常量生成，无直接原始字段。'}</div>
+        <h3>字段血缘 <small>从当前层向上游追溯</small></h3>
+
         <div class="production-chain">${steps.map(stage=>{const ns=trace.nodes.filter(n=>n.stage===stage).sort((a,b)=>a.line-b.line),item=production.stages[stage];return `<details class="production-step" ${stage<2?'open':''}><summary><span>${item.label}</span><small>${ns.length} 项相关表达式</small></summary><code class="source-table-name">${esc(item.table)}</code>${ns.map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${sourceButton(stage,n.line)}<p class="source-caption">输入：${n.refs.map(r=>esc(r.field)).join('、')||'固定值 / 常量'}</p></div>`).join('')}</details>`}).join('')}</div>
+        <h3>原始来源</h3>
+        <div class="production-origin">${trace.external.length?trace.external.map(x=>`<div><code>${esc(x.table)}.${esc(x.field)}</code></div>`).join(''):'由 SQL 固定值或常量生成，无直接原始字段。'}</div>
         <details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(productionScope)}</p><p>关联字段的匹配键、维表筛选与 SQL 上下文可在各层完整 SQL 中查看；上方链路展示字段值的直接依赖。</p>${steps.map(stage=>sourceButton(stage,production.stages[stage].line,production.stages[stage].label)).join('')}</details>
         <h3>直接用于指标</h3><div class="field-used-metrics">${used.map(m=>`<button class="source-link" data-metric-link="${m.id}">${esc(m.cn)}</button>`).join('')||'<span class="source-caption">当前指标未直接引用，可用于维度、筛选或上游加工。</span>'}</div>`;
       bindProduction($('#fieldDetailPanel'));bindCrossLinks($('#fieldDetailPanel'));$('#fieldDetailPanel').scrollTop=0;
