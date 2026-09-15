@@ -63,3 +63,15 @@ python3 assets/metric-center/build_catalog.py
 当前覆盖 20 项指标、分片 78 个和子任务 77 个输出字段。子任务零速按 `max(seq_zero_speed) = '1' and sum(recv_bytes) = 0`；分片 DWS 新增后台/预部署任务过滤、六个大小/流量字段分别小于 10 TiB、版本点号检查及 PC 产品范围限制，采集信息来自 `dim_xlyun_transfer_mp_gcid_info_d_inc`。
 
 提取器的 FROM/JOIN 绑定针对当前六个任务；SQL 结构或业务规则变化时，需复核 build_catalog.py 中的 bindings、center.js 指标口径与页面表说明。自动构建更新原文和表达式，不自动推断自然语言口径。字段血缘展示值的直接依赖，过滤和关联条件请查看完整 SQL；DDL 注释不代表线上数据库校验。
+
+## 数据空间与心跳血缘
+
+页面顶部可切换「任务结束上报」与「心跳上报」。两空间使用独立目录、字段关系、表选择、搜索及页签状态；切换后保留各自当前浏览位置，浏览器记住所选空间。心跳空间只开放数据血缘及常用工具，不配置指标或取数模板。
+
+- `SQL/任务结束上报/`：任务结束链路的 6 份原始 SQL。
+- `SQL/心跳上报/`：上行、下行共 8 份原始 SQL（ODS → DWD → DWS → ADS）。
+- `assets/heartbeat/`：独立心跳目录生成器、前端及字段依赖校验。
+
+运行 `python3 assets/metric-center/build_catalog.py` 会分别构建两个目录并嵌入页面，部署流程也执行该命令。心跳字段覆盖静态分区、嵌套 SELECT、UNPIVOT 六类流量展开和 DCDN 扣减 PCDN；SQL 弹窗与下载均使用对应空间的完整原文件。未提供加工 SQL 的 PRE 仅显示为上游来源，不推测其加工逻辑。
+
+心跳提取器针对当前单来源嵌套 SELECT 结构校验绑定；新增 JOIN、CTE 或其他结构时会停止构建，需先更新解析逻辑。校验命令：`python3 assets/heartbeat/test_catalog.py`。

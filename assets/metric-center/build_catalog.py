@@ -1,6 +1,6 @@
 """Extract exact SELECT expressions and source locations; no SQL is executed."""
 from pathlib import Path
-import re,json,hashlib,argparse
+import re,json,hashlib,argparse,runpy
 ROOT=Path(__file__).resolve().parents[2]
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--source',type=Path,default=ROOT/'SQL/任务结束上报',help='线上 SQL 目录（默认仓库 SQL/任务结束上报）')
@@ -101,12 +101,16 @@ for stage, source in zip(stages, sources):
     (ROOT/'assets/metric-center/sql'/(stage['table'].split('.')[-1]+'.sql')).write_bytes(source.read_bytes())
 result={'file':'SQL/任务结束上报/', 'sha256':hashlib.sha256(sql.encode()).hexdigest(),'stages':stages,'queries':queries,'fields':list(dict.fromkeys([*qmap['0:0']['columns'],*qmap['1:0']['columns']]))}
 (ROOT/'assets/metric-center/catalog.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
+heartbeat=runpy.run_path(str(ROOT/'assets/heartbeat/build_catalog.py'))['build']()
 page=ROOT/'传输库血缘与自助取数.html';html=page.read_text()
+html=re.sub(r'<script type="application/json" id="heartbeatCatalog">[\s\S]*?</script>\s*','',html)
+heartbeat_block='<script type="application/json" id="heartbeatCatalog">'+json.dumps(heartbeat,ensure_ascii=False).replace('<','\\u003c')+'</script>'
+html=html.replace('  <script>','  '+heartbeat_block+'\n  <script>',1)
 block='<script type="application/json" id="productionCatalog">'+json.dumps(result,ensure_ascii=False).replace('<','\\u003c')+'</script>'
 html=re.sub(r'<script type="application/json" id="productionCatalog">[\s\S]*?</script>\s*','',html)
 html=html.replace('  <script>','  '+block+'\n  <script>',1)
-runtime=(ROOT/'assets/metric-center/center.js').read_text()
-style=(ROOT/'assets/metric-center/center.css').read_text()
+runtime=(ROOT/'assets/metric-center/center.js').read_text()+(ROOT/'assets/heartbeat/heartbeat.js').read_text()
+style=(ROOT/'assets/metric-center/center.css').read_text()+(ROOT/'assets/heartbeat/heartbeat.css').read_text()
 html=re.sub(r'    // BEGIN GENERATED METRIC CENTER[\s\S]*?    // END GENERATED METRIC CENTER',lambda m:'    // BEGIN GENERATED METRIC CENTER\n'+runtime+'    // END GENERATED METRIC CENTER',html)
 html=re.sub(r'    /\* BEGIN GENERATED METRIC CENTER \*/[\s\S]*?    /\* END GENERATED METRIC CENTER \*/',lambda m:'    /* BEGIN GENERATED METRIC CENTER */\n'+style+'    /* END GENERATED METRIC CENTER */',html)
 page.write_text(html)
