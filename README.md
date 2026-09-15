@@ -50,14 +50,16 @@ python3 -m http.server 8000
 
 ## 指标中心与字段血缘更新
 
-提供 20 项指标的概览、口径说明、查询 SQL、来源字段与线上 SQL 行号。字段血缘覆盖分片层 78 个、子任务层 77 个 SELECT 输出字段。源文件包含 6 个 DWD/DWS 加工任务，不包含最终 ADS 聚合；页面明确区分线上加工原文与指标查询模板。当前查询继续保持不限制 1TB。
+唯一线上 SQL 来源为 `SQL/任务结束上报/`，保留原始文件名、头部说明和 DDL 注释。分片文件名为 `dws_xlyun_transfer_download_seqid_d_incs.sql`，实际目标表以文件中的 INSERT 为准（`dws_xlyun_transfer_download_seqid_d_inc`）。
 
-修改 center.js 或 center.css 后重新生成：
+更新此目录 SQL 后运行：
 
 ```bash
-python3 assets/metric-center/build_catalog.py --source /path/to/血缘更新.sql
+python3 assets/metric-center/build_catalog.py
 ```
 
-命令更新目录 JSON、源文件哈希，并同步两个应用入口。提取器的 FROM/JOIN 绑定针对当前六个任务；新增或调整子查询时须同步检查 bindings。字段链路展示字段值的直接依赖，关联条件与过滤上下文可查看对应完整 SQL。DDL 注释类型仅作说明，不代表已连接线上库校验。
+命令重新提取 6 个任务的字段表达式、源文件行号与 SHA-256，更新 catalog.json、兼容 SQL 下载文件及两个应用入口。页面中表血缘、字段血缘和指标详情的线上 SQL 均展示此目录的完整原文，下载链接直接指向原文件。GitHub 部署也会先运行此命令，因此更新目录中的 SQL 后部署会自动刷新原文及字段目录。
 
-字段血缘桌面布局两侧等高、独立滚动。线上加工按目标表拆为 `assets/metric-center/sql/` 中的六个 SQL 文件，可在页面下载；展示行号以每张表文件从 1 开始，目录保留原文件位置用于追溯。
+当前覆盖 20 项指标、分片 78 个和子任务 77 个输出字段。子任务零速按 `max(seq_zero_speed) = '1' and sum(recv_bytes) = 0`；分片 DWS 新增后台/预部署任务过滤、六个大小/流量字段分别小于 10 TiB、版本点号检查及 PC 产品范围限制，采集信息来自 `dim_xlyun_transfer_mp_gcid_info_d_inc`。
+
+提取器的 FROM/JOIN 绑定针对当前六个任务；SQL 结构或业务规则变化时，需复核 build_catalog.py 中的 bindings、center.js 指标口径与页面表说明。自动构建更新原文和表达式，不自动推断自然语言口径。字段血缘展示值的直接依赖，过滤和关联条件请查看完整 SQL；DDL 注释不代表线上数据库校验。

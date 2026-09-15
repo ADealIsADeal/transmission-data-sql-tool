@@ -1,6 +1,6 @@
     const production=JSON.parse(document.getElementById('productionCatalog').textContent);
     const productionQueries=Object.fromEntries(production.queries.map(q=>[q.id,q]));
-    const productionScope="PC 任务结束事件；移动端 eventstatus='2'。按 platform、seqid、parent_id、file_url、peer_id 取当日 ts 最新记录。分片 DWS 保留六端 download / withdraw，排除 bt_main、magnet；子任务按当日五个键聚合。";
+    const productionScope="PC 任务结束事件；移动端 eventstatus='2'。按 platform、seqid、parent_id、file_url、peer_id 取当日 ts 最新记录。分片 DWS 保留六端 download / withdraw，仅保留 p2sp、bt、emule、hls；剔除后台下载、预部署任务，file_size、all_bytes、origin_bytes、phub_bytes、tracker_bytes、dcdn_bytes 分别须小于 10 TiB（NULL 按 0）。product_version 与 service_version 的点号位置须大于 1；PC 仅保留 pc.thunderX、pc.NetDisk_N。子任务按当日五个键聚合。";
     const metricNotes={
       seq_total:['任务结束记录经分片去重、业务过滤后，统计分片 DWS 记录数。','同一分片在同一天按 platform、seqid、parent_id、file_url、peer_id 去重，取 ts 最新记录；跨天按日记录累计。'],
       avg_global_speed:['分片 DWS 的 global_speed 算术平均值，单位 KB/s，包含 0。','小时层仅保留上报速度大于 0 的值；统一 DWD 转 bigint；分片 DWS 除以 1024，NULL 转为 0，因此分片平均速度包含这些 0。'],
@@ -10,8 +10,8 @@
       seq_fail_rate:['失败分片数 / 分片数。','分子、分母均来自相同日期和筛选范围的分片 DWS。'],
       cnt_sub_task:['按 platform、action_type、peerid、parentid、download_url 聚合后的子任务记录数。',"每天聚合；peerid、parentid、download_url 的 NULL 先转为 'N/A'。跨天累计的是每日子任务记录数，并非跨天重新按五键去重。"],
       avg_global_speed_sub_task:['先对每个子任务的非零分片速度取平均，再对子任务速度取平均，单位 KB/s。','子任务层 avg(if(global_speed is not null and global_speed <> 0, global_speed, null))；全部为 0 或 NULL 的子任务速度为 NULL，不参与最终 avg。每个有效子任务等权，不按分片数或时长加权。'],
-      zero_speed_cnt_sub_task:['全部分片都被标记为零速的子任务数。',"sum(if(seq_zero_speed='1',1,0)) = count(1) 才标记为 '1'；只要有一个分片未被标记为零速，子任务就不计零速。"],
-      task_zero_speed_rate:['零速子任务数 / 子任务数。','子任务零速要求全部分片零速；分子、分母使用同一子任务 DWS 范围。'],
+      zero_speed_cnt_sub_task:['至少一个分片零速且接收量合计为 0 的子任务数。',"max(seq_zero_speed) = '1' and sum(recv_bytes) = 0；至少一个分片满足下载时长 > 10 秒且原始接收量 = 0，同时子任务接收量合计为 0。其他短时长分片接收量为 0 时仍可计入。"],
+      task_zero_speed_rate:['零速子任务数 / 子任务数。','子任务零速要求至少一个分片零速且接收量合计为 0；分子、分母使用同一子任务 DWS 范围。'],
       fail_cnt_sub_task:['最后一条分片被标记为失败的子任务数。','子任务 seq_fail = max_by(seq_fail, ts)，按 ts 取末条状态；并非任意分片失败就算子任务失败。ts 并列时 SQL 未指定次级排序。'],
       task_fail_rate:['失败子任务数 / 子任务数。','失败状态取子任务末条分片；分子、分母使用同一子任务 DWS 范围。'],
       sum_p2p_bytes_sub_task:['子任务 phub_bytes 与 tracker_bytes 相加后求和，单位 Byte。','分片层这两个字段 NULL 转 0，子任务层分别按分片求和；指标查询再次 ifnull 后相加。P2P 此处只包含 Phub 与 Tracker。'],
@@ -20,7 +20,7 @@
       total_peer_users:['子任务 DWS 中按 peerid 去重的用户数。',"count(distinct peerid)；上游将 NULL peerid 归为 'N/A'，因此存在这类记录时会计为一个用户。默认数据含下载和取回，单看下载需筛选 action_type='download'。"],
       fail_peer_users:['至少有一个失败子任务的用户数，按 peerid 去重。','先按子任务末条分片判定失败，再对这些子任务的 peerid 去重；同一用户其他成功子任务不影响计入。'],
       fail_peer_user_rate:['失败用户数 / 下载用户数。','分子为至少有一个失败子任务的去重 peerid；分母为相同范围全部去重 peerid。跨天应对整个日期范围重新去重，不能累加每日用户数。'],
-      zero_speed_peer_users:['至少有一个零速子任务的用户数，按 peerid 去重。','零速子任务要求全部分片都零速；用户只需有一个这样的子任务即可计入，并非用户全部子任务都零速。'],
+      zero_speed_peer_users:['至少有一个零速子任务的用户数，按 peerid 去重。','零速子任务要求至少一个分片零速且接收量合计为 0；用户只需有一个这样的子任务即可计入，并非用户全部子任务都零速。'],
       zero_speed_peer_user_rate:['零速用户数 / 下载用户数。','分子为至少有一个零速子任务的去重 peerid；分母为相同范围全部去重 peerid。跨天重新去重，不能累加每日用户数。']
     };
     function metricSummary(m){return metricNotes[m.id][0]}
@@ -53,7 +53,7 @@
     }
     function openProductionSql(stage,line){
       const item=production.stages[stage];$('#infoDialogTitle').textContent=`${item.label} · 线上加工 SQL`;
-      $('#infoDialogBody').innerHTML=`<p class="source-caption">${esc(item.table.split('.').pop())}.sql · 独立表加工 SQL</p><code class="source-table-name">${esc(item.table)}</code><a class="source-link" href="assets/metric-center/sql/${encodeURIComponent(item.table.split('.').pop())}.sql" download>下载本表 SQL</a><pre class="production-sql numbered-sql"><code>${item.sql.split('\n').map((row,i)=>`<span class="source-code-line ${item.line+i===line?'source-highlight':''}" data-line="${item.line+i}"><i>${i+1}</i>${esc(row)||' '}</span>`).join('')}</code></pre>`;
+      $('#infoDialogBody').innerHTML=`<p class="source-caption">${esc(item.file)} · 独立表加工 SQL</p><code class="source-table-name">${esc(item.table)}</code><a class="source-link" href="${item.file.split('/').map(encodeURIComponent).join('/')}" download>下载本表 SQL</a><pre class="production-sql numbered-sql"><code>${item.sql.split('\n').map((row,i)=>`<span class="source-code-line ${item.line+i===line?'source-highlight':''}" data-line="${item.line+i}"><i>${i+1}</i>${esc(row)||' '}</span>`).join('')}</code></pre>`;
       $('#infoDialog').showModal();requestAnimationFrame(()=>$('.source-highlight',$('#infoDialogBody'))?.scrollIntoView({block:'center'}));
     }
     function openMetric(id){
@@ -64,8 +64,8 @@
         <div class="metric-detail-tabs" role="tablist" aria-label="指标详情"><button role="tab" aria-selected="true" aria-controls="metric-tab-definition" id="metric-tab-button-definition" data-metric-tab="definition" class="active">口径说明</button><button role="tab" aria-selected="false" aria-controls="metric-tab-sql" id="metric-tab-button-sql" data-metric-tab="sql">计算 SQL</button><button role="tab" aria-selected="false" aria-controls="metric-tab-source" id="metric-tab-button-source" data-metric-tab="source">来源与血缘</button></div>
         <section id="metric-tab-definition" role="tabpanel" aria-labelledby="metric-tab-button-definition" data-metric-panel="definition">
           <div class="metric-explanation"><h3>如何计算</h3><p>${esc(metricNotes[m.id][1])}</p>${m.ratio?'<p>分母为 0 返回 NULL；SQL 返回小数比例，百分比展示时乘以 100。</p>':''}${m.grain==='user'?"<p>peerid 的 NULL 在子任务层转为 N/A，计数时会作为一个去重值。</p>":''}</div>
-          <div class="metric-explanation"><h3>数据范围</h3><p>${esc(productionScope)}</p><p>线上 DWS 加工与当前自助取数均不限制 1TB；使用时应保持分子、分母的日期和业务筛选一致。</p></div>
-          <div class="source-note">依据：血缘更新.sql。指标从对应的分片或子任务明细表计算，字段加工可追溯至线上 SQL。</div>
+          <div class="metric-explanation"><h3>数据范围</h3><p>${esc(productionScope)}</p><p>线上 DWS 已按六个大小/流量字段分别过滤 ≥ 10 TiB 的异常值；自助取数直接读取过滤后的 DWS，不额外限制 1TB；使用时应保持分子、分母的日期和业务筛选一致。</p></div>
+          <div class="source-note">依据：SQL/任务结束上报/。指标从对应的分片或子任务明细表计算，字段加工可追溯至线上 SQL。</div>
         </section>
         <section id="metric-tab-sql" role="tabpanel" aria-labelledby="metric-tab-button-sql" data-metric-panel="sql" hidden><div class="metric-sql-heading"><div><h3>指标计算 SQL</h3><p class="source-caption">单日期基础查询，可替换日期并追加业务条件。</p></div><button class="btn small" id="copyMetricSql">复制 SQL</button></div>${sqlPanel(metricCalculationSql(m))}</section>
         <section id="metric-tab-source" role="tabpanel" aria-labelledby="metric-tab-button-source" data-metric-panel="source" hidden><div class="metric-source-table"><span class="metric-summary-label">直接来源表 · ${stage===1?'分片 DWS':'子任务 DWS'}</span><code class="source-table-name">${esc(m.sourceTable)}</code></div><div class="metric-section-title"><h3>来源字段</h3><span>${used.length?'计算使用的字段及其加工表达式':'记录计数对应的标识与分组字段'}</span></div><div class="metric-source-fields">${relevant.map(f=>{const col=productionQueries[stage===1?'1:0':'0:0'].columns[f];return col?`<div class="metric-source-field"><div class="metric-field-heading"><code>${esc(f)}</code><button class="source-link" data-prod-field="${f}" data-prod-grain="${grain}">查看字段血缘 →</button></div><span class="metric-summary-label">本层加工表达式</span>${sqlPanel(col.expression)}<div class="metric-field-actions">${sourceButton(stage,col.line)}</div></div>`:''}).join('')}</div></section>`;
@@ -81,7 +81,7 @@
     function fieldFamily(id){return /bytes$/.test(id)?'流量':/speed|time|ending_span|buffer_fail/.test(id)?'速度质量':/result|fail|error|country|province|city|carrier/.test(id)?'结果地域':/peerid|parentid|seqid|user_id|guid|platform|action_type|^ds$/.test(id)?'标识行为':/vip|is_c|collect|hfk|gcid|resource|phub_res/.test(id)?'资源用户':'任务属性'}
     function fieldRule(col){
       if(!col)return '该层未输出';const e=col.body.toLowerCase();
-      if(e.includes('sum(if(seq_zero_speed'))return '全部分片零速';
+      if(e.includes('max(seq_zero_speed)'))return '至少一个分片零速且总接收量为 0';
       if(e.includes('max_by'))return '按时间取末条';if(e.includes('min_by'))return '按时间取首条';
       if(e.includes('avg('))return '非零值取平均';if(e.includes('sum('))return '分片求和';if(e.includes('max('))return '取最大值';
       if(e.includes('/ 1024'))return '÷ 1024，空值补 0';if(e.includes('coalesce'))return '空值处理';
@@ -124,6 +124,6 @@
     }
     function renderLogic(){
       const q=$('#logicSearch').value.trim().toLowerCase();
-      $('#tableLogicGrid').innerHTML=production.stages.filter(s=>!q||`${s.table} ${s.label} ${s.sql}`.toLowerCase().includes(q)).slice().reverse().map(s=>`<article class="card table-logic-card"><div class="table-logic-head"><h2>${s.label}</h2><code>${esc(s.table)}</code></div><div class="table-logic-body">${sourceButton(s.id,s.line,'展开线上完整 SQL')}<p class="source-caption">${esc(s.table.split('.').pop())}.sql · ${s.sql.split('\n').length} 行 SQL 原文</p></div></article>`).join('')||'<p>没有找到匹配的加工 SQL。</p>';
+      $('#tableLogicGrid').innerHTML=production.stages.filter(s=>!q||`${s.table} ${s.label} ${s.sql}`.toLowerCase().includes(q)).slice().reverse().map(s=>`<article class="card table-logic-card"><div class="table-logic-head"><h2>${s.label}</h2><code>${esc(s.table)}</code></div><div class="table-logic-body">${sourceButton(s.id,s.line,'展开线上完整 SQL')}<p class="source-caption">${esc(s.file)} · ${s.sql.split('\n').length} 行 SQL 原文</p></div></article>`).join('')||'<p>没有找到匹配的加工 SQL。</p>';
       $('#logicGrid').innerHTML='';bindProduction($('#tableLogicGrid'));
     }

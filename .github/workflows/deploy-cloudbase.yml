@@ -13,6 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build lineage from production SQL
+        run: python3 assets/metric-center/build_catalog.py
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

@@ -3,9 +3,16 @@ from pathlib import Path
 import re,json,hashlib,argparse
 ROOT=Path(__file__).resolve().parents[2]
 parser=argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--source',type=Path,required=True,help='线上 SQL 文件路径')
+parser.add_argument('--source',type=Path,default=ROOT/'SQL/任务结束上报',help='线上 SQL 目录（默认仓库 SQL/任务结束上报）')
 args=parser.parse_args()
-sql=args.source.read_text()
+source_files = list(args.source.glob('*.sql'))
+order = ['dws_xlyun_transfer_download_sub_task_d_inc', 'dws_xlyun_transfer_download_seqid_d_inc', 'dwd_xlyun_transfer_seqid_platform_d_inc', 'dwd_xlyun_transfer_seqid_platform_dedup_d_inc', 'dwd_xlyun_transfer_log_h_inc', 'dwd_xlyun_transfer_pc_log_h_inc']
+sources=[]
+for table in order:
+    matches=[p for p in source_files if re.search(r'insert\s+overwrite\s+(?:table\s+)?dw_xlyun\.'+table+r'\b',p.read_text(),re.I)]
+    if len(matches)!=1: raise ValueError(f'{table}: expected one source, got {matches}')
+    sources.append(matches[0])
+sql=''.join(p.read_text()+'\n' for p in sources)
 # Mask comments and quoted strings while preserving character positions and line numbers.
 def mask(s):
     return re.sub(r"--[^\n]*|/\*[\s\S]*?\*/|'(?:\\.|''|[^'\\])*'|\"(?:\\.|[^\"\\])*\"",lambda m:''.join('\n' if c=='\n' else ' ' for c in m[0]),s)
@@ -53,7 +60,7 @@ for q in queries:print(q['id'],len(q['columns']),list(q['columns'])[:3])
 bindings={
  '0:0':{'_':['1:0']},
  '1:0':{'download':['1:1'],'gcid':['1:2'],'_':['1:1']},
- '1:1':{'_':['2:2']},'1:2':{'_':['dw_xlyun.pre_xlyun_mp_gcid_info_accum']},
+ '1:1':{'_':['2:2']},'1:2':{'_':['dw_xlyun.dim_xlyun_transfer_mp_gcid_info_d_inc']},
  '2:0':{'d':['3:2'],'hfk':['2:1']},'2:1':{'_':['dw_xlyun.dim_xlyun_transfer_gcid_forbidden_hfk_d_inc']},
  '2:2':{'joined':['2:0'],'dim_pub1':['2:3'],'dim_pub2':['2:4']},
  '2:3':{'_':['dw_xlyun.dim_pub_sundry_manual_full']},'2:4':{'_':['dw_xlyun.dim_pub_sundry_manual_full']},
@@ -80,12 +87,19 @@ for q in queries:
                 ref={'query':target,'field':f}
                 if ref not in refs:refs.append(ref)
         col['refs']=refs
-sql_dir=ROOT/'assets/metric-center/sql'
-sql_dir.mkdir(exist_ok=True)
-for stage in stages:
-    (sql_dir/(stage['table'].split('.')[-1]+'.sql')).write_text(stage['sql']+'\n')
-# DWS output fields; partition metadata is included where selected.
-result={'file':'血缘更新.sql','sha256':hashlib.sha256(sql.encode()).hexdigest(),'stages':stages,'queries':queries,'fields':list(dict.fromkeys([*qmap['0:0']['columns'],*qmap['1:0']['columns']]))}
+# Keep complete source files, including headers and DDL; line numbers are file-local.
+for stage, source in zip(stages, sources):
+    offset=sum(p.read_text().count('\n')+1 for p in sources[:stage['id']])
+    for q in queries:
+        if q['stage']==stage['id']:
+            for col in q['columns'].values(): col['line']-=offset
+    stage['sql']=source.read_text()
+    stage['line']=1
+    stage['file']='SQL/任务结束上报/'+source.name
+    stage['sha256']=hashlib.sha256(source.read_bytes()).hexdigest()
+    # Legacy download URLs remain byte-identical to the canonical source.
+    (ROOT/'assets/metric-center/sql'/(stage['table'].split('.')[-1]+'.sql')).write_bytes(source.read_bytes())
+result={'file':'SQL/任务结束上报/', 'sha256':hashlib.sha256(sql.encode()).hexdigest(),'stages':stages,'queries':queries,'fields':list(dict.fromkeys([*qmap['0:0']['columns'],*qmap['1:0']['columns']]))}
 (ROOT/'assets/metric-center/catalog.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
 page=ROOT/'传输库血缘与自助取数.html';html=page.read_text()
 block='<script type="application/json" id="productionCatalog">'+json.dumps(result,ensure_ascii=False).replace('<','\\u003c')+'</script>'
