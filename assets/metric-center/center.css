@@ -98,3 +98,9 @@
     .table-current-sql{margin-top:14px}.table-current-sql .btn{width:100%;font-size:13px;color:var(--blue)}
     #tableGraph,#hbGraph{cursor:grab;user-select:none}
     #tableGraph.canvas-dragging,#hbGraph.canvas-dragging,#tableGraph.canvas-dragging *,#hbGraph.canvas-dragging *{cursor:grabbing!important}
+
+/* Full physical table names remain readable in narrow panels. */
+.graph-node strong,.table-related strong,.table-detail-title h2,.production-step summary span,.field-detail-heading .tag{overflow-wrap:anywhere;white-space:normal;min-width:0}
+#fieldGrain,#hbFieldTable{max-width:100%;min-width:0}
+
+.source-sql-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:12px 0}

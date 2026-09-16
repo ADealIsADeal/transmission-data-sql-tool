@@ -1,23 +1,23 @@
     const production=JSON.parse(document.getElementById('productionCatalog').textContent);
     const productionQueries=Object.fromEntries(production.queries.map(q=>[q.id,q]));
-    const productionScope="PC 任务结束事件；移动端 eventstatus='2'。按 platform、seqid、parent_id、file_url、peer_id 取当日 ts 最新记录。分片 DWS 保留六端 download / withdraw，仅保留 p2sp、bt、emule、hls；剔除后台下载、预部署任务，file_size、all_bytes、origin_bytes、phub_bytes、tracker_bytes、dcdn_bytes 分别须小于 10 TiB（NULL 按 0）。product_version 与 service_version 的点号位置须大于 1；PC 仅保留 pc.thunderX、pc.NetDisk_N。子任务按当日五个键聚合。";
+    const productionScope="PC 任务结束事件；移动端 eventstatus='2'。按 platform、seqid、parent_id、file_url、peer_id 取当日 ts 最新记录。dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc 保留六端 download / withdraw，仅保留 p2sp、bt、emule、hls；剔除后台下载、预部署任务，file_size、all_bytes、origin_bytes、phub_bytes、tracker_bytes、dcdn_bytes 分别须小于 10 TiB（NULL 按 0）。product_version 与 service_version 的点号位置须大于 1；PC 仅保留 pc.thunderX、pc.NetDisk_N。子任务按当日五个键聚合。";
     const metricNotes={
-      seq_total:['任务结束记录经分片去重、业务过滤后，统计分片 DWS 记录数。','同一分片在同一天按 platform、seqid、parent_id、file_url、peer_id 去重，取 ts 最新记录；跨天按日记录累计。'],
-      avg_global_speed:['分片 DWS 的 global_speed 算术平均值，单位 KB/s，包含 0。','小时层仅保留上报速度大于 0 的值；统一 DWD 转 bigint；分片 DWS 除以 1024，NULL 转为 0，因此分片平均速度包含这些 0。'],
-      seq_zero_speed_total:['下载时长 > 10 秒且原始接收量 = 0 的分片数。','零速判定发生在分片 DWS 内层：download_time > 10 and recv_bytes = 0。原始 recv_bytes 为 NULL 时不计零速，不能使用外层补 0 后的值重新判定。'],
-      seq_zero_speed_rate:['零速分片数 / 分片数。','分子、分母均来自相同日期和筛选范围的分片 DWS。'],
+      seq_total:['任务结束记录经分片去重、业务过滤后，统计dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc 记录数。','同一分片在同一天按 platform、seqid、parent_id、file_url、peer_id 去重，取 ts 最新记录；跨天按日记录累计。'],
+      avg_global_speed:['dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc 的 global_speed 算术平均值，单位 KB/s，包含 0。','小时层仅保留上报速度大于 0 的值；dw_xlyun.dwd_xlyun_transfer_seqid_platform_d_inc 转 bigint；dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc 除以 1024，NULL 转为 0，因此分片平均速度包含这些 0。'],
+      seq_zero_speed_total:['下载时长 > 10 秒且原始接收量 = 0 的分片数。','零速判定发生在dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc 内层：download_time > 10 and recv_bytes = 0。原始 recv_bytes 为 NULL 时不计零速，不能使用外层补 0 后的值重新判定。'],
+      seq_zero_speed_rate:['零速分片数 / 分片数。','分子、分母均来自相同日期和筛选范围的dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc。'],
       seq_fail_total:["最终结果为 failure 或 fail 的分片数。","seq_fail 由 final_result in ('failure', 'fail') 生成；其余结果不计失败。"],
-      seq_fail_rate:['失败分片数 / 分片数。','分子、分母均来自相同日期和筛选范围的分片 DWS。'],
+      seq_fail_rate:['失败分片数 / 分片数。','分子、分母均来自相同日期和筛选范围的dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc。'],
       cnt_sub_task:['按 platform、action_type、peerid、parentid、download_url 聚合后的子任务记录数。',"每天聚合；peerid、parentid、download_url 的 NULL 先转为 'N/A'。跨天累计的是每日子任务记录数，并非跨天重新按五键去重。"],
       avg_global_speed_sub_task:['先对每个子任务的非零分片速度取平均，再对子任务速度取平均，单位 KB/s。','子任务层 avg(if(global_speed is not null and global_speed <> 0, global_speed, null))；全部为 0 或 NULL 的子任务速度为 NULL，不参与最终 avg。每个有效子任务等权，不按分片数或时长加权。'],
       zero_speed_cnt_sub_task:['至少一个分片零速且接收量合计为 0 的子任务数。',"max(seq_zero_speed) = '1' and sum(recv_bytes) = 0；至少一个分片满足下载时长 > 10 秒且原始接收量 = 0，同时子任务接收量合计为 0。其他短时长分片接收量为 0 时仍可计入。"],
-      task_zero_speed_rate:['零速子任务数 / 子任务数。','子任务零速要求至少一个分片零速且接收量合计为 0；分子、分母使用同一子任务 DWS 范围。'],
+      task_zero_speed_rate:['零速子任务数 / 子任务数。','子任务零速要求至少一个分片零速且接收量合计为 0；分子、分母使用同一dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc 范围。'],
       fail_cnt_sub_task:['最后一条分片被标记为失败的子任务数。','子任务 seq_fail = max_by(seq_fail, ts)，按 ts 取末条状态；并非任意分片失败就算子任务失败。ts 并列时 SQL 未指定次级排序。'],
-      task_fail_rate:['失败子任务数 / 子任务数。','失败状态取子任务末条分片；分子、分母使用同一子任务 DWS 范围。'],
+      task_fail_rate:['失败子任务数 / 子任务数。','失败状态取子任务末条分片；分子、分母使用同一dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc 范围。'],
       sum_p2p_bytes_sub_task:['子任务 phub_bytes 与 tracker_bytes 相加后求和，单位 Byte。','分片层这两个字段 NULL 转 0，子任务层分别按分片求和；指标查询再次 ifnull 后相加。P2P 此处只包含 Phub 与 Tracker。'],
-      sum_all_bytes_sub_task:['子任务 all_bytes 求和，单位 Byte。','分片 DWS 对 all_bytes 的 NULL 转 0，子任务层 sum(all_bytes)；指标对入选子任务再次求和。'],
+      sum_all_bytes_sub_task:['子任务 all_bytes 求和，单位 Byte。','dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc 对 all_bytes 的 NULL 转 0，子任务层 sum(all_bytes)；指标对入选子任务再次求和。'],
       p2p_byte_rate_sub_task:['P2P 流量 / 总流量。','先汇总 Phub + Tracker 和 all_bytes，再相除；不对单个子任务的占比取平均。'],
-      total_peer_users:['子任务 DWS 中按 peerid 去重的用户数。',"count(distinct peerid)；上游将 NULL peerid 归为 'N/A'，因此存在这类记录时会计为一个用户。默认数据含下载和取回，单看下载需筛选 action_type='download'。"],
+      total_peer_users:['dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc 中按 peerid 去重的用户数。',"count(distinct peerid)；上游将 NULL peerid 归为 'N/A'，因此存在这类记录时会计为一个用户。默认数据含下载和取回，单看下载需筛选 action_type='download'。"],
       fail_peer_users:['至少有一个失败子任务的用户数，按 peerid 去重。','先按子任务末条分片判定失败，再对这些子任务的 peerid 去重；同一用户其他成功子任务不影响计入。'],
       fail_peer_user_rate:['失败用户数 / 下载用户数。','分子为至少有一个失败子任务的去重 peerid；分母为相同范围全部去重 peerid。跨天应对整个日期范围重新去重，不能累加每日用户数。'],
       zero_speed_peer_users:['至少有一个零速子任务的用户数，按 peerid 去重。','零速子任务要求至少一个分片零速且接收量合计为 0；用户只需有一个这样的子任务即可计入，并非用户全部子任务都零速。'],
@@ -51,10 +51,21 @@
         state.selectedField=b.dataset.prodField;$('#fieldGrain').value=b.dataset.prodGrain||'task';$('#fieldSearch').value='';$('#fieldFamily').value='';showPage('lineage');showFieldTab();renderFields();
       });
     }
+    function bindSourceSqlCopy(sql){
+      const button=$('#copySourceSql');
+      button.onclick=async()=>{
+        try{
+          await navigator.clipboard.writeText(sql);
+          button.textContent='已复制';
+        }catch{
+          button.textContent='复制失败，请重试或下载 SQL';
+        }
+      };
+    }
     function openProductionSql(stage,line){
-      const item=production.stages[stage];$('#infoDialogTitle').textContent=`${item.label} · 线上加工 SQL`;
-      $('#infoDialogBody').innerHTML=`<p class="source-caption">${esc(item.file)} · 独立表加工 SQL</p><code class="source-table-name">${esc(item.table)}</code><a class="source-link" href="${item.file.split('/').map(encodeURIComponent).join('/')}" download>下载本表 SQL</a><pre class="production-sql numbered-sql"><code>${sqlToHtml(item.sql).split('\n').map((row,i)=>`<span class="source-code-line ${item.line+i===line?'source-highlight':''}" data-line="${item.line+i}"><i>${i+1}</i>${row||' '}</span>`).join('')}</code></pre>`;
-      $('#infoDialog').showModal();requestAnimationFrame(()=>$('.source-highlight',$('#infoDialogBody'))?.scrollIntoView({block:'center'}));
+      const item=production.stages[stage];$('#infoDialogTitle').textContent=`${item.table} · 线上加工 SQL`;
+      $('#infoDialogBody').innerHTML=`<p class="source-caption">${esc(item.file)} · 独立表加工 SQL</p><code class="source-table-name">${esc(item.table)}</code><div class="source-sql-actions"><a class="source-link" href="${item.file.split('/').map(encodeURIComponent).join('/')}" download>下载本表 SQL</a><button type="button" class="btn small" id="copySourceSql" aria-live="polite">复制 SQL</button></div><pre class="production-sql numbered-sql"><code>${sqlToHtml(item.sql).split('\n').map((row,i)=>`<span class="source-code-line ${item.line+i===line?'source-highlight':''}" data-line="${item.line+i}"><i>${i+1}</i>${row||' '}</span>`).join('')}</code></pre>`;
+      bindSourceSqlCopy(item.sql);$('#infoDialog').showModal();requestAnimationFrame(()=>$('.source-highlight',$('#infoDialogBody'))?.scrollIntoView({block:'center'}));
     }
     function openMetric(id){
       const m=metricById(id),stage=m.grain==='seq'?1:0,grain=m.grain==='seq'?'seq':'task',used=metricSourceFields(m);state.currentMetric=id;
@@ -68,7 +79,7 @@
           <div class="source-note">依据：SQL/任务结束上报/。指标从对应的分片或子任务明细表计算，字段加工可追溯至线上 SQL。</div>
         </section>
         <section id="metric-tab-sql" role="tabpanel" aria-labelledby="metric-tab-button-sql" data-metric-panel="sql" hidden><div class="metric-sql-heading"><div><h3>指标计算 SQL</h3><p class="source-caption">单日期基础查询，可替换日期并追加业务条件。</p></div><button class="btn small" id="copyMetricSql">复制 SQL</button></div>${sqlPanel(metricCalculationSql(m))}</section>
-        <section id="metric-tab-source" role="tabpanel" aria-labelledby="metric-tab-button-source" data-metric-panel="source" hidden><div class="metric-source-table"><span class="metric-summary-label">直接来源表 · ${stage===1?'分片 DWS':'子任务 DWS'}</span><code class="source-table-name">${esc(m.sourceTable)}</code></div><div class="metric-section-title"><h3>来源字段</h3><span>${used.length?'计算使用的字段及其加工表达式':'记录计数对应的标识与分组字段'}</span></div><div class="metric-source-fields">${relevant.map(f=>{const col=productionQueries[stage===1?'1:0':'0:0'].columns[f];return col?`<div class="metric-source-field"><div class="metric-field-heading"><code>${esc(f)}</code><button class="source-link" data-prod-field="${f}" data-prod-grain="${grain}">查看字段血缘 →</button></div><span class="metric-summary-label">本层加工表达式</span>${sqlPanel(col.expression)}<div class="metric-field-actions">${sourceButton(stage,col.line)}</div></div>`:''}).join('')}</div></section>`;
+        <section id="metric-tab-source" role="tabpanel" aria-labelledby="metric-tab-button-source" data-metric-panel="source" hidden><div class="metric-source-table"><span class="metric-summary-label">直接来源表</span><code class="source-table-name">${esc(m.sourceTable)}</code></div><div class="metric-section-title"><h3>来源字段</h3><span>${used.length?'计算使用的字段及其加工表达式':'记录计数对应的标识与分组字段'}</span></div><div class="metric-source-fields">${relevant.map(f=>{const col=productionQueries[stage===1?'1:0':'0:0'].columns[f];return col?`<div class="metric-source-field"><div class="metric-field-heading"><code>${esc(f)}</code><button class="source-link" data-prod-field="${f}" data-prod-grain="${grain}">查看字段血缘 →</button></div><span class="metric-summary-label">本层加工表达式</span>${sqlPanel(col.expression)}<div class="metric-field-actions">${sourceButton(stage,col.line)}</div></div>`:''}).join('')}</div></section>`;
       $$('[data-metric-tab]',$('#metricDialogBody')).forEach(b=>b.onclick=()=>{
         $$('[data-metric-tab]',$('#metricDialogBody')).forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b));x.tabIndex=x===b?0:-1});
         $$('[data-metric-panel]',$('#metricDialogBody')).forEach(x=>x.hidden=x.dataset.metricPanel!==b.dataset.metricTab);
@@ -113,14 +124,14 @@
       const f=productionField(id),trace=fieldTrace(id,grain),root=productionQueries[grain==='seq'?'1:0':'0:0'].columns[id];
       const used=metrics.filter(m=>metricSourceFields(m).includes(id));
       const steps=[...new Set(trace.nodes.map(n=>n.stage))].sort((a,b)=>a-b);
-      $('#fieldDetailPanel').innerHTML=`<div class="field-detail-heading"><div><h2>${esc(f.cn)}</h2><code>${esc(id)}</code></div><span class="tag">${grain==='seq'?'分片':'子任务'} DWS</span></div><p class="source-caption">${esc(f.comment)} · 类型注释：${esc(f.type)}</p>
+      $('#fieldDetailPanel').innerHTML=`<div class="field-detail-heading"><div><h2>${esc(f.cn)}</h2><code>${esc(id)}</code></div><span class="tag">${esc(grain==='seq'?SEQ_SOURCE_TABLE:TASK_SOURCE_TABLE)}</span></div><p class="source-caption">${esc(f.comment)} · 类型注释：${esc(f.type)}</p>
         <h3>当前层加工</h3>${sqlPanel(root.expression)}${sourceButton(grain==='seq'?1:0,root.line)}
         <h3>字段血缘 <small>从当前层向上游追溯</small></h3>
 
-        <div class="production-chain">${steps.map(stage=>{const ns=trace.nodes.filter(n=>n.stage===stage).sort((a,b)=>a.line-b.line),item=production.stages[stage];return `<details class="production-step" ${stage<2?'open':''}><summary><span>${item.label}</span><small>${ns.length} 项相关表达式</small></summary><code class="source-table-name">${esc(item.table)}</code>${ns.map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${sourceButton(stage,n.line)}<p class="source-caption">输入：${n.refs.map(r=>esc(r.field)).join('、')||'固定值 / 常量'}</p></div>`).join('')}</details>`}).join('')}</div>
+        <div class="production-chain">${steps.map(stage=>{const ns=trace.nodes.filter(n=>n.stage===stage).sort((a,b)=>a.line-b.line),item=production.stages[stage];return `<details class="production-step" ${stage<2?'open':''}><summary><span>${item.table}</span><small>${ns.length} 项相关表达式</small></summary><code class="source-table-name">${esc(item.table)}</code>${ns.map(n=>`<div class="production-expression"><b>${esc(n.field)}</b>${sqlPanel(n.expression)}${sourceButton(stage,n.line)}<p class="source-caption">输入：${n.refs.map(r=>esc(r.field)).join('、')||'固定值 / 常量'}</p></div>`).join('')}</details>`}).join('')}</div>
         <h3>原始来源</h3>
         <div class="production-origin">${trace.external.length?trace.external.map(x=>`<div><code>${esc(x.table)}.${esc(x.field)}</code></div>`).join(''):'由 SQL 固定值或常量生成，无直接原始字段。'}</div>
-        <details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(productionScope)}</p><p>关联字段的匹配键、维表筛选与 SQL 上下文可在各层完整 SQL 中查看；上方链路展示字段值的直接依赖。</p>${steps.map(stage=>sourceButton(stage,production.stages[stage].line,production.stages[stage].label)).join('')}</details>
+        <details class="field-context"><summary>过滤、去重与关联条件</summary><p>${esc(productionScope)}</p><p>关联字段的匹配键、维表筛选与 SQL 上下文可在各层完整 SQL 中查看；上方链路展示字段值的直接依赖。</p>${steps.map(stage=>sourceButton(stage,production.stages[stage].line,production.stages[stage].table)).join('')}</details>
         <h3>直接用于指标</h3><div class="field-used-metrics">${used.map(m=>`<button class="source-link" data-metric-link="${m.id}">${esc(m.cn)}</button>`).join('')||'<span class="source-caption">当前指标未直接引用，可用于维度、筛选或上游加工。</span>'}</div>`;
       bindProduction($('#fieldDetailPanel'));bindCrossLinks($('#fieldDetailPanel'));$('#fieldDetailPanel').scrollTop=0;
     }
