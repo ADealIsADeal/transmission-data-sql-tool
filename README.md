@@ -60,7 +60,22 @@ python3 assets/metric-center/build_catalog.py
 
 命令重新提取 6 个任务的字段表达式、源文件行号与 SHA-256，更新 catalog.json、兼容 SQL 下载文件及两个应用入口。页面中表血缘、字段血缘和指标详情的线上 SQL 均展示此目录的完整原文，下载链接直接指向原文件。GitHub 部署也会先运行此命令，因此更新目录中的 SQL 后部署会自动刷新原文及字段目录。
 
-当前覆盖 20 项指标、分片 78 个和子任务 77 个输出字段。子任务零速按 `max(seq_zero_speed) = '1' and sum(recv_bytes) = 0`；分片 DWS 新增后台/预部署任务过滤、六个大小/流量字段分别小于 10 TiB、版本点号检查及 PC 产品范围限制，采集信息来自 `dim_xlyun_transfer_mp_gcid_info_d_inc`。
+自助取数保留 20 项可组合指标；指标中心按白皮书独立维护 58 项指标、6 个业务分类、4 个关联看板和 10 项维度。字段血缘覆盖分片 78 个和子任务 77 个输出字段。子任务零速按 `max(seq_zero_speed) = '1' and sum(recv_bytes) = 0`；分片 DWS 新增后台/预部署任务过滤、六个大小/流量字段分别小于 10 TiB、版本点号检查及 PC 产品范围限制，采集信息来自 `dim_xlyun_transfer_mp_gcid_info_d_inc`。
+
+### 从指标白皮书更新指标中心
+
+`assets/metric-center/whitepaper.json` 保存《传输中台指标白皮书-2.xlsx》的完整指标与维度内容、来源工作表及单元格位置、文件 SHA-256。导入只继承实际合并单元格的左上角值，不对普通空白向下填充。`whitepaper.js` 和 `whitepaper.css` 渲染目录、业务分类、搜索、统计对象/看板/来源表筛选、维度字典与详情。
+
+导入新版工作簿时运行（仅此步需要 Python 的 openpyxl）：
+
+```bash
+python3 assets/metric-center/import_whitepaper.py /path/to/传输中台指标白皮书-2.xlsx
+python3 assets/metric-center/build_catalog.py
+```
+
+常规构建直接使用 JSON，不依赖原始 Excel 路径或 openpyxl，两个共享入口均嵌入目录，支持离线使用。SQL 模板逐字保留原文，复制按钮不自动纠正查询；日期仍使用 `${date}`。`whitepaperReviews` 单独记录原文中的口径、来源表、字段和单位冲突，更新白皮书后应重新复核这些注记及其单元格定位。现有数据有 13 项待核对。
+
+调度指标来源表尚无仓库加工 SQL，详情明确说明这一缺口，不复用下载表血缘。心跳上报工作表为空，因此未添加心跳指标。白皮书模板尚未执行数据库查询。
 
 提取器的 FROM/JOIN 绑定针对当前六个任务；SQL 结构或业务规则变化时，需复核 build_catalog.py 中的 bindings、center.js 指标口径与页面表说明。自动构建更新原文和表达式，不自动推断自然语言口径。字段血缘展示值的直接依赖，过滤和关联条件请查看完整 SQL；DDL 注释不代表线上数据库校验。
 
