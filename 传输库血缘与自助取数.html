@@ -728,7 +728,50 @@
 .source-sql-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:12px 0}
     .space-switcher select{min-width:160px}.space-switcher{position:relative;z-index:1}
     /* END GENERATED METRIC CENTER */
-</style>
+
+    /* Platform navigation shares the existing card and theme tokens. */
+    .platform-section-title{margin:0 0 16px;font-size:20px;line-height:1.4}
+    .platform-info-section{margin-top:32px}
+    .platform-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:20px;grid-auto-rows:1fr}
+    .platform-card{display:flex;flex-direction:column;min-width:0;min-height:270px;padding:24px;text-align:left;text-decoration:none;color:var(--text);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+    .platform-card:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 16px 36px rgba(24,39,75,.15)}
+    .platform-card:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+    .platform-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .platform-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--soft);color:var(--blue)}
+    .platform-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .platform-card h2{margin:20px 0 8px;font-size:19px;line-height:1.4}
+    .platform-card p{margin:0 0 24px;color:var(--muted);line-height:1.7}
+    .platform-card-action{margin-top:auto;color:var(--blue);font-size:13px;font-weight:600}
+    @media(prefers-reduced-motion:reduce){.platform-card{transition:none}.platform-card:hover{transform:none}}
+
+    /* Header workspace control */
+    .topbar .topbar-inner{gap:16px}
+    .workspace-switcher{position:relative;margin-left:auto;flex:0 0 auto;color:var(--text)}
+    .workspace-switcher summary{display:flex;align-items:center;gap:9px;height:36px;padding:0 10px;list-style:none;border:1px solid transparent;border-radius:8px;background:transparent;cursor:pointer;transition:background .16s,border-color .16s}
+    .workspace-switcher summary::-webkit-details-marker{display:none}
+    .workspace-switcher summary:hover,.workspace-switcher[open] summary{background:var(--soft);border-color:var(--line)}
+    .workspace-switcher summary:focus-visible,.workspace-options button:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+    .workspace-switcher summary strong{font-size:13px;font-weight:500;white-space:nowrap}
+    .workspace-symbol{display:flex;color:var(--muted)}.workspace-symbol svg{width:18px;height:18px}
+    .workspace-chevron{display:flex;color:var(--muted);transition:transform .16s}.workspace-chevron svg{width:15px;height:15px}
+    .workspace-switcher[open] .workspace-chevron{transform:rotate(180deg)}
+    .workspace-popover{position:absolute;top:calc(100% + 14px);right:0;z-index:50;width:min(320px,calc(100vw - 24px));padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 12px 40px rgba(20,35,60,.12),0 2px 8px rgba(20,35,60,.04);overflow:hidden}
+    .workspace-heading{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 12px;color:var(--muted);font-size:11px;font-weight:500}
+    .workspace-heading>span{font-size:10px;color:var(--muted)}
+    .workspace-options{display:grid;gap:4px}
+    .workspace-options button{display:flex;align-items:center;gap:12px;width:100%;padding:13px 12px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--text);text-align:left;cursor:pointer;transition:background .16s}
+    .workspace-options button:hover{background:var(--soft)}
+    .workspace-options button[aria-pressed="true"]{background:color-mix(in srgb,var(--blue) 7%,var(--panel));border-color:color-mix(in srgb,var(--blue) 12%,transparent)}
+    .workspace-option-icon{display:grid;place-items:center;width:34px;height:36px;border-radius:8px;background:var(--soft);color:var(--muted);flex-shrink:0}
+    .workspace-option-icon svg{width:21px;height:21px}
+    .workspace-options [aria-pressed="true"] .workspace-option-icon{background:color-mix(in srgb,var(--blue) 10%,var(--panel));color:var(--blue)}
+    .workspace-options strong{display:block;font-size:13px;font-weight:600}.workspace-options small{display:block;margin-top:4px;font-size:10px;color:var(--muted);line-height:1.5}
+    .workspace-check{margin-left:auto;color:var(--blue);font-size:13px;visibility:hidden}.workspace-options [aria-pressed="true"] .workspace-check{visibility:visible}
+    .workspace-footer{margin:8px 6px 0;padding:11px 6px 5px;border-top:1px solid var(--line);font-size:10px;color:var(--muted)}
+    @media(max-width:1180px){.topbar .topbar-inner{height:auto!important;flex-wrap:wrap;padding:10px 0!important}.topbar .nav{order:2;flex:0 0 100%;width:100%;position:static;overflow-x:auto}.workspace-switcher{order:1}}
+    @media(max-width:480px){.workspace-switcher summary{gap:5px;padding:0 5px}.workspace-symbol svg{width:16px;height:16px}.workspace-switcher summary strong{font-size:12px}.topbar .brand{font-size:13px}.topbar .topbar-inner{gap:6px}}
+    @media(prefers-reduced-motion:reduce){.workspace-switcher summary,.workspace-chevron,.workspace-options button{transition:none}}
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -738,18 +781,26 @@
         <button class="active" data-page="builder"><span class="nav-intelligence" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M13 1.5c.65 4.2 2.8 6.8 6.5 7.8-3.7 1-5.85 3.6-6.5 7.8-.65-4.2-2.8-6.8-6.5-7.8 3.7-1 5.85-3.6 6.5-7.8Z"></path><path d="M4 2c.2 1.3.85 2.1 2.1 2.4C4.85 4.7 4.2 5.5 4 6.8 3.8 5.5 3.15 4.7 1.9 4.4 3.15 4.1 3.8 3.3 4 2Z" opacity=".75"></path><path d="M3.5 12.5c.15 1 .65 1.6 1.6 1.85-.95.25-1.45.85-1.6 1.85-.15-1-.65-1.6-1.6-1.85.95-.25 1.45-.85 1.6-1.85Z" opacity=".5"></path></svg></span>自助取数</button>
         <button data-page="metrics"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9m7 10V5m7 14v-7"></path><path d="M3 19h18"></path></svg>指标中心</button>
         <button data-page="lineage"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.5"></circle><circle cx="19" cy="6" r="2.5"></circle><circle cx="19" cy="18" r="2.5"></circle><path d="M7.5 11 16.5 7M7.5 13l9 4"></path></svg>数据血缘</button>
+        <button data-page="platforms"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m16 8-2.5 5.5L8 16l2.5-5.5Z"></path></svg>平台导航</button>
         <button data-page="toolkit"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.8"></rect><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.8"></rect><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.8"></rect><path d="M17.25 13.5c.35 2.05 1.45 3.25 3.25 3.75-1.8.5-2.9 1.7-3.25 3.75-.35-2.05-1.45-3.25-3.25-3.75 1.8-.5 2.9-1.7 3.25-3.75Z"></path></svg>常用工具</button>
       </nav>
+      <details class="workspace-switcher" id="workspaceSwitcher">
+        <summary aria-label="切换数据空间"><span class="workspace-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></svg></span><span><strong id="currentSpaceName">任务结束上报</strong></span><span class="workspace-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 10 4 4 4-4"/></svg></span></summary>
+        <div class="workspace-popover">
+          <div class="workspace-heading">切换数据空间<span>2 个空间</span></div>
+          <div class="workspace-options" aria-label="可用数据空间">
+            <button type="button" data-space-option="task-end" aria-pressed="true"><span class="workspace-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span><span><strong>任务结束上报</strong><small>指标分析 · 自助取数 · 数据血缘</small></span><span class="workspace-check" aria-hidden="true">✓</span></button>
+            <button type="button" data-space-option="heartbeat" aria-pressed="false"><span class="workspace-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></span><span><strong>心跳上报</strong><small>上行与下行 · 独立数据血缘</small></span><span class="workspace-check" aria-hidden="true">✓</span></button>
+          </div>
+          <div id="dataSpaceDescription" class="workspace-footer">任务结束上报 · 指标与数据血缘</div>
+        </div>
+        <select id="dataSpace" aria-label="数据空间" hidden><option value="task-end">任务结束上报</option><option value="heartbeat">心跳上报</option></select>
+      </details>
     </div>
   </header>
   <div class="generation-alert hidden" id="generationAlert" role="alert" aria-live="assertive"></div>
 
   <main>
-    <div class="space-switcher card" style="display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:18px;flex-wrap:wrap">
-      <label for="dataSpace" style="font-weight:600">数据空间</label>
-      <select id="dataSpace" aria-label="数据空间"><option value="task-end">任务结束上报</option><option value="heartbeat">心跳上报</option></select>
-      <span id="dataSpaceDescription" class="source-caption">任务结束上报 · 指标与数据血缘</span>
-    </div>
     <section class="page" id="page-metrics">
       <div class="hero"><div><h1>指标中心</h1><p>从指标口径到计算 SQL、来源字段，一处查清。</p></div></div>
       <div class="metric-source-banner"><span>口径依据 <strong>SQL/任务结束上报/</strong></span><span>6 段线上加工 · 详情可追溯原文</span></div>
@@ -863,6 +914,17 @@
           <aside class="card side-detail" id="hbFieldDetail"></aside>
         </div>
       </div>
+    </section>
+
+    <section class="page" id="page-platforms" aria-label="平台导航">
+      <section aria-labelledby="quickPlatformsTitle">
+        <h2 id="quickPlatformsTitle" class="platform-section-title">常用平台快速导航</h2>
+        <div class="platform-grid" id="platformGrid"></div>
+      </section>
+      <section aria-labelledby="platformInfoTitle" class="platform-info-section">
+        <h2 id="platformInfoTitle" class="platform-section-title">平台信息汇总</h2>
+        <div class="platform-grid" id="platformInfoGrid"></div>
+      </section>
     </section>
 
     <section class="page" id="page-toolkit">
@@ -1004,7 +1066,36 @@
     const metricRoleLabel=m=>['均值','分母','分子','占比'][metricRole(m)];
     const metricTopic=m=>m.id.includes('zero_speed')?0:m.id.includes('fail')?1:2;
     const metricSort=(a,b)=>{const groups=['seq','task','user','untagged'],groupDiff=groups.indexOf(metricDisplayGroup(a))-groups.indexOf(metricDisplayGroup(b));if(groupDiff)return groupDiff;const roleDiff=metricRole(a)-metricRole(b);if(roleDiff)return roleDiff;const topicDiff=metricTopic(a)-metricTopic(b);return topicDiff||metrics.indexOf(a)-metrics.indexOf(b)};
-    function showPage(page){if($('#dataSpace').value==='heartbeat'&&page!=='toolkit')page='heartbeat';state.page=page;$$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===(page==='heartbeat'?'lineage':page)));window.scrollTo(0,0);requestAnimationFrame(()=>window.scrollTo(0,0));if(page==='builder')renderSummary();}
+    // Add platform entries here; the cards are rendered from this configuration.
+    const platformConfig = [
+      {name:'Adhoc SQL 查询平台',description:'用于日常 Adhoc SQL 查询和数据分析',url:'https://adhoc-xldc.xunlei.com/',icon:'query',category:'SQL 查询'},
+      {name:'XDAP 任务调度平台',description:'用于数据任务开发、调度及运行管理',url:'http://xdap.xunlei.cn/',icon:'schedule',category:'任务调度'},
+      {name:'Quick BI 看板',description:'用于查看和管理数据分析看板',url:'https://quickbi.xunlei.cn/view/index',icon:'chart',category:'BI 看板'},
+      {name:'数据资产平台',description:'用于查询数据表、字段及相关数据资产信息及新建数据表',url:'https://data-manager-xldc.xunlei.com/',icon:'database',category:'数据资产'},
+      {name:'XData数据中心',description:'集中查看各类数据平台的信息与入口',url:'https://xdata-xldc.xunlei.com/',icon:'database',category:'信息汇总',group:'information'}
+    ];
+    const platformIcons = {
+      query:'<rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="m7 9 3 3-3 3m6 0h4"></path>',
+      schedule:'<rect x="3" y="3" width="6" height="6" rx="1.5"></rect><rect x="15" y="15" width="6" height="6" rx="1.5"></rect><path d="M9 6h9v6m-3-3 3 3 3-3M6 9v9h6m-3-3 3 3-3 3"></path>',
+      chart:'<path d="M4 3v17h17M8 15v-4m5 4V7m5 8v-6"></path>',
+      database:'<ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"></path>'
+    };
+    platformConfig.forEach(platform=>{
+      const card=document.createElement('a');
+      card.className='card platform-card';card.href=platform.url;card.target='_blank';card.rel='noopener noreferrer';
+      const top=document.createElement('div');top.className='platform-card-top';
+      const icon=document.createElement('span');icon.className='platform-icon';icon.setAttribute('aria-hidden','true');
+      icon.innerHTML='<svg viewBox="0 0 24 24">'+platformIcons[platform.icon]+'</svg>';
+      const category=document.createElement('span');category.className='tag';category.textContent=platform.category;
+      top.append(icon,category);
+      const title=document.createElement('h2');title.textContent=platform.name;
+      const description=document.createElement('p');description.textContent=platform.description;
+      const action=document.createElement('span');action.className='platform-card-action';action.textContent='访问平台 ↗';
+      action.setAttribute('aria-label','访问平台（在新标签页打开）');
+      card.append(top,title,description,action);$(platform.group==='information'?'#platformInfoGrid':'#platformGrid').append(card);
+    });
+
+    function showPage(page){if($('#dataSpace').value==='heartbeat'&&!['toolkit','platforms'].includes(page))page='heartbeat';state.page=page;$$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===(page==='heartbeat'?'lineage':page)));window.scrollTo(0,0);requestAnimationFrame(()=>window.scrollTo(0,0));if(page==='builder')renderSummary();}
     $$('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));$$('[data-go-builder]').forEach(b=>b.onclick=()=>showPage('builder'));
     const toolkitFrame=$('#toolkitFrame');let toolkitResizeObserver=null;const toolkitThemeMedia=window.matchMedia('(prefers-color-scheme: dark)');
     function syncToolkitTheme(doc=toolkitFrame.contentDocument){if(!doc?.body)return;doc.body.classList.add('embedded');doc.body.classList.toggle('light',!toolkitThemeMedia.matches)}
@@ -1343,8 +1434,25 @@
       hideGenerationAlert();hideHoverHelp();
       $$('[data-page="builder"],[data-page="metrics"]').forEach(b=>b.classList.toggle('hidden',space==='heartbeat'));
       $('#dataSpaceDescription').textContent=space==='heartbeat'?'心跳上报 · 独立血缘空间，暂不配置指标':'任务结束上报 · 指标与数据血缘';
+      syncSpacePicker();
       showPage(spacePages[space]);
     }
+    function syncSpacePicker(){
+      const space=$('#dataSpace').value;
+      $('#currentSpaceName').textContent=space==='heartbeat'?'心跳上报':'任务结束上报';
+      $$('[data-space-option]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.spaceOption===space)));
+    }
+    const workspacePicker=$('#workspaceSwitcher');
+    $$('[data-space-option]').forEach(button=>button.addEventListener('click',()=>{
+      if($('#dataSpace').value!==button.dataset.spaceOption){$('#dataSpace').value=button.dataset.spaceOption;switchDataSpace()}
+      workspacePicker.open=false;workspacePicker.querySelector('summary').focus();
+    }));
+    document.addEventListener('click',event=>{if(!workspacePicker.contains(event.target))workspacePicker.open=false});
+    workspacePicker.addEventListener('keydown',event=>{if(event.key==='Escape'){workspacePicker.open=false;workspacePicker.querySelector('summary').focus()}});
+    // WebKit may report relatedTarget=null when a pointer clicks a button.
+    // Keep the panel open until click dispatch; only close on a known outside focus target.
+    workspacePicker.addEventListener('focusout',event=>{if(event.relatedTarget&&!workspacePicker.contains(event.relatedTarget))workspacePicker.open=false});
+    syncSpacePicker();
     $('#dataSpace').onchange=switchDataSpace;
     try{if(localStorage.getItem('transmission-data-space')==='heartbeat'){$('#dataSpace').value='heartbeat';switchDataSpace()}}catch{}
     if(location.hash==='#metrics')showPage('metrics');if(location.hash==='#fields'){showPage('lineage');showFieldTab()}
