@@ -130,8 +130,17 @@ shared_css=html[:style_end]
 for original, counterpart in {'page-lineage':'page-heartbeat','tableLineage':'hbTableView','fieldLineage':'hbFieldView','tableDetailPanel':'hbTableDetail','fieldDetailPanel':'hbFieldDetail'}.items():
     shared_css=re.sub(r'(?<!:is\()#'+original+r'\b', ':is(#'+original+',#'+counterpart+')', shared_css)
 html=shared_css+html[style_end:]
+theme_style=(ROOT/'assets/theme.css').read_text()
+theme_script=(ROOT/'assets/theme.js').read_text()
+def embed_theme(document):
+    document=re.sub(r'<style id="app-theme-style">[\s\S]*?</style>\s*','',document)
+    document=re.sub(r'<script id="app-theme-script">[\s\S]*?</script>\s*','',document)
+    return document.replace('</head>','<style id="app-theme-style">'+theme_style+'</style>\n<script id="app-theme-script">'+theme_script+'</script>\n</head>')
+html=embed_theme(html)
 page.write_text(html)
 (ROOT/'app.html').write_text(html)
+index=ROOT/'index.html'
+index.write_text(embed_theme(index.read_text()))
 
 # Version iframe URLs when the embedded application changes.
 version=hashlib.sha256(html.encode()).hexdigest()[:12]

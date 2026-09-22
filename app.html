@@ -851,6 +851,99 @@
   @media(prefers-color-scheme:dark){.app-drawer{background:#141e2d;border-color:#263248}.drawer-toggle{border-color:#263248;color:#9aaec9}.app-drawer .nav button:hover{background:#233650!important}.app-drawer .nav button{color:#9cafca!important}.app-drawer .nav button.active{color:#fff!important}.header-actions .workspace-symbol{background:#20375b;color:#89b5ff}}
   @media(prefers-reduced-motion:reduce){.app-drawer,.drawer-label{transition:none}}
 </style>
+<style id="app-theme-style">.theme-toggle{flex:none;order:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:36px;height:42px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--muted,#596579);cursor:pointer;font-family:inherit;font-size:11px}
+.theme-toggle svg{width:19px;height:19px}.theme-toggle:hover{background:var(--soft,#f2f5fb);color:var(--blue,#315bef)}
+.theme-toggle:focus-visible{outline:2px solid var(--blue,#315bef);outline-offset:3px}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#10151e;--panel:#192231;--soft:#202d40;--text:#edf2fa;--muted:#b0bdcf;--line:#39495f;--blue:#aac5ff;--blue2:#92b5ff;--teal:#81ded7;--amber:#f3c17e;--red:#ffaaa4;--green:#89dda8;--violet:#c9b4ff}
+html[data-theme="dark"] body{background:#10151e!important;color:var(--text)}
+html[data-theme="dark"] .topbar,html[data-theme="dark"] dialog,html[data-theme="dark"] .workspace-popover{background:#192231!important;color:var(--text);border-color:var(--line)!important}
+html[data-theme="dark"] .dialog-head,html[data-theme="dark"] .pane-head,html[data-theme="dark"] .pane-search{background:#1d293b!important}
+html[data-theme="dark"] .card,html[data-theme="dark"] .field-pane,html[data-theme="dark"] .side-detail,html[data-theme="dark"] .canvas-section{background:#192231!important;color:var(--text)}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{color:var(--text);color-scheme:dark}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#a7b5ca!important;opacity:1}
+html[data-theme="dark"] option{background:#202d40;color:#edf2fa}
+html[data-theme="dark"] .header-actions .help-document,html[data-theme="dark"] .theme-toggle,html[data-theme="dark"] .drawer-toggle,html[data-theme="dark"] .drawer-section,html[data-theme="dark"] .drawer-bottom{color:#b0bdcf}
+html[data-theme="dark"] .wp-stats,html[data-theme="dark"] .wp-detail-source,html[data-theme="dark"] .wp-table thead th{background:#202d40!important}
+html[data-theme="dark"] .wp-review-tag{color:#f3c17e;background:#49371e}
+html[data-theme="dark"] .wp-review{background:#352d21;color:#f7deba}
+html[data-theme="dark"] .wp-table tbody tr:hover{background:#223149}
+html[data-theme="dark"] .wp-view.active,html[data-theme="dark"] .wp-dashboard,html[data-theme="dark"] .wp-open,html[data-theme="dark"] .source-link{color:#aac5ff}
+html[data-theme="dark"] .wp-table .metric-name-link{color:#edf2fa}
+/* SQL surfaces are intentionally invariant across all page themes. */
+html .production-sql{background:#111b2b!important;color:#dce6f5!important;border-color:#26344a!important;color-scheme:dark}
+html .production-sql code{color:inherit!important;background:none!important}
+html .sql-shell,html .sql-code,html .table-logic-sql{background:#101827!important;color:#d9e5f7!important;color-scheme:dark}
+html .sql-toolbar{background:#182337!important;color:#dbe8ff!important}
+html .sql-toolbar .btn{background:#25344e!important;color:#dbe8ff!important;border-color:#41516a!important}
+html .production-sql .kw,html .production-sql .fn{color:#a9c6ff!important}html .production-sql .str{color:#b8deb7!important}html .production-sql .com{color:#8da0b9!important}
+html .sql-code .kw{color:#8cb4ff!important}html .sql-code .str{color:#8ee7ba!important}html .sql-code .num{color:#ffc978!important}html .sql-code .com{color:#8da0b9!important}html .sql-code .alias{color:#e8a6dc!important}html .sql-code .fn{color:#70d8d4!important}
+html .source-code-line.source-highlight{background:#344967!important;outline-color:#789bca!important}
+html[data-theme="dark"] .btn.primary{background:#315fbd!important;color:#fff!important}
+html[data-theme="dark"] .validation .pass{color:#9ce4b1!important;background:#203b2c!important}html[data-theme="dark"] .validation .risk{color:#f6ce90!important;background:#423321!important}html[data-theme="dark"] .validation .fail{color:#ffc0ba!important;background:#492b2e!important}
+html[data-theme="dark"] .wrap .card p,html[data-theme="dark"] .wrap .hero p,html[data-theme="dark"] .wrap .footer,html[data-theme="dark"] .wrap .eyebrow{color:var(--muted)}
+html[data-theme="dark"] .wrap .badge,html[data-theme="dark"] .wrap .icon{background:#263b5c!important;color:#c0d5ff!important;border-color:var(--line)}
+html[data-theme="dark"] .wrap .go{color:#aac5ff}
+html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[data-theme="dark"] .pane-head small,html[data-theme="dark"] .canvas-title p,html[data-theme="dark"] .metric-summary-label{color:var(--muted)!important}
+@media(max-width:430px){.header-actions{gap:5px!important}.header-actions .help-document,.theme-toggle{width:30px}.workspace-identity strong{max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}body .topbar .brand{font-size:12px!important}}
+</style>
+<script id="app-theme-script">(() => {
+  const key = 'transmission-color-mode';
+  const media = matchMedia('(prefers-color-scheme: dark)');
+  const valid = value => ['system', 'dark', 'light'].includes(value) ? value : 'system';
+  let mode = 'system';
+  try { mode = valid(localStorage.getItem(key)); } catch {}
+  // Retain existing dark rules and their cascade order, but make their media
+  // conditions respond to the explicit preference instead of only the OS.
+  const rules = [];
+  function collect(list) {
+    for (const rule of list) {
+      if (rule instanceof CSSMediaRule && /prefers-color-scheme\s*:\s*dark/.test(rule.conditionText)) {
+        rules.push({rule, query: rule.conditionText});
+      }
+      if (rule.cssRules) collect(rule.cssRules);
+    }
+  }
+  for (const sheet of document.styleSheets) {
+    try { collect(sheet.cssRules); } catch {}
+  }
+  function apply() {
+    const dark = mode === 'dark' || (mode === 'system' && media.matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.documentElement.dataset.colorMode = mode;
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    for (const {rule, query} of rules) {
+      rule.media.mediaText = query.replace(/\(prefers-color-scheme\s*:\s*dark\)/g, dark ? '(min-width: 0px)' : '(max-width: -1px)');
+    }
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) {
+      toggle.querySelector('span').textContent = dark ? '深色' : '浅色';
+      toggle.title = toggle.ariaLabel = dark ? '切换为浅色模式' : '切换为深色模式';
+      toggle.querySelector('svg').innerHTML = dark
+        ? '<path d="M20 14a8 8 0 0 1-10-10 8 8 0 1 0 10 10Z" fill="none" stroke="currentColor" stroke-width="1.6"/>'
+        : '<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
+    }
+    window.dispatchEvent(new CustomEvent('app-theme-change', {detail:{mode, theme:dark?'dark':'light'}}));
+  }
+  window.appTheme = {set(value) {mode=valid(value);try{localStorage.setItem(key,mode)}catch{}apply();}, get mode(){return mode;}};
+  apply();
+  media.addEventListener('change', apply);
+  window.addEventListener('storage', event => {if(event.key===key || event.key===null){mode=valid(event.newValue);apply();}});
+  document.addEventListener('DOMContentLoaded', () => {
+    const help = document.querySelector('.help-document');
+    if (help) {
+      const toggle = document.createElement('button');
+      toggle.id = 'themeToggle';
+      toggle.className = 'theme-toggle';
+      toggle.type = 'button';
+      toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"></svg><span></span>';
+      help.after(toggle);
+      toggle.addEventListener('click', () => window.appTheme.set(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+    }
+    apply();
+  });
+})();
+</script>
 </head>
 <body>
   <aside class="app-drawer" id="appDrawer" aria-label="应用菜单">
@@ -1188,12 +1281,12 @@
 
     function showPage(page){if($('#dataSpace').value==='heartbeat'&&!['toolkit','platforms'].includes(page))page='heartbeat';state.page=page;$$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===(page==='heartbeat'?'lineage':page)));window.scrollTo(0,0);requestAnimationFrame(()=>window.scrollTo(0,0));if(page==='builder')renderSummary();}
     $$('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));$$('[data-go-builder]').forEach(b=>b.onclick=()=>showPage('builder'));
-    const toolkitFrame=$('#toolkitFrame');let toolkitResizeObserver=null;const toolkitThemeMedia=window.matchMedia('(prefers-color-scheme: dark)');
-    function syncToolkitTheme(doc=toolkitFrame.contentDocument){if(!doc?.body)return;doc.body.classList.add('embedded');doc.body.classList.toggle('light',!toolkitThemeMedia.matches)}
+    const toolkitFrame=$('#toolkitFrame');let toolkitResizeObserver=null;
+    function syncToolkitTheme(doc=toolkitFrame.contentDocument){if(!doc?.body)return;doc.body.classList.add('embedded');doc.body.classList.toggle('light',document.documentElement.dataset.theme!=="dark")}
     const viewportWorkspaces=['#page-builder .workbench','#page-metrics .meta-metric-grid','#page-lineage #tableLineage .lineage-layout','#page-lineage #fieldLineage .field-layout','#page-heartbeat #hbTableView .lineage-layout','#page-heartbeat #hbFieldView .field-layout'];
     function syncViewportWorkspaces(){viewportWorkspaces.forEach(selector=>{const el=$(selector);if(!el)return;if(window.innerWidth<=980){el.style.minHeight='';return}if(el.offsetParent===null)return;const top=Math.max(68,el.getBoundingClientRect().top),height=Math.max(420,window.innerHeight-top-40);el.style.minHeight=height+'px'})}
     function bindToolkitAutoHeight(){try{const doc=toolkitFrame.contentDocument,app=doc&&doc.querySelector('.app-shell');if(!app)return;syncToolkitTheme(doc);const sync=()=>{const available=Math.max(520,window.innerHeight-toolkitFrame.getBoundingClientRect().top-24),content=Math.ceil(app.scrollHeight);toolkitFrame.style.height=Math.max(available,content)+'px'};if(toolkitResizeObserver)toolkitResizeObserver.disconnect();toolkitResizeObserver=new ResizeObserver(sync);toolkitResizeObserver.observe(app);doc.addEventListener('click',()=>requestAnimationFrame(sync));window.addEventListener('resize',sync,{passive:true});sync()}catch(e){/* Same-origin local tool is expected; keep CSS fallback height otherwise. */}}
-    toolkitFrame.addEventListener('load',bindToolkitAutoHeight);toolkitThemeMedia.addEventListener('change',()=>syncToolkitTheme());if(toolkitFrame.contentDocument?.readyState==='complete')bindToolkitAutoHeight();
+    toolkitFrame.addEventListener('load',bindToolkitAutoHeight);window.addEventListener('app-theme-change',()=>syncToolkitTheme());if(toolkitFrame.contentDocument?.readyState==='complete')bindToolkitAutoHeight();
     window.addEventListener('resize',syncViewportWorkspaces,{passive:true});document.addEventListener('click',()=>requestAnimationFrame(syncViewportWorkspaces));requestAnimationFrame(syncViewportWorkspaces);
     ['metricSearch','metricCategory','metricGrain'].forEach(id=>$('#'+id).addEventListener('input',renderMetrics));
     function useMetric(id){state.selectedMetrics.add(id);renderBuilderMetrics();renderSummary();showPage('builder');goStep(2);$('#metricDialog').close();}

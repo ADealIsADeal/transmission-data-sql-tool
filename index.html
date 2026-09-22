@@ -9,4 +9,97 @@
     .help-document:hover .help-document-tooltip,.help-document:focus-visible .help-document-tooltip{opacity:1;visibility:visible}
     @media(max-width:1180px){.help-document{order:1}}
   </style>
+<style id="app-theme-style">.theme-toggle{flex:none;order:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:36px;height:42px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--muted,#596579);cursor:pointer;font-family:inherit;font-size:11px}
+.theme-toggle svg{width:19px;height:19px}.theme-toggle:hover{background:var(--soft,#f2f5fb);color:var(--blue,#315bef)}
+.theme-toggle:focus-visible{outline:2px solid var(--blue,#315bef);outline-offset:3px}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#10151e;--panel:#192231;--soft:#202d40;--text:#edf2fa;--muted:#b0bdcf;--line:#39495f;--blue:#aac5ff;--blue2:#92b5ff;--teal:#81ded7;--amber:#f3c17e;--red:#ffaaa4;--green:#89dda8;--violet:#c9b4ff}
+html[data-theme="dark"] body{background:#10151e!important;color:var(--text)}
+html[data-theme="dark"] .topbar,html[data-theme="dark"] dialog,html[data-theme="dark"] .workspace-popover{background:#192231!important;color:var(--text);border-color:var(--line)!important}
+html[data-theme="dark"] .dialog-head,html[data-theme="dark"] .pane-head,html[data-theme="dark"] .pane-search{background:#1d293b!important}
+html[data-theme="dark"] .card,html[data-theme="dark"] .field-pane,html[data-theme="dark"] .side-detail,html[data-theme="dark"] .canvas-section{background:#192231!important;color:var(--text)}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{color:var(--text);color-scheme:dark}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#a7b5ca!important;opacity:1}
+html[data-theme="dark"] option{background:#202d40;color:#edf2fa}
+html[data-theme="dark"] .header-actions .help-document,html[data-theme="dark"] .theme-toggle,html[data-theme="dark"] .drawer-toggle,html[data-theme="dark"] .drawer-section,html[data-theme="dark"] .drawer-bottom{color:#b0bdcf}
+html[data-theme="dark"] .wp-stats,html[data-theme="dark"] .wp-detail-source,html[data-theme="dark"] .wp-table thead th{background:#202d40!important}
+html[data-theme="dark"] .wp-review-tag{color:#f3c17e;background:#49371e}
+html[data-theme="dark"] .wp-review{background:#352d21;color:#f7deba}
+html[data-theme="dark"] .wp-table tbody tr:hover{background:#223149}
+html[data-theme="dark"] .wp-view.active,html[data-theme="dark"] .wp-dashboard,html[data-theme="dark"] .wp-open,html[data-theme="dark"] .source-link{color:#aac5ff}
+html[data-theme="dark"] .wp-table .metric-name-link{color:#edf2fa}
+/* SQL surfaces are intentionally invariant across all page themes. */
+html .production-sql{background:#111b2b!important;color:#dce6f5!important;border-color:#26344a!important;color-scheme:dark}
+html .production-sql code{color:inherit!important;background:none!important}
+html .sql-shell,html .sql-code,html .table-logic-sql{background:#101827!important;color:#d9e5f7!important;color-scheme:dark}
+html .sql-toolbar{background:#182337!important;color:#dbe8ff!important}
+html .sql-toolbar .btn{background:#25344e!important;color:#dbe8ff!important;border-color:#41516a!important}
+html .production-sql .kw,html .production-sql .fn{color:#a9c6ff!important}html .production-sql .str{color:#b8deb7!important}html .production-sql .com{color:#8da0b9!important}
+html .sql-code .kw{color:#8cb4ff!important}html .sql-code .str{color:#8ee7ba!important}html .sql-code .num{color:#ffc978!important}html .sql-code .com{color:#8da0b9!important}html .sql-code .alias{color:#e8a6dc!important}html .sql-code .fn{color:#70d8d4!important}
+html .source-code-line.source-highlight{background:#344967!important;outline-color:#789bca!important}
+html[data-theme="dark"] .btn.primary{background:#315fbd!important;color:#fff!important}
+html[data-theme="dark"] .validation .pass{color:#9ce4b1!important;background:#203b2c!important}html[data-theme="dark"] .validation .risk{color:#f6ce90!important;background:#423321!important}html[data-theme="dark"] .validation .fail{color:#ffc0ba!important;background:#492b2e!important}
+html[data-theme="dark"] .wrap .card p,html[data-theme="dark"] .wrap .hero p,html[data-theme="dark"] .wrap .footer,html[data-theme="dark"] .wrap .eyebrow{color:var(--muted)}
+html[data-theme="dark"] .wrap .badge,html[data-theme="dark"] .wrap .icon{background:#263b5c!important;color:#c0d5ff!important;border-color:var(--line)}
+html[data-theme="dark"] .wrap .go{color:#aac5ff}
+html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[data-theme="dark"] .pane-head small,html[data-theme="dark"] .canvas-title p,html[data-theme="dark"] .metric-summary-label{color:var(--muted)!important}
+@media(max-width:430px){.header-actions{gap:5px!important}.header-actions .help-document,.theme-toggle{width:30px}.workspace-identity strong{max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}body .topbar .brand{font-size:12px!important}}
+</style>
+<script id="app-theme-script">(() => {
+  const key = 'transmission-color-mode';
+  const media = matchMedia('(prefers-color-scheme: dark)');
+  const valid = value => ['system', 'dark', 'light'].includes(value) ? value : 'system';
+  let mode = 'system';
+  try { mode = valid(localStorage.getItem(key)); } catch {}
+  // Retain existing dark rules and their cascade order, but make their media
+  // conditions respond to the explicit preference instead of only the OS.
+  const rules = [];
+  function collect(list) {
+    for (const rule of list) {
+      if (rule instanceof CSSMediaRule && /prefers-color-scheme\s*:\s*dark/.test(rule.conditionText)) {
+        rules.push({rule, query: rule.conditionText});
+      }
+      if (rule.cssRules) collect(rule.cssRules);
+    }
+  }
+  for (const sheet of document.styleSheets) {
+    try { collect(sheet.cssRules); } catch {}
+  }
+  function apply() {
+    const dark = mode === 'dark' || (mode === 'system' && media.matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.documentElement.dataset.colorMode = mode;
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    for (const {rule, query} of rules) {
+      rule.media.mediaText = query.replace(/\(prefers-color-scheme\s*:\s*dark\)/g, dark ? '(min-width: 0px)' : '(max-width: -1px)');
+    }
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) {
+      toggle.querySelector('span').textContent = dark ? '深色' : '浅色';
+      toggle.title = toggle.ariaLabel = dark ? '切换为浅色模式' : '切换为深色模式';
+      toggle.querySelector('svg').innerHTML = dark
+        ? '<path d="M20 14a8 8 0 0 1-10-10 8 8 0 1 0 10 10Z" fill="none" stroke="currentColor" stroke-width="1.6"/>'
+        : '<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
+    }
+    window.dispatchEvent(new CustomEvent('app-theme-change', {detail:{mode, theme:dark?'dark':'light'}}));
+  }
+  window.appTheme = {set(value) {mode=valid(value);try{localStorage.setItem(key,mode)}catch{}apply();}, get mode(){return mode;}};
+  apply();
+  media.addEventListener('change', apply);
+  window.addEventListener('storage', event => {if(event.key===key || event.key===null){mode=valid(event.newValue);apply();}});
+  document.addEventListener('DOMContentLoaded', () => {
+    const help = document.querySelector('.help-document');
+    if (help) {
+      const toggle = document.createElement('button');
+      toggle.id = 'themeToggle';
+      toggle.className = 'theme-toggle';
+      toggle.type = 'button';
+      toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"></svg><span></span>';
+      help.after(toggle);
+      toggle.addEventListener('click', () => window.appTheme.set(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+    }
+    apply();
+  });
+})();
+</script>
 </head><body><main class="wrap"><div class="hero"><div><div class="eyebrow">TRANSMISSION DATA WORKSPACE</div><h1>传输中台数据自助</h1><p>统一入口 · 指标探索 · 数据血缘 · SQL 工具</p></div><div style="display:flex;align-items:center;gap:16px"><div class="badge">数据分析工作台</div><a class="help-document" href="https://xclaw.k8s.xunlei.cn/p/axyXEbmuWpI59nUu7YeI0A/" target="_blank" rel="noopener" aria-label="帮助文档（在新标签页打开）"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.75-2.5 2-2.5 4"/><circle cx="12" cy="17" r=".8" fill="currentColor" stroke="none"/></svg><span>帮助</span><span class="help-document-tooltip" aria-hidden="true">帮助文档</span></a></div></div><div class="grid"><a class="card" href="自助取数.html"><span class="icon">✦</span><h2>自助取数</h2><p>选择指标、维度和筛选条件，快速生成规范 SQL。</p><span class="go">进入页面 →</span></a><a class="card" href="指标中心.html"><span class="icon">▥</span><h2>指标中心</h2><p>查看指标定义、统计口径、计算公式和来源字段。</p><span class="go">进入页面 →</span></a><a class="card" href="数据血缘.html"><span class="icon">⌘</span><h2>数据血缘</h2><p>浏览表血缘、字段链路和数据加工逻辑。</p><span class="go">进入页面 →</span></a><a class="card" href="平台导航.html"><span class="icon">↗</span><h2>平台导航</h2><p>快速访问 SQL 查询、任务调度、BI 看板和数据资产平台。</p><span class="go">进入页面 →</span></a><a class="card" href="常用工具.html"><span class="icon">✣</span><h2>常用工具</h2><p>打开传输中台常用的分析与辅助工具集合。</p><span class="go">进入页面 →</span></a></div><div class="footer">传输数据团队 · GitHub Pages / CloudBase</div></main></body></html>

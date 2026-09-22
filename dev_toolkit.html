@@ -1061,10 +1061,16 @@
   body.light .smart-result pre{background:#fff;border:1px solid #eef2f7;color:#334155}
   body.light .smart-empty{color:#9aa5b5}
 </style>
+<style id="sql-fixed-theme">
+html body #sqlInput,html body #sqlOutput{background:#101827!important;color:#d9e5f7!important;border-color:#39495f!important;color-scheme:dark}
+html body #sqlInput::placeholder{color:#a7b5ca!important}
+html body .sql-output{color:#d9e5f7!important}
+html body .sql-output .kw{color:#a9c6ff!important}html body .sql-output .fn{color:#b8deb7!important}html body .sql-output .str{color:#edc28e!important}html body .sql-output .num{color:#a7d0ed!important}html body .sql-output .cmt{color:#8da0b9!important}
+</style>
 </head>
 <body class="light">
 <script>
-  (()=>{if(new URLSearchParams(location.search).get('embedded')!=='1')return;const media=matchMedia('(prefers-color-scheme: dark)');const sync=()=>{document.body.classList.add('embedded');document.body.classList.toggle('light',!media.matches)};sync();media.addEventListener('change',sync)})();
+  (()=>{if(new URLSearchParams(location.search).get('embedded')!=='1')return;const sync=()=>{document.body.classList.add('embedded');document.body.classList.toggle('light',parent.document.documentElement.dataset.theme!=='dark')};sync();parent.addEventListener('app-theme-change',sync)})();
 </script>
 
 <div class="app-shell">
