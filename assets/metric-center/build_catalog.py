@@ -110,6 +110,13 @@ block='<script type="application/json" id="productionCatalog">'+json.dumps(resul
 html=re.sub(r'<script type="application/json" id="productionCatalog">[\s\S]*?</script>\s*','',html)
 html=html.replace('  <script>','  '+block+'\n  <script>',1)
 whitepaper=json.loads((ROOT/'assets/metric-center/whitepaper.json').read_text())
+overrides_path=ROOT/'assets/metric-center/metric-overrides.json'
+if overrides_path.exists():
+    overrides=json.loads(overrides_path.read_text())['metrics']
+    known={metric['name'] for metric in whitepaper['metrics']}
+    if set(overrides)-known: raise ValueError('Unknown metric overrides: '+str(set(overrides)-known))
+    for metric in whitepaper['metrics']:
+        metric.update(overrides.get(metric['name'],{}))
 html=re.sub(r'<script type="application/json" id="whitepaperCatalog">[\s\S]*?</script>\s*','',html)
 whitepaper_block='<script type="application/json" id="whitepaperCatalog">'+json.dumps(whitepaper,ensure_ascii=False).replace('<','\\u003c')+'</script>'
 html=html.replace('  <script>','  '+whitepaper_block+'\n  <script>',1)

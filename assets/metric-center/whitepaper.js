@@ -1,20 +1,6 @@
     // Whitepaper is the metric-center catalogue. The query builder retains its own schema.
     const whitepaper = JSON.parse(document.getElementById('whitepaperCatalog').textContent);
-    const whitepaperReviews = {
-      '下载用户数': '口径要求按 peerid 去重计数，但 SQL 计算分片平均速度，且读取分片表，与配置的子任务来源表不一致。',
-      '分片平均全局速度（KB/s）': '来源配置为分片表，但 SQL 读取子任务表，别名也为子任务平均速度。',
-      '失败用户占比': '口径写为“零速用户数 / 下载用户数”，SQL 则计算失败用户占比。',
-      '零速分片占比': '口径的分母为下载用户数，SQL 的分母为分片记录数 sum(1)。',
-      '零速子任务占比': '口径写为“零速用户数 / 下载用户数”，SQL 则计算零速子任务数 / 子任务数。',
-      '平均文件大小（MB）': '名称标注 MB，但 SQL 仅计算 avg(file_size)，没有单位换算；来源字段的单位为字节。',
-      '有过速度 <= xx子任务的用户数占比': '口径的分母为子任务数，SQL 的分母为去重用户数 count(distinct peerid)。',
-      '平均首次发起索引时间（ms）': '口径限定“仅取回”，SQL 没有 action_type 过滤；调度表加工 SQL 暂未接入，需确认底表是否已限定取回。',
-      '可加速且速度 < xx 子任务数占比': 'SQL 使用 sub_task_speed，现有子任务表加工逻辑未输出该字段；已提供的速度字段为 global_speed，需核对实际表结构。',
-      '平均首次发起查源时间（ms）': '移动端来源字段写为 extdata[FirstSendQueryAllPeerTime]，键名缺少引号。',
-      '有加速token比例': 'PC 来源字段写为 extadata，需核对是否应为 extdata。',
-      'PCDN流量占比（ipv6）': '移动端来源字段缺少键名的起始引号。',
-      '任务控速均值（MB/s）': 'PC 来源字段 localspeedlimit 前有两个单引号。'
-    };
+    const whitepaperReviews = {};
     let whitepaperView = 'metrics';
     function wpReview(m){return whitepaperReviews[m.name] || ''}
     function wpText(value){return value && value !== '-' ? esc(value) : '<span class="wp-muted">未填写</span>'}

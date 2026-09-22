@@ -73,7 +73,7 @@ python3 assets/metric-center/import_whitepaper.py /path/to/传输中台指标白
 python3 assets/metric-center/build_catalog.py
 ```
 
-常规构建直接使用 JSON，不依赖原始 Excel 路径或 openpyxl，两个共享入口均嵌入目录，支持离线使用。SQL 模板逐字保留原文，复制按钮不自动纠正查询；日期仍使用 `${date}`。`whitepaperReviews` 单独记录原文中的口径、来源表、字段和单位冲突，更新白皮书后应重新复核这些注记及其单元格定位。现有数据有 13 项待核对。
+常规构建直接使用 JSON，不依赖原始 Excel 路径或 openpyxl，两个共享入口均嵌入目录，支持离线使用。SQL 模板逐字保留原文，复制按钮不自动纠正查询；日期仍使用 `${date}`。`whitepaperReviews` 单独记录原文中的口径、来源表、字段和单位冲突，更新白皮书后应重新复核这些注记及其单元格定位。2026-09-22 的用户核对结果记录在 `assets/metric-center/metric-overrides.json`，构建时按指标名称覆盖导入内容，重新导入也不会丢失已确认修订。零速子任务占比已确认为零速子任务数 / 子任务数，与现有 SQL 一致；本轮 13 项问题均已核对完成。
 
 调度指标来源表尚无仓库加工 SQL，详情明确说明这一缺口，不复用下载表血缘。心跳上报工作表为空，因此未添加心跳指标。白皮书模板尚未执行数据库查询。
 

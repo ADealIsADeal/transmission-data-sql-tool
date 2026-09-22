@@ -1,0 +1,44 @@
+{
+  "updated": "2026-09-22",
+  "metrics": {
+    "下载用户数": {
+      "sql": "select\n    count(distinct peerid) as cnt_user -- 下载用户数\nfrom dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc\nwhere ds = '${date}'"
+    },
+    "分片平均全局速度（KB/s）": {
+      "sql": "select\n    avg(global_speed) as avg_seq_global_speed -- 分片平均全局速度\nfrom dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc\nwhere ds = '${date}'"
+    },
+    "零速分片占比": {
+      "definition": "零速分片数 / 分片数"
+    },
+    "零速子任务占比": {
+      "definition": "零速子任务数 / 子任务数"
+    },
+    "失败用户占比": {
+      "definition": "失败用户数 / 下载用户数"
+    },
+    "平均文件大小（MB）": {
+      "sql": "select\n    avg(file_size)/1024/1024 as avg_file_size -- 平均文件大小（MB）\nfrom dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc\nwhere ds = '${date}'"
+    },
+    "有过速度 <= xx子任务的用户数占比": {
+      "definition": "有下载过速度 <=xx 的子任务的用户数 / 下载用户数"
+    },
+    "平均首次发起索引时间（ms）": {
+      "definition": "对首次发起索引时间求平均（仅取回，只将10min内的数据纳入统计）。下载任务不上传该指标，值为 NULL，不参与平均值计算。"
+    },
+    "平均首次发起查源时间（ms）": {
+      "mobile": "extdata['FirstSendQueryAllPeerTime']"
+    },
+    "有加速token比例": {
+      "pc": "extdata['vip_dcdn_token_backup']"
+    },
+    "PCDN流量占比（ipv6）": {
+      "mobile": "extdata['IdcPeerIPv6Bytes']"
+    },
+    "任务控速均值（MB/s）": {
+      "pc": "extdata['localspeedlimit']"
+    },
+    "可加速且速度 < xx 子任务数占比": {
+      "sql": "select\n    sum(case when is_collect = '1' and global_speed < 50 then 1 else 0 end)/sum(1) as rate_sub_task_collect_50kb_speed -- 可加速且速度<50KB/s子任务数占比\n    ,sum(case when is_collect = '1' and global_speed < 100 then 1 else 0 end)/sum(1) as rate_sub_task_collect_100kb_speed -- 可加速且速度<100KB/s子任务数占比\n    ,sum(case when is_collect = '1' and global_speed < 200 then 1 else 0 end)/sum(1) as rate_sub_task_collect_200kb_speed -- 可加速且速度<200KB/s子任务数占比\n    ,sum(case when is_collect = '1' and global_speed < 300 then 1 else 0 end)/sum(1) as rate_sub_task_collect_300kb_speed -- 可加速且速度<300KB/s子任务数占比\n    ,sum(case when is_collect = '1' and global_speed < 400 then 1 else 0 end)/sum(1) as rate_sub_task_collect_400kb_speed -- 可加速且速度<400KB/s子任务数占比 \n    ,sum(case when is_collect = '1' and global_speed < 500 then 1 else 0 end)/sum(1) as rate_sub_task_collect_500kb_speed -- 可加速且速度<500KB/s子任务数占比\nfrom dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc\nwhere ds = '${date}'"
+    }
+  }
+}
