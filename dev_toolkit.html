@@ -1067,6 +1067,13 @@ html body #sqlInput::placeholder{color:#a7b5ca!important}
 html body .sql-output{color:#d9e5f7!important}
 html body .sql-output .kw{color:#a9c6ff!important}html body .sql-output .fn{color:#b8deb7!important}html body .sql-output .str{color:#edc28e!important}html body .sql-output .num{color:#a7d0ed!important}html body .sql-output .cmt{color:#8da0b9!important}
 </style>
+<style id="toolkit-consistency">
+body{--ui-muted:#b0bdcf;--ui-shadow:0 2px 8px rgba(0,0,0,.18)}
+body.light{--ui-muted:#596579;--ui-shadow:0 2px 8px rgba(35,52,88,.06)}
+body .sidebar,body .main,body.light .sidebar,body.light .main,body.embedded:not(.light) .sidebar,body.embedded:not(.light) .main{box-shadow:var(--ui-shadow)!important;border-radius:12px!important}
+body :is(.tool-header p,.field-label,.nav-section-title,.smart-empty){color:var(--ui-muted)!important;font-size:12px!important;line-height:1.65}
+body :is(textarea,input)::placeholder{color:var(--ui-muted)!important;opacity:1}
+</style>
 </head>
 <body class="light">
 <script>

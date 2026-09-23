@@ -14,7 +14,7 @@
     function wpTabButton(view,label){return `<button class="wp-view ${whitepaperView===view?'active':''}" data-wp-view="${view}" aria-pressed="${whitepaperView===view}">${label}</button>`}
     function wpInit(){
       const root = $('#page-metrics');
-      root.innerHTML = `<div class="hero wp-hero"><div><div class="wp-eyebrow">传输中台 · 数据资产</div><h1>指标中心</h1><p>查口径、找看板，追溯每个指标的取数依据。</p></div><span class="wp-edition">任务结束上报</span></div>
+      root.innerHTML = `<div class="hero wp-hero"><div><h1>指标中心</h1><p>查口径、找看板，追溯每个指标的取数依据。</p></div><span class="wp-edition">任务结束上报</span></div>
         <div class="wp-stats"><div><strong>${whitepaper.metrics.length}</strong><span>指标</span></div><div><strong>${new Set(whitepaper.metrics.map(m=>m.category)).size}</strong><span>业务分类</span></div><div><strong>${new Set(whitepaper.metrics.filter(m=>m.bi==='✅').map(m=>m.dashboard.trim())).size}</strong><span>关联看板</span></div><div><strong>${whitepaper.dimensions.length}</strong><span>维度</span></div></div>
         <div class="wp-layout"><aside class="card wp-sidebar"><h2>业务分类</h2><nav id="wpCategories" aria-label="业务分类"></nav></aside>
         <div class="wp-main"><div id="wpViews" class="wp-views"></div>

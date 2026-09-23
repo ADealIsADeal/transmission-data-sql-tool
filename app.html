@@ -886,6 +886,37 @@ html[data-theme="dark"] .wrap .badge,html[data-theme="dark"] .wrap .icon{backgro
 html[data-theme="dark"] .wrap .go{color:#aac5ff}
 html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[data-theme="dark"] .pane-head small,html[data-theme="dark"] .canvas-title p,html[data-theme="dark"] .metric-summary-label{color:var(--muted)!important}
 @media(max-width:430px){.header-actions{gap:5px!important}.header-actions .help-document,.theme-toggle{width:30px}.workspace-identity strong{max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}body .topbar .brand{font-size:12px!important}}
+
+/* Shared page hierarchy, surface elevation and readable secondary text. */
+:root{--ui-muted:#596579;--ui-shadow:0 2px 8px rgba(35,52,88,.06);--ui-shadow-hover:0 4px 12px rgba(35,52,88,.1)}
+:root[data-theme="dark"]{--ui-muted:#b0bdcf;--ui-shadow:0 2px 8px rgba(0,0,0,.18);--ui-shadow-hover:0 4px 12px rgba(0,0,0,.24)}
+main .page>.hero,main #page-metrics>.wp-hero{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 24px!important;padding:0;min-height:64px!important}
+main .page>.hero h1{margin:0;font-size:24px!important;font-weight:700;line-height:32px;letter-spacing:0}
+main .page>.hero p{margin:6px 0 0;font-size:13px;line-height:22px;color:var(--ui-muted)!important}
+main .platform-section-title{font-size:16px;line-height:24px}
+main .page :is(.card,.toolbar,.field-pane,.canvas-section,.side-detail,.field-list,.wp-stats,.wp-sidebar){box-shadow:var(--ui-shadow)!important;border-radius:12px}
+main .page :is(.filter-card,.detail-block,.chain-node,.fresh-item,.graph-node,.grain-meta-group){box-shadow:none!important}
+main .page .platform-card:hover{box-shadow:var(--ui-shadow-hover)!important}
+main .page .toolkit-shell{box-shadow:none!important;border-radius:0}
+#page-builder .metric-pane .flat-metric-choice{height:auto;min-height:44px!important;grid-template-columns:15px minmax(0,1fr) auto;align-items:center}
+#page-builder .metric-pane .flat-metric-choice strong{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:20px}
+main .page :is(.pane-head span,.pane-head small,.canvas-title p,.fresh-inline,.graph-node small,.meta-list dt,.wp-meta,.wp-muted,.wp-results,.wp-footer,.wp-source,.source-caption,.metric-summary-label,.wp-edition,.wp-stats span,.platform-card p){font-size:12px!important;line-height:1.65;color:var(--ui-muted)!important}
+main .page .wp-table thead th{font-size:12px;color:var(--ui-muted)!important}
+main .page :is(input,textarea)::placeholder{color:var(--ui-muted)!important;opacity:1}
+main .page :is(.wp-sidebar h2,#wpCategories button span:last-child,.wp-detail-item dt,.wp-detail-item dt small,.wp-inline-fields>span){font-size:12px!important;color:var(--ui-muted)!important}
+@media(max-width:640px){main .page>.hero,main #page-metrics>.wp-hero{align-items:flex-start;flex-direction:column;gap:10px;margin-bottom:20px}main .page>.hero h1{font-size:22px!important;line-height:30px}}
+
+/* Subtle outlines separate lineage table cards from the canvas. */
+html[data-theme="light"] :is(#page-lineage,#page-heartbeat) .graph-node{border-width:1px!important;border-color:#d8e1ec!important}
+html[data-theme="dark"] :is(#page-lineage,#page-heartbeat) .graph-node{border-width:1px!important;border-color:#3c4b60!important}
+html :is(#page-lineage,#page-heartbeat) .graph-node:hover{border-color:color-mix(in srgb,var(--blue) 40%,var(--line))!important}
+html :is(#page-lineage,#page-heartbeat) .graph-node.active{border-color:color-mix(in srgb,var(--blue) 60%,var(--line))!important}
+
+/* Dimension inputs share the preceding stage; their connectors enter the next stage. */
+#page-lineage .lineage-flow-grid{position:relative}
+#page-lineage .lineage-dim-connectors{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;color:#a08ac7}
+#page-lineage .lineage-dim-connectors path{fill:none;stroke:currentColor;stroke-width:1.2;stroke-dasharray:4 3}
+#page-lineage .lineage-dim-connectors text{fill:var(--ui-muted);font-size:11px}
 </style>
 <script id="app-theme-script">(() => {
   const key = 'transmission-color-mode';
@@ -996,6 +1027,7 @@ html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[dat
     </section>
 
     <section class="page active" id="page-builder">
+      <div class="hero"><div><h1>自助取数</h1><p>选择指标与维度，配置查询条件并生成 SQL。</p></div></div>
       <div id="stepper" class="hidden"></div>
       <div class="workbench">
         <aside class="card field-pane metric-pane">
@@ -1045,7 +1077,7 @@ html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[dat
               <select class="control" id="lineageDirection"><option value="all">查看全链路</option><option value="up">仅查看上游</option><option value="down">仅查看下游</option></select>
               <select class="control" id="lineageDepth"><option value="1">展开一级</option><option value="2">展开二级</option><option value="3" selected>展开三级</option></select>
               <button class="btn" id="fullscreenLineage">全屏查看</button>
-              <div class="legend"><span style="--c:#64748b">原始表</span><span style="--c:#2563eb">DWD</span><span style="--c:#087f7b">DWS</span><span style="--c:#b45309">ADS</span><span style="--c:#7c3aed">DIM</span><span style="--c:#0e7490">查询关联</span></div>
+              <div class="legend"><span style="--c:#64748b">原始表</span><span style="--c:#2563eb">DWD</span><span style="--c:#087f7b">DWS</span><span style="--c:#b45309">ADS</span><span style="--c:#7c3aed">DIM</span></div>
             </div>
             <div class="graph" id="tableGraph"></div>
           </div>
@@ -1099,6 +1131,7 @@ html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[dat
     </section>
 
     <section class="page" id="page-platforms" aria-label="平台导航">
+      <div class="hero"><div><h1>平台导航</h1><p>快速访问查询、调度、看板与数据资产平台。</p></div></div>
       <section aria-labelledby="quickPlatformsTitle">
         <h2 id="quickPlatformsTitle" class="platform-section-title">常用平台快速导航</h2>
         <div class="platform-grid" id="platformGrid"></div>
@@ -1110,8 +1143,9 @@ html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[dat
     </section>
 
     <section class="page" id="page-toolkit">
+      <div class="hero"><div><h1>常用工具</h1><p>使用格式转换、开发辅助与数据计算工具。</p></div></div>
       <div class="card toolkit-shell">
-        <iframe class="toolkit-frame" id="toolkitFrame" title="常用工具" src="dev_toolkit.html?embedded=1&v=20260824b" loading="lazy" allow="clipboard-read; clipboard-write"></iframe>
+        <iframe class="toolkit-frame" id="toolkitFrame" title="常用工具" src="dev_toolkit.html?embedded=1&v=20260923design" loading="lazy" allow="clipboard-read; clipboard-write"></iframe>
         <div class="toolkit-fallback" id="toolkitFallback">常用工具暂时无法加载。<a class="toolkit-frame-link" href="dev_toolkit.html" target="_blank" rel="noopener noreferrer">在新窗口打开常用工具 →</a></div>
       </div>
     </section>
@@ -1350,11 +1384,31 @@ html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[dat
     $('#saveExperimentInline').onclick=()=>{const id=$('#experimentIdInline').value.trim(),message=$('#experimentInlineMessage');if(!/^[a-zA-Z0-9_-]{8,64}$/.test(id)){message.textContent='实验 ID 需为 8–64 位字母、数字、下划线或连字符。';message.style.color='var(--red)';return}state.experiment={enabled:true,id,entity:$('#experimentEntityInline').value};$('#experimentBadge').textContent=`实验 ${id} · ${state.experiment.entity}`;$('#experimentBadge').className='tag ok';message.textContent='';invalidateSql();renderSummary()};$('#clearExperimentInline').onclick=()=>{state.experiment={enabled:false,id:'',entity:'user_id'};$('#experimentIdInline').value='';$('#experimentEntityInline').value='user_id';$('#experimentBadge').textContent='未关联实验';$('#experimentBadge').className='tag warn';$('#experimentInlineMessage').textContent='';state.outputDims.delete('segment_name');invalidateSql();renderDimensions();renderSummary()};
 
     const typeColor={raw:'#64748b',dwd:'#2563eb',dws:'#087f7b',ads:'#b45309',dim:'#7c3aed',ref:'#0891b2',query:'#0e7490'};
-    function renderGraph(){const q=$('#tableSearch').value.trim().toLowerCase(),selected=tableById(state.selectedTable),direction=$('#lineageDirection').value,depth=+$('#lineageDepth').value;let allowed=new Set(tables.map(t=>t.id));if(direction!=='all'){allowed=new Set([selected.id]);let frontier=[selected.id];for(let i=0;i<depth;i++){frontier=[...new Set(frontier.flatMap(id=>direction==='up'?tableById(id).up:tableById(id).down))];frontier.forEach(id=>allowed.add(id))}}const list=tables.filter(t=>allowed.has(t.id)&&!t.isDim&&!t.isQuery),dimList=tables.filter(t=>t.isDim&&!t.isQuery&&(direction==='all'||allowed.has(t.id))),queryList=tables.filter(t=>t.isQuery&&(direction==='all'||allowed.has(t.id))),layers=[...new Set(list.map(t=>t.layer))].sort((a,b)=>a-b),titles=['原始日志','小时明细','分片去重','统一事实表','dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc','dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc','看板应用'],node=t=>`<button class="graph-node ${t.id===state.selectedTable?'active':''}" style="--node:${typeColor[t.type]};${q&&`${t.cn} ${t.name}`.toLowerCase().includes(q)?'box-shadow:0 0 0 4px #fbbf24;':''}" data-table="${t.id}"><span class="tag">${t.type.toUpperCase()}</span><strong>${esc(t.name)}</strong><small>${t.grain} · ${t.frequency}</small></button>`,layerColumn=layer=>layer*2+1,productionTargets=list.map(target=>({target,inputs:dimList.filter(x=>x.down.includes(target.id))})).filter(x=>x.inputs.length),abTable=queryList.find(x=>x.id==='ab_query');$('#tableGraph').innerHTML=`<div class="lineage-flow-grid">${productionTargets.map(({target,inputs})=>`<div class="lineage-production-satellite" style="grid-column:${layerColumn(target.layer)};grid-row:1"><div class="lineage-step-inputs">${inputs.map(node).join('')}</div></div><div class="lineage-production-link" style="grid-column:${layerColumn(target.layer)};grid-row:2"></div>`).join('')}${layers.map(layer=>`<div class="lineage-main-title" style="grid-column:${layerColumn(layer)}">${titles[layer]}</div>`).join('')}${layers.map(layer=>`<div class="lineage-main-layer" style="grid-column:${layerColumn(layer)}">${list.filter(t=>t.layer===layer).map(node).join('')}</div>`).join('')}${layers.slice(1).map(layer=>`<div class="lineage-main-arrow" style="grid-column:${layerColumn(layer)-1}">→</div>`).join('')}${abTable&&list.some(t=>t.id==='dws')&&list.some(t=>t.id==='task_dws')?`<div class="lineage-ab-bridge" style="grid-column:${layerColumn(4)}/${layerColumn(5)+1}"><span class="bridge-left"></span><span class="bridge-horizontal"></span><span class="bridge-right"></span><span class="bridge-center"></span><em>按需关联</em></div><div class="lineage-ab-holder" style="grid-column:${layerColumn(4)}/${layerColumn(5)+1}">${node(abTable)}</div>`:''}</div>`;$$('[data-table]',$('#tableGraph')).forEach(b=>b.onclick=()=>{state.selectedTable=b.dataset.table;renderGraph();renderTableDetail()});}
+    // Short labels only; physical table names remain intact for SQL and lineage matching.
+    function lineageTableLabel(name){return String(name).replace(/^dw_xlyun\./,'')}
+    let dimensionConnectorObserver;
+    function renderGraph(){const q=$('#tableSearch').value.trim().toLowerCase(),selected=tableById(state.selectedTable),direction=$('#lineageDirection').value,depth=+$('#lineageDepth').value;let allowed=new Set(tables.map(t=>t.id));if(direction!=='all'){allowed=new Set([selected.id]);let frontier=[selected.id];for(let i=0;i<depth;i++){frontier=[...new Set(frontier.flatMap(id=>direction==='up'?tableById(id).up:tableById(id).down))];frontier.forEach(id=>allowed.add(id))}}const list=tables.filter(t=>allowed.has(t.id)&&!t.isDim&&!t.isQuery),dimList=tables.filter(t=>t.isDim&&!t.isQuery&&(direction==='all'||allowed.has(t.id))),layers=[...new Set(list.map(t=>t.layer))].sort((a,b)=>a-b),titles=['原始日志','小时明细','分片去重','统一事实表','分片汇总','子任务汇总','看板应用'],node=t=>`<button class="graph-node ${t.id===state.selectedTable?'active':''}" style="--node:${typeColor[t.type]};${q&&`${t.cn} ${t.name}`.toLowerCase().includes(q)?'box-shadow:0 0 0 4px #fbbf24;':''}" data-table="${t.id}"><span class="tag">${t.type.toUpperCase()}</span><strong>${esc(lineageTableLabel(t.name))}</strong><small>${t.grain} · ${t.frequency}</small></button>`,layerColumn=layer=>layer*2+1,productionTargets=list.map(target=>({target,inputs:dimList.filter(x=>x.down.includes(target.id))})).filter(x=>x.inputs.length);$('#tableGraph').innerHTML=`<div class="lineage-flow-grid">${productionTargets.map(({target,inputs})=>`<div class="lineage-production-satellite" style="grid-column:${layerColumn(target.layer-1)};grid-row:1"><div class="lineage-step-inputs">${inputs.map(node).join('')}</div></div>`).join('')}${layers.map(layer=>`<div class="lineage-main-title" style="grid-column:${layerColumn(layer)}">${esc(lineageTableLabel(titles[layer]))}</div>`).join('')}${layers.map(layer=>`<div class="lineage-main-layer" style="grid-column:${layerColumn(layer)}">${list.filter(t=>t.layer===layer).map(node).join('')}</div>`).join('')}${layers.slice(1).map(layer=>`<div class="lineage-main-arrow" style="grid-column:${layerColumn(layer)-1}">→</div>`).join('')}</div>`;
+      const grid=$('.lineage-flow-grid',$('#tableGraph'));
+      grid.insertAdjacentHTML('afterbegin','<svg class="lineage-dim-connectors" aria-hidden="true"></svg>');
+      const drawDimensionConnectors=()=>{
+        const base=grid.getBoundingClientRect();if(!base.width)return;
+        const pieces=[];
+        productionTargets.forEach(({target,inputs})=>{
+          const end=grid.querySelector(`[data-table="${target.id}"]`).getBoundingClientRect();
+          const starts=inputs.map(input=>grid.querySelector(`[data-table="${input.id}"]`).getBoundingClientRect());
+          const tx=end.left-base.left,ty=end.top-base.top+end.height/2-18,mx=(Math.max(...starts.map(start=>start.right-base.left))+tx)/2;
+          const ys=starts.map(start=>start.top+start.height/2-base.top);
+          starts.forEach((start,index)=>pieces.push(`<path d="M ${start.right-base.left} ${ys[index]} H ${mx}"/>`));
+          pieces.push(`<path d="M ${mx} ${Math.min(...ys,ty)} V ${Math.max(...ys,ty)} M ${mx} ${ty} H ${tx-3}"/><path d="M ${tx-8} ${ty-4} L ${tx-3} ${ty} L ${tx-8} ${ty+4}" style="stroke-dasharray:none"/>`);
+        });
+        grid.querySelector('.lineage-dim-connectors').innerHTML=pieces.join('');
+      };
+      dimensionConnectorObserver?.disconnect();dimensionConnectorObserver=new ResizeObserver(drawDimensionConnectors);dimensionConnectorObserver.observe(grid);requestAnimationFrame(drawDimensionConnectors);
+      $$('[data-table]',$('#tableGraph')).forEach(b=>b.onclick=()=>{state.selectedTable=b.dataset.table;renderGraph();renderTableDetail()});}
     function renderTableDetail(){
       const t=tableById(state.selectedTable),currentStage=production.stages.find(s=>s.table===t.name);
-      const related=ids=>ids.length?ids.map(id=>{const r=tableById(id),stage=production.stages.find(s=>s.table===r.name);return `<button class="table-related" ${stage?`data-source-stage="${stage.id}" data-source-line="${stage.line}" aria-label="查看${esc(r.name)}线上 SQL"`:'disabled'}><strong>${esc(r.name)}</strong><small>${stage?'查看线上 SQL':'未提供加工 SQL'}</small></button>`}).join(''):'<p class="table-no-related">无</p>';
-      $('#tableDetailPanel').innerHTML=`<div class="table-detail-title"><span class="tag">${esc(t.type.toUpperCase())}</span><h2>${esc(t.name)}</h2></div><div class="table-current-sql">${currentStage?`<button class="btn" data-source-stage="${currentStage.id}" data-source-line="${currentStage.line}">查看当前表 SQL</button>`:'<span class="source-caption">当前表未提供加工 SQL</span>'}</div><p class="table-description">${esc(t.note)}</p><dl class="table-facts"><div><dt>数据粒度</dt><dd>${esc(t.grain)}</dd></div><div><dt>更新频率</dt><dd>${esc(t.frequency)}</dd></div></dl><section class="table-relations"><h3>上游表 <span>${t.up.length}</span></h3>${related(t.up)}</section><section class="table-relations"><h3>下游表 <span>${t.down.length}</span></h3>${related(t.down)}</section><div class="side-links"><button class="btn small" data-direction="up">仅看上游</button><button class="btn small" data-direction="down">仅看下游</button></div>`;
+      const related=ids=>ids.length?ids.map(id=>{const r=tableById(id),stage=production.stages.find(s=>s.table===r.name);return `<button class="table-related" ${stage?`data-source-stage="${stage.id}" data-source-line="${stage.line}" aria-label="查看${esc(lineageTableLabel(r.name))}线上 SQL"`:'disabled'}><strong>${esc(lineageTableLabel(r.name))}</strong><small>${stage?'查看线上 SQL':'未提供加工 SQL'}</small></button>`}).join(''):'<p class="table-no-related">无</p>';
+      $('#tableDetailPanel').innerHTML=`<div class="table-detail-title"><span class="tag">${esc(t.type.toUpperCase())}</span><h2>${esc(lineageTableLabel(t.name))}</h2></div><div class="table-current-sql">${currentStage?`<button class="btn" data-source-stage="${currentStage.id}" data-source-line="${currentStage.line}">查看当前表 SQL</button>`:'<span class="source-caption">当前表未提供加工 SQL</span>'}</div><p class="table-description">${esc(t.note)}</p><dl class="table-facts"><div><dt>数据粒度</dt><dd>${esc(t.grain)}</dd></div><div><dt>更新频率</dt><dd>${esc(t.frequency)}</dd></div></dl><section class="table-relations"><h3>上游表 <span>${t.up.length}</span></h3>${related(t.up)}</section><section class="table-relations"><h3>下游表 <span>${t.down.length}</span></h3>${related(t.down)}</section><div class="side-links"><button class="btn small" data-direction="up">仅看上游</button><button class="btn small" data-direction="down">仅看下游</button></div>`;
       $$('[data-direction]',$('#tableDetailPanel')).forEach(b=>b.onclick=()=>{$('#lineageDirection').value=b.dataset.direction;renderGraph()});
       bindProduction($('#tableDetailPanel'));
     }
@@ -1525,7 +1579,7 @@ html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[dat
     function wpTabButton(view,label){return `<button class="wp-view ${whitepaperView===view?'active':''}" data-wp-view="${view}" aria-pressed="${whitepaperView===view}">${label}</button>`}
     function wpInit(){
       const root = $('#page-metrics');
-      root.innerHTML = `<div class="hero wp-hero"><div><div class="wp-eyebrow">传输中台 · 数据资产</div><h1>指标中心</h1><p>查口径、找看板，追溯每个指标的取数依据。</p></div><span class="wp-edition">任务结束上报</span></div>
+      root.innerHTML = `<div class="hero wp-hero"><div><h1>指标中心</h1><p>查口径、找看板，追溯每个指标的取数依据。</p></div><span class="wp-edition">任务结束上报</span></div>
         <div class="wp-stats"><div><strong>${whitepaper.metrics.length}</strong><span>指标</span></div><div><strong>${new Set(whitepaper.metrics.map(m=>m.category)).size}</strong><span>业务分类</span></div><div><strong>${new Set(whitepaper.metrics.filter(m=>m.bi==='✅').map(m=>m.dashboard.trim())).size}</strong><span>关联看板</span></div><div><strong>${whitepaper.dimensions.length}</strong><span>维度</span></div></div>
         <div class="wp-layout"><aside class="card wp-sidebar"><h2>业务分类</h2><nav id="wpCategories" aria-label="业务分类"></nav></aside>
         <div class="wp-main"><div id="wpViews" class="wp-views"></div>
@@ -1619,10 +1673,10 @@ html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[dat
       let allowed=new Set(hbTables.map(t=>t.id));
       if(direction!=='all'){allowed=new Set([selected.id]);let frontier=[selected.id];for(let i=0;i<depth;i++){frontier=[...new Set(frontier.flatMap(id=>hbTableById(id)[direction==='up'?'up':'down']))];frontier.forEach(id=>allowed.add(id))}}
       const list=hbTables.filter(t=>allowed.has(t.id)),layers=[...new Set(list.map(t=>t.layer))].sort((a,b)=>a-b),titles=['原始日志','上报明细','心跳去重','主题聚合','看板应用'];
-      const node=t=>`<button class="graph-node ${t.id===selected.id?'active':''}" style="--node:${typeColor[t.type]||'#64748b'};${search&&`${t.cn} ${t.name}`.toLowerCase().includes(search)?'box-shadow:0 0 0 4px #fbbf24;':''}" data-hb-table="${t.id}"><span class="tag">${t.type.toUpperCase()}</span><strong>${esc(t.name)}</strong><small>${esc(t.grain)} · ${t.frequency}</small></button>`;
+      const node=t=>`<button class="graph-node ${t.id===selected.id?'active':''}" style="--node:${typeColor[t.type]||'#64748b'};${search&&`${t.cn} ${t.name}`.toLowerCase().includes(search)?'box-shadow:0 0 0 4px #fbbf24;':''}" data-hb-table="${t.id}"><span class="tag">${t.type.toUpperCase()}</span><strong>${esc(lineageTableLabel(t.name))}</strong><small>${esc(t.grain)} · ${t.frequency}</small></button>`;
       $('#hbGraph').innerHTML=`<div class="lineage-flow-grid" style="grid-template-columns:repeat(${Math.max(0,layers.length-1)},minmax(160px,1fr) 34px) minmax(160px,1fr);min-width:${layers.length*160+Math.max(0,layers.length-1)*34}px">${layers.map((layer,i)=>`<div class="lineage-main-title" style="grid-column:${i*2+1}">${titles[layer]}</div><div class="lineage-main-layer" style="grid-column:${i*2+1}">${list.filter(t=>t.layer===layer).map(node).join('')}</div>${i?`<div class="lineage-main-arrow" style="grid-column:${i*2}">→</div>`:''}`).join('')}</div>`;
-      const stage=hbStages[selected.id],related=ids=>ids.length?ids.map(id=>{const t=hbTableById(id),hasSql=!!hbStages[id];return `<button class="table-related" ${hasSql?`data-hb-source="${id}" data-hb-line="1" aria-label="查看${esc(t.name)}线上 SQL"`:'disabled'}><strong>${esc(t.name)}</strong><small>${hasSql?'查看线上 SQL':'未提供加工 SQL'}</small></button>`}).join(''):'<p class="table-no-related">无</p>';
-      $('#hbTableDetail').innerHTML=`<div class="table-detail-title"><span class="tag">${selected.type.toUpperCase()}</span><h2>${esc(selected.name)}</h2></div><div class="table-current-sql">${stage?`<button class="btn" data-hb-source="${stage.id}" data-hb-line="1">查看当前表 SQL</button>`:'<span class="source-caption">当前表未提供加工 SQL</span>'}</div><p class="table-description">${esc(selected.note)}</p><dl class="table-facts"><div><dt>数据粒度</dt><dd>${esc(selected.grain)}</dd></div><div><dt>更新频率</dt><dd>${selected.frequency}</dd></div></dl><section class="table-relations"><h3>上游表 <span>${selected.up.length}</span></h3>${related(selected.up)}</section><section class="table-relations"><h3>下游表 <span>${selected.down.length}</span></h3>${related(selected.down)}</section><div class="side-links"><button class="btn small" data-hb-direction="up">仅看上游</button><button class="btn small" data-hb-direction="down">仅看下游</button></div>`;
+      const stage=hbStages[selected.id],related=ids=>ids.length?ids.map(id=>{const t=hbTableById(id),hasSql=!!hbStages[id];return `<button class="table-related" ${hasSql?`data-hb-source="${id}" data-hb-line="1" aria-label="查看${esc(lineageTableLabel(t.name))}线上 SQL"`:'disabled'}><strong>${esc(lineageTableLabel(t.name))}</strong><small>${hasSql?'查看线上 SQL':'未提供加工 SQL'}</small></button>`}).join(''):'<p class="table-no-related">无</p>';
+      $('#hbTableDetail').innerHTML=`<div class="table-detail-title"><span class="tag">${selected.type.toUpperCase()}</span><h2>${esc(lineageTableLabel(selected.name))}</h2></div><div class="table-current-sql">${stage?`<button class="btn" data-hb-source="${stage.id}" data-hb-line="1">查看当前表 SQL</button>`:'<span class="source-caption">当前表未提供加工 SQL</span>'}</div><p class="table-description">${esc(selected.note)}</p><dl class="table-facts"><div><dt>数据粒度</dt><dd>${esc(selected.grain)}</dd></div><div><dt>更新频率</dt><dd>${selected.frequency}</dd></div></dl><section class="table-relations"><h3>上游表 <span>${selected.up.length}</span></h3>${related(selected.up)}</section><section class="table-relations"><h3>下游表 <span>${selected.down.length}</span></h3>${related(selected.down)}</section><div class="side-links"><button class="btn small" data-hb-direction="up">仅看上游</button><button class="btn small" data-hb-direction="down">仅看下游</button></div>`;
       bindHeartbeat($('#hbTableView'));
       $$('[data-hb-direction]').forEach(b=>b.onclick=()=>{$('#hbDirection').value=b.dataset.hbDirection;renderHeartbeat()});
       renderHeartbeatFields();

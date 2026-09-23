@@ -44,6 +44,37 @@ html[data-theme="dark"] .wrap .badge,html[data-theme="dark"] .wrap .icon{backgro
 html[data-theme="dark"] .wrap .go{color:#aac5ff}
 html[data-theme="dark"] .hero p,html[data-theme="dark"] .source-caption,html[data-theme="dark"] .pane-head small,html[data-theme="dark"] .canvas-title p,html[data-theme="dark"] .metric-summary-label{color:var(--muted)!important}
 @media(max-width:430px){.header-actions{gap:5px!important}.header-actions .help-document,.theme-toggle{width:30px}.workspace-identity strong{max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}body .topbar .brand{font-size:12px!important}}
+
+/* Shared page hierarchy, surface elevation and readable secondary text. */
+:root{--ui-muted:#596579;--ui-shadow:0 2px 8px rgba(35,52,88,.06);--ui-shadow-hover:0 4px 12px rgba(35,52,88,.1)}
+:root[data-theme="dark"]{--ui-muted:#b0bdcf;--ui-shadow:0 2px 8px rgba(0,0,0,.18);--ui-shadow-hover:0 4px 12px rgba(0,0,0,.24)}
+main .page>.hero,main #page-metrics>.wp-hero{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 24px!important;padding:0;min-height:64px!important}
+main .page>.hero h1{margin:0;font-size:24px!important;font-weight:700;line-height:32px;letter-spacing:0}
+main .page>.hero p{margin:6px 0 0;font-size:13px;line-height:22px;color:var(--ui-muted)!important}
+main .platform-section-title{font-size:16px;line-height:24px}
+main .page :is(.card,.toolbar,.field-pane,.canvas-section,.side-detail,.field-list,.wp-stats,.wp-sidebar){box-shadow:var(--ui-shadow)!important;border-radius:12px}
+main .page :is(.filter-card,.detail-block,.chain-node,.fresh-item,.graph-node,.grain-meta-group){box-shadow:none!important}
+main .page .platform-card:hover{box-shadow:var(--ui-shadow-hover)!important}
+main .page .toolkit-shell{box-shadow:none!important;border-radius:0}
+#page-builder .metric-pane .flat-metric-choice{height:auto;min-height:44px!important;grid-template-columns:15px minmax(0,1fr) auto;align-items:center}
+#page-builder .metric-pane .flat-metric-choice strong{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:20px}
+main .page :is(.pane-head span,.pane-head small,.canvas-title p,.fresh-inline,.graph-node small,.meta-list dt,.wp-meta,.wp-muted,.wp-results,.wp-footer,.wp-source,.source-caption,.metric-summary-label,.wp-edition,.wp-stats span,.platform-card p){font-size:12px!important;line-height:1.65;color:var(--ui-muted)!important}
+main .page .wp-table thead th{font-size:12px;color:var(--ui-muted)!important}
+main .page :is(input,textarea)::placeholder{color:var(--ui-muted)!important;opacity:1}
+main .page :is(.wp-sidebar h2,#wpCategories button span:last-child,.wp-detail-item dt,.wp-detail-item dt small,.wp-inline-fields>span){font-size:12px!important;color:var(--ui-muted)!important}
+@media(max-width:640px){main .page>.hero,main #page-metrics>.wp-hero{align-items:flex-start;flex-direction:column;gap:10px;margin-bottom:20px}main .page>.hero h1{font-size:22px!important;line-height:30px}}
+
+/* Subtle outlines separate lineage table cards from the canvas. */
+html[data-theme="light"] :is(#page-lineage,#page-heartbeat) .graph-node{border-width:1px!important;border-color:#d8e1ec!important}
+html[data-theme="dark"] :is(#page-lineage,#page-heartbeat) .graph-node{border-width:1px!important;border-color:#3c4b60!important}
+html :is(#page-lineage,#page-heartbeat) .graph-node:hover{border-color:color-mix(in srgb,var(--blue) 40%,var(--line))!important}
+html :is(#page-lineage,#page-heartbeat) .graph-node.active{border-color:color-mix(in srgb,var(--blue) 60%,var(--line))!important}
+
+/* Dimension inputs share the preceding stage; their connectors enter the next stage. */
+#page-lineage .lineage-flow-grid{position:relative}
+#page-lineage .lineage-dim-connectors{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;color:#a08ac7}
+#page-lineage .lineage-dim-connectors path{fill:none;stroke:currentColor;stroke-width:1.2;stroke-dasharray:4 3}
+#page-lineage .lineage-dim-connectors text{fill:var(--ui-muted);font-size:11px}
 </style>
 <script id="app-theme-script">(() => {
   const key = 'transmission-color-mode';
