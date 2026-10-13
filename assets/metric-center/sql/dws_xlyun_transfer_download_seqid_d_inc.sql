@@ -7,7 +7,10 @@
 --  NOTE:    仅保留 platform in (pc/android/ios/mac/nas/harmony)，action_type in (download/withdraw)
 --           过滤 BT_main、magnet，避免 BT 主/子任务重复统计及磁力链种子任务重复
 --           采集侧改读 PRE 下游 DIM：dim_xlyun_transfer_mp_gcid_info_d_inc
+--           写入前 drop 当天 ds 分区，避免动态分区残留旧 platform/action_type
 ------------------------------------------------------------
+
+alter table dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc drop if exists partition(ds='${date}');
 
 insert overwrite dw_xlyun.dws_xlyun_transfer_download_seqid_d_inc
 select
@@ -213,7 +216,7 @@ from (
         dw_xlyun.dwd_xlyun_transfer_seqid_platform_d_inc
     where
         ds = '${date}'
-        and platform in ('pc', 'android', 'ios', 'mac', 'nas', 'harmony')
+        and platform in ('pc', 'android', 'ios', 'mac', 'nas', 'harmony_mobile','harmony_pc','harmony_pad') --'harmony' ：是为了兼容旧口径
         and action_type in ('download', 'withdraw')
         and task_type_name not in ('bt_main', 'magnet') -- bt主任务和子任务统计重复，磁力链即bt种子的下载任务，故过滤
         and coalesce(task_origin, '')  <> 'background'  --剔除自有后台下载任务
@@ -228,7 +231,7 @@ from (
         --过滤异常版本号，规则：版本号都为数字，且最少包含一个 ’.' 符号
         and instr(product_version, '.') > 1
         and instr(service_version, '.') > 1
-        and ((platform='pc' and service_name in ('pc.thunderX', 'pc.NetDisk_N')) or platform in ('android', 'ios', 'mac', 'nas', 'harmony')) --过滤pc非下载的产品
+        and ((platform='pc' and service_name in ('pc.thunderX', 'pc.NetDisk_N')) or platform in ('android', 'ios', 'mac', 'nas','harmony_mobile','harmony_pc','harmony_pad')) --过滤pc非下载的产品
         and task_type_name in ('p2sp','bt','emule','hls')
 ) as download
 left join (

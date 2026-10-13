@@ -8,7 +8,10 @@
 --           global_speed 对非0非null取 avg；
 --           seq_zero_speed：至少1个分片 download_time>10 且全部分片 recv_bytes=0 才记零速；
 --           流量字段对分片 sum
+--           写入前 drop 当天 ds 分区，避免动态分区残留旧 platform/action_type
 ------------------------------------------------------------
+
+alter table dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc drop if exists partition(ds='${date}');
 
 insert overwrite table dw_xlyun.dws_xlyun_transfer_download_sub_task_d_inc
 select
